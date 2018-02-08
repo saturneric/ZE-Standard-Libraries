@@ -11,8 +11,10 @@ typedef struct List{
 	unsigned long int length;
 }List;
 
+int safeMode(int ifon);//Safe mode is used to make sure that all malloced will be freed. 
 List *init_list();
 Node *init_node();
+unsigned long int *getId();
 int insertInHead(List *p_list, Node *p_node);
 int insertInTail(List *p_list, Node *p_node);
 int removeById(List *p_list, unsigned long id);
@@ -24,6 +26,21 @@ Node *findById(List *p_list, const unsigned long int id);
 Node *findByValue(List *p_list, const char *type, const void *value);
 int releaseList(List *p_list);
 int releaseNode(Node *p_node);
+
+/*Something about safe mode*/
+int if_safeMode = 0;
+List *node_list; //Store nodes which haven't been freed.
+List *list_list; //Store lists which haven't been freed. 
+
+List *init_list(){
+	List *p_list = malloc(sizeof(List));
+	p_list->head = NULL;
+	p_list->tail = NULL;
+	Node *p_node = init_node();
+	p_node->value = (void *)p_list;
+	if(if_safeMode) insertInHead(list_list,p_node);
+	return p_list;
+}
 
 int insertInHead(List *p_list, Node *p_node){
 	p_list->head->last = p_node;
