@@ -20,8 +20,8 @@ int removeByNode(List *p_list, Node *p_node);
 int popFromHead(List *p_list);
 int popFromTail(List *p_list);
 unsigned long int len(List *p_list);
-Node *findById(List *p_list, unsigned long int id);
-Node *findByValue(List *p_list, char type[], void *value);
+Node *findById(List *p_list, const unsigned long int id);
+Node *findByValue(List *p_list, const char *type, const void *value);
 int releaseList(List *p_list);
 int releaseNode(Node *p_node);
 
@@ -123,4 +123,60 @@ int popFromTail(List *p_list){
 		p_list->tail = p_list->tail->last;
 	}
 	return 0;
+}
+
+/*The method in this function won't be better than going through the list 
+ * node by node.The worst situation happens when the matched node is in 
+ * the middle of the list.*/
+Node *findById(List *p_list, const unsigned long int id){
+	Node *ph_node = p_list->head;
+	Node *pt_node = p_list->tail;
+	int direction = 0;
+	while(ph_node != pt_node){
+		if (direction == 0){
+			if (ph_node->id == id){
+				return ph_node;
+			}
+			else{
+				ph_node = ph_node->next;
+			}
+			direction = 1;
+		}
+		else{
+			if (pt_node->id == id){
+				return pt_node;
+			}
+			else{
+				pt_node = pt_node->last;
+			}
+		}
+	}
+	return NULL;
+}
+
+Node *findByValue(List *p_list, const char *type, const void *value){
+	Node *p_node = p_list->head;
+	while(p_node != NULL){
+		if(!strcmp(type,"int")){
+			if(*((int *)p_node) == *((int *)value)){
+				return p_node;
+			}
+		}
+		else if(!strcmp(type,"double")){
+			if(*((double *)p_node) == *((double *)value)){
+				return p_node;
+			}
+		}
+		else if(!strcmp	(type,"string")){
+			if(!strcmp((char *)p_node->value,(char *)value))
+			{
+				return p_node;
+			}
+		}
+		else{
+			return NULL;
+		}
+		
+	}
+	return NULL;
 }
