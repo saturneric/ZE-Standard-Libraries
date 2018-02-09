@@ -1,6 +1,7 @@
 typedef struct Node{
-	unsigned long int id;
+	unsigned long long id;
 	void *value;
+	int if_setvalue;
 	struct Node *next;
 	struct Node *last;
 }Node;
@@ -8,21 +9,22 @@ typedef struct Node{
 typedef struct List{
 	Node *head;
 	Node *tail;
-	unsigned long int length;
+	unsigned long long length;
 }List;
 
 int safeMode(int ifon);//Safe mode is used to make sure that all malloced will be freed. 
-List *init_list();
-Node *init_node();
-unsigned long int *getId();
+List *init_list(void);
+Node *init_node(void);
+int init_value(Node *,void *);
+unsigned long long getId(void);
 int insertInHead(List *p_list, Node *p_node);
 int insertInTail(List *p_list, Node *p_node);
 int removeById(List *p_list, unsigned long id);
 int removeByNode(List *p_list, Node *p_node);
 int popFromHead(List *p_list);
 int popFromTail(List *p_list);
-unsigned long int len(List *p_list);
-Node *findById(List *p_list, const unsigned long int id);
+unsigned long long len(List *p_list);
+Node *findById(List *p_list, const unsigned long long id);
 Node *findByValue(List *p_list, const char *type, const void *value);
 int releaseList(List *p_list);
 int releaseNode(Node *p_node);
@@ -32,14 +34,33 @@ int if_safeMode = 0;
 List *node_list; //Store nodes which haven't been freed.
 List *list_list; //Store lists which haven't been freed. 
 
-List *init_list(){
-	List *p_list = malloc(sizeof(List));
+Node *init_node(void){
+	Node *p_node = (Node *) malloc(sizeof(Node));
+	p_node->id = getId();
+	p_node->if_setvalue = 0;
+	if(if_safeMode) insertInTail(node_list,p_node);
+	return p_node;
+}
+
+List *init_list(void){
+	List *p_list = (List *) malloc(sizeof(List));
 	p_list->head = NULL;
 	p_list->tail = NULL;
 	Node *p_node = init_node();
-	p_node->value = (void *)p_list;
+	init_value(p_node,(void *)p_list);
 	if(if_safeMode) insertInHead(list_list,p_node);
 	return p_list;
+}
+
+unsigned long long getId(void){
+	unsigned long long id = 0;
+	srand(time(0));
+	id = ((random()%9)+1)*10;
+	for(int i = 0; i < 18; i++){
+		id = random()%10;
+		id *= 10;
+	}
+	return id;
 }
 
 int insertInHead(List *p_list, Node *p_node){
@@ -145,7 +166,7 @@ int popFromTail(List *p_list){
 /*The method in this function won't be better than going through the list 
  * node by node.The worst situation happens when the matched node is in 
  * the middle of the list.*/
-Node *findById(List *p_list, const unsigned long int id){
+Node *findById(List *p_list, const unsigned long long id){
 	Node *ph_node = p_list->head;
 	Node *pt_node = p_list->tail;
 	int direction = 0;
