@@ -12,22 +12,32 @@ typedef struct List{
 	unsigned long long length;
 }List;
 
-int safeMode(int ifon);//Safe mode is used to make sure that all malloced will be freed. 
+int safeMode(int ifon);//Safe mode is used to make sure that all malloced will be freed.
+
 List *init_list(void);
 Node *init_node(void);
 int init_value(Node *,void *);
+
 unsigned long long getId(void);
+
 int insertInHead(List *p_list, Node *p_node);
 int insertInTail(List *p_list, Node *p_node);
+
 int removeById(List *p_list, unsigned long id);
 int removeByNode(List *p_list, Node *p_node);
+
 int popFromHead(List *p_list);
 int popFromTail(List *p_list);
+
 unsigned long long len(List *p_list);
+
 Node *findById(List *p_list, const unsigned long long id);
 Node *findByValue(List *p_list, const char *type, const void *value);
+
 int releaseList(List *p_list);
 int releaseNode(Node *p_node);
+
+int isListEmpty(List *p_list);
 
 /*Something about safe mode*/
 int if_safeMode = 0;
@@ -64,18 +74,30 @@ unsigned long long getId(void){
 }
 
 int insertInHead(List *p_list, Node *p_node){
-	p_list->head->last = p_node;
-	p_node->last = NULL;
-	p_node->next = p_list->head;
-	p_list->head = p_node;
+	if( isListEmpty(p_list) ){
+		p_list->head = p_node;
+		p_list->tail = p_node;
+	}
+	else{
+		p_list->head->last = p_node;
+		p_node->last = NULL;
+		p_node->next = p_list->head;
+		p_list->head = p_node;
+	}
 	return 0;
 }
 
 int insertInTail(List *p_list, Node *p_node){
-	p_list->tail->next = p_node;
-	p_node->next = NULL;
-	p_node->last = p_list->tail;
-	p_list->tail = p_node;
+	if( isListEmpty(p_list) ){
+		p_list->head = p_node;
+		p_list->tail = p_node;
+	}
+	else{
+		p_list->tail->next = p_node;
+		p_node->next = NULL;
+		p_node->last = p_list->tail;
+		p_list->tail = p_node;
+	}
 	return 0;
 }
 
@@ -99,66 +121,72 @@ int releaseList(List *p_list){
 
 int removeById(List *p_list, unsigned long id){
 	Node *tmp = p_list->head;
-	if(tmp == NULL) return -1;//这说明p_list指向空列表
+	if( isListEmpty(p_list) )
+		return -1;
 	do{	
 		if(tmp->id == id) {
 			tmp->last->next = tmp->next;
 			tmp->next->last = tmp->last;
-			return 1;//找到了
+			realeaseNode(tmp);
+			return 1;//found
 		}
 		else{
 			tmp = tmp->next;
 		}
-	} while(tmp != NULL);
+	}while(tmp != NULL);
 
-	return 0;//没找到
+	return 0;//not find
 }
 
 int removeByNode(List *p_list, Node *p_node){
 	Node *tmp = p_list->head;
-	if(tmp == NULL)
-		return -1;//这说明p_list指向空列表
-
+	if( isListEmpty(p_list) )
+		return -1;
 	do{
 		if(tmp == p_node){
 			tmp->last->next = tmp->next;
 			tmp->next->last = tmp->last;
-			return 1;//找到了
+			releaseNode(tmp);
+			return 1;//found
 		}
 		else{
 			tmp = tmp->next;
 		}	
 	}while(tmp != NULL);
 
-	return 0;//没找到
+	return 0;//not find
 }
 
 int popFromHead(List *p_list){
-	if(p_list->head == NULL)
+	if( isListEmpty(p_list) )
 		return -1;
-
-	if(p_list->head->next == NULL){
-		p_list->head = NULL;
-		p_list->tail = NULL;
-	}
 	else{
+		Node *tmp = p_list->head;
 		p_list->head->next->last = NULL;
 		p_list->head = p_list->head->next;
+		releaseNode(tmp);
+	}
+
+	if( isListEmpty(p_list) ){
+		p_list->head = NULL;
+		p_list->tail = NULL;
 	}
 	return 0;
 }
 
 int popFromTail(List *p_list){
-	if(p_list->head == NULL)
+	if( isListEmpty(p_list) )
 		return -1;
-
-	if(p_list->head->next == NULL){
-		p_list->head = NULL;
-		p_list->tail = NULL;
-	}
 	else{
+		Node *tmp = p_list->tail;
 		p_list->tail->last->next = NULL;
 		p_list->tail = p_list->tail->last;
+		releaseNode(tmp);
+	}
+
+	if( isListEmpty(p_list) ){
+		p_list->head = NULL;
+		p_list->tail = NULL;
 	}
 	return 0;
 }
@@ -217,4 +245,10 @@ Node *findByValue(List *p_list, const char *type, const void *value){
 		
 	}
 	return NULL;
+}
+
+int isListEmpty(List *p_list){
+	if(p_list->head == NULL || p_list->tail == NULL)// If its head or tail is NULL,it would be thought as empty.
+		return 1;				// But we should ensure that both of them are NULL when we
+	return 0;					// want to make a list empty.
 }
