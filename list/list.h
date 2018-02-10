@@ -12,7 +12,8 @@ typedef struct List{
 	unsigned long long length;
 }List;
 
-int safeMode(int ifon);//Safe mode is used to make sure that all malloced will be freed. 
+int safeMode(int ifon);//Safe mode is used to make sure that all malloced will be freed.
+int releaseAll(void);
 List *init_list(void);
 Node *init_node(void);
 int init_value(Node *,void *);
@@ -31,8 +32,32 @@ int releaseNode(Node *p_node);
 
 /*Something about safe mode*/
 int if_safeMode = 0;
-List *node_list; //Store nodes which haven't been freed.
-List *list_list; //Store lists which haven't been freed. 
+List *node_list = NULL; //Store nodes which haven't been freed.
+List *list_list = NULL; //Store lists which haven't been freed. 
+
+int safeMode(int ifon){
+	if(ifon == 1){
+		if (node_list == NULL && list_list == NULL){
+			node_list = (List *)malloc(sizeof(List));
+			list_list = (List *)malloc(sizeof(List));
+			if_safeMode = 1;
+		}
+		else{
+			return -1;
+		}
+	}
+	
+	return ifon;
+}
+
+int releaseAll(void){
+	if(if_safeMode == 1){
+		if_safeMode = 0;
+		releaseList(node_list);
+		releaseList(list_list);
+	}
+	return 0;
+}
 
 Node *init_node(void){
 	Node *p_node = (Node *) malloc(sizeof(Node));
@@ -46,10 +71,18 @@ List *init_list(void){
 	List *p_list = (List *) malloc(sizeof(List));
 	p_list->head = NULL;
 	p_list->tail = NULL;
-	Node *p_node = init_node();
-	init_value(p_node,(void *)p_list);
-	if(if_safeMode) insertInHead(list_list,p_node);
+	if(if_safeMode){
+		Node *p_node = init_node();
+		init_value(p_node,(void *)p_list);
+		insertInTail(list_list,p_node);
+	}
 	return p_list;
+}
+
+int init_value(Node *p_node,void * p_value){
+	p_node->if_setvalue = 1;
+	p_node->value = p_value;
+	return 0;
 }
 
 unsigned long long getId(void){
@@ -80,7 +113,12 @@ int insertInTail(List *p_list, Node *p_node){
 }
 
 int releaseNode(Node *p_node){
-	free(p_node->value);
+	if(if_safeMode == 1){
+		removeByNode(node_list,p_node);
+	}
+	if(p_node->if_setvalue == 1){
+		free(p_node->value);
+	}
 	free(p_node);
 	return 0;
 }
@@ -88,6 +126,10 @@ int releaseNode(Node *p_node){
 int releaseList(List *p_list){
 	Node *p_node, *pl_node;
 	p_node = p_list->head;
+	if(if_safeMode == 1){
+		Node *tar_list = findByValue(list_list,"int",(void *)p_list);
+		removeByNode(list_list,tar_list);
+	}
 	while (p_node != NULL){
 		pl_node = p_node;
 		p_node = p_node->next;
