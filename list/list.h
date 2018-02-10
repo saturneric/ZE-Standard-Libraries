@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
 typedef struct Node{
 	unsigned long long id;
 	void *value;
@@ -17,6 +22,7 @@ int releaseAll(void);
 List *init_list(void);
 Node *init_node(void);
 int init_value(Node *,void *);
+void init_rand(void);
 
 unsigned long long getId(void);
 
@@ -94,13 +100,16 @@ int init_value(Node *p_node,void * p_value){
 	return 0;
 }
 
+void rand_init(void){
+	srand((unsigned)time(NULL));
+}
+
 unsigned long long getId(void){
 	unsigned long long id = 0;
-	srand(time(0));
-	id = ((random()%9)+1)*10;
-	for(int i = 0; i < 18; i++){
-		id = random()%10;
+	id = ((random()%9)+1);
+	for(int i = 0; i < 15; i++){
 		id *= 10;
+		id += random()%10;
 	}
 	return id;
 }
@@ -116,6 +125,7 @@ int insertInHead(List *p_list, Node *p_node){
 		p_node->next = p_list->head;
 		p_list->head = p_node;
 	}
+	p_list->length += 1;
 	return 0;
 }
 
@@ -130,6 +140,7 @@ int insertInTail(List *p_list, Node *p_node){
 		p_node->last = p_list->tail;
 		p_list->tail = p_node;
 	}
+	p_list->length += 1;
 	return 0;
 }
 
@@ -265,12 +276,12 @@ Node *findByValue(List *p_list, const char *type, const void *value){
 	Node *p_node = p_list->head;
 	while(p_node != NULL){
 		if(!strcmp(type,"int")){
-			if(*((int *)p_node) == *((int *)value)){
+			if(*((int *)p_node->value) == *((int *)value)){
 				return p_node;
 			}
 		}
 		else if(!strcmp(type,"double")){
-			if(*((double *)p_node) == *((double *)value)){
+			if(*((double *)p_node->value) == *((double *)value)){
 				return p_node;
 			}
 		}
@@ -280,9 +291,8 @@ Node *findByValue(List *p_list, const char *type, const void *value){
 				return p_node;
 			}
 		}
-		else{
-			return NULL;
-		}
+		
+		p_node = p_node->next;
 		
 	}
 	return NULL;
