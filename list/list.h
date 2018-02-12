@@ -108,7 +108,7 @@ int init_value(Node *p_node,const char *type,void * p_value){
 }
 
 void rand_init(void){
-	srand((unsigned)time(NULL));
+	srandom((unsigned)time(NULL));
 }
 
 unsigned long long getId(void){
