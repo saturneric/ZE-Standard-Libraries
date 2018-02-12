@@ -3,6 +3,9 @@
 #include <string.h>
 #include <time.h>
 
+#ifndef LIST_H 
+#define LIST_H
+
 typedef struct Node{
 	unsigned long long id;
 	void *value;
@@ -11,6 +14,7 @@ typedef struct Node{
 	struct Node *next;
 	struct Node *last;
 }Node;
+
 
 typedef struct List{
 	Node *head;
@@ -40,6 +44,7 @@ unsigned long long len(List *p_list);
 
 Node *findById(List *p_list, const unsigned long long id);
 Node *findByValue(List *p_list, const char *type, const void *value);
+List *mply_findByValue(List *p_list, const char *type, const void *value);
 
 int releaseList(List *p_list);
 int releaseNode(Node *p_node);
@@ -322,8 +327,51 @@ Node *findByValue(List *p_list, const char *type, const void *value){
 	return NULL;
 }
 
+List *mply_findByValue(List *p_list, const char *type, const void *value){
+	List *f_list = init_list();
+	Node *p_node = p_list->head;
+	while(p_node != NULL){
+		if(strcmp(p_node->type,type)) continue;
+		if(!strcmp(type,"int")){
+			if(*((int *)p_node->value) == *((int *)value)){
+				Node *f_node = init_node();
+				init_value(f_node,"pointer",(void *)p_node);
+				insertInTail(f_list,f_node);
+			}
+		}
+		else if(!strcmp(type,"double")){
+			if(*((double *)p_node->value) == *((double *)value)){
+				Node *f_node = init_node();
+				init_value(f_node,"pointer",(void *)p_node);
+				insertInTail(f_list,f_node);
+			}
+		}
+		else if(!strcmp	(type,"string")){
+			if(!strcmp((char *)p_node->value,(char *)value))
+			{
+				Node *f_node = init_node();
+				init_value(f_node,"pointer",(void *)p_node);
+				insertInTail(f_list,f_node);
+			}
+		}
+		else if(!strcmp(type,"pointer")){
+			if(p_node->value == value){
+				Node *f_node = init_node();
+				init_value(f_node,"pointer",(void *)p_node);
+				insertInTail(f_list,f_node);
+			}
+		}
+		
+		p_node = p_node->next;
+		
+	}
+	return f_list;
+}
+
 int isListEmpty(List *p_list){
 	if(p_list->head == NULL || p_list->tail == NULL)// If its head or tail is NULL,it would be thought as empty.
 		return 1;				// But we should ensure that both of them are NULL when we
 	return 0;					// want to make a list empty.
 }
+
+#endif
