@@ -23,7 +23,7 @@ typedef struct Error{
 
 typedef struct Notice{
 	unsigned int type;
-	Info info;
+	Info *info;
 	time_t time;
 }Notice;
 
@@ -34,9 +34,26 @@ typedef struct Log{
 	unsigned int type;
 }Log;
 
-List *error_list;
-List *log_list;
+List *error_list = NULL;
+List *log_list = NULL;
+int if_error = 0;
 
+int error_init(int if_enable);
+int set_logDirectory(char *);
+int push_error(unsigned int type, int pri, Info *p_info);
+int push_notice(unsigned int type, Info *p_info);
+int save_error(Error *p_error);
+int save_notice(Notice *p_notice);
+Info *init_Info(char *m_info);
 
+int error_init(int if_enable){
+	if(if_enable == 1){
+		error_list = init_list();
+		log_list = init_list();
+		if_error = 1;
+		return 1;
+	}
+	return 0;
+}
 
 #endif
