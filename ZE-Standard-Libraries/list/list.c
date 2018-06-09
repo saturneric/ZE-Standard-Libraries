@@ -25,8 +25,7 @@ int main(int argc, char **argv){
 	
 	int *f_i = (int *)malloc(sizeof(int));
 	*f_i = 3;
-	char *f_s = "there";
-	Node *f_node = findByValue(t_list,"int",(void *)f_i);
+    //releaseMalloc();
 	releaseAll();
 	
 	return 0;

@@ -7,23 +7,28 @@
 #define LIST_H
 
 typedef struct Node{
-	unsigned long long id;
+	unsigned long long id;//唯一标识符
 	void *value;
-	int if_setvalue;
-	const char *type;
+	int if_setvalue;//记录是否已经初始化值
+	const char *type;//记录值的类型
 	struct Node *next;
 	struct Node *last;
 }Node;
 
 
 typedef struct List{
+    unsigned long long id;//唯一标识符
 	Node *head;
 	Node *tail;
-	unsigned long long length;
+	unsigned long long length;//链表长度
 }List;
 
-int safeMode(int ifon);//Safe mode is used to make sure that all malloced will be freed.
-int releaseAll(void);
+int safeMode(int ifon);//安全模式确保显式声明过的内存都会被释放
+int releaseMalloc(void);//释放所有声明过的内存
+int releaseSingleList(List *p_list);
+int releaseSingleNode(List *p_list);
+int releaseAll(void);//安全模式最后调用的函数
+
 List *init_list(void);
 Node *init_node(void);
 int init_value(Node *,const char *,void *);
@@ -44,23 +49,32 @@ unsigned long long len(List *p_list);
 
 Node *findById(List *p_list, const unsigned long long id);
 Node *findByValue(List *p_list, const char *type, const void *value);
-List *mply_findByValue(List *p_list, const char *type, const void *value);
+List *mply_findByValue(List *p_list, const char *type, const void *value);//寻找多个值匹配的节点
 
 int releaseList(List *p_list);
 int releaseNode(Node *p_node);
 
 int isListEmpty(List *p_list);
 
-/*Something about safe mode*/
+/*有关安全模式的变量*/
 int if_safeMode = 0;
-List *node_list = NULL; //Store nodes which haven't been freed.
-List *list_list = NULL; //Store lists which haven't been freed. 
+List *node_list = NULL; //储存声明过的节点.
+List *list_list = NULL; //储存声明过的链表.
 
 int safeMode(int ifon){
 	if(ifon == 1){
 		if (node_list == NULL && list_list == NULL){
 			node_list = (List *)malloc(sizeof(List));
 			list_list = (List *)malloc(sizeof(List));
+            
+            list_list->head = NULL;
+            list_list->length = 0;
+            list_list->tail = NULL;
+            
+            node_list->head = NULL;
+            node_list->length = 0;
+            node_list->tail = NULL;
+            
 			if_safeMode = 1;
 		}
 		else{
@@ -71,11 +85,53 @@ int safeMode(int ifon){
 	return ifon;
 }
 
+int releaseSingleList(List *p_list){
+    Node *p_node = p_list->head;
+    List *plv_node = NULL;
+    while(p_node != NULL){
+        plv_node = (List *)p_node->value;
+        plv_node->id = 0;
+        plv_node->head = NULL;
+        plv_node->length = 0;
+        plv_node->tail = NULL;
+        free(plv_node);
+        p_node = p_node->next;
+    }
+    p_list->head = NULL;
+    p_list->length = 0;
+    p_list->tail = NULL;
+    p_list->id = 0;
+    free(p_list);
+    return 0;
+}
+
+int releaseSingleNode(List *p_list){
+    Node *p_node = p_list->head;
+    Node *pnv_node = NULL;
+    while(p_node != NULL){
+        pnv_node = (Node *)p_node->value;
+        pnv_node->id = 0;
+        pnv_node->if_setvalue = 0;
+        pnv_node->last = NULL;
+        pnv_node->next = NULL;
+        pnv_node->type = NULL;
+        pnv_node->value = NULL;
+        free(pnv_node);
+        p_node = p_node->next;
+    }
+    p_list->id = 0;
+    p_list->head = NULL;
+    p_list->length = 0;
+    p_list->tail = NULL;
+    free(p_list);
+    return 0;
+}
+
 int releaseAll(void){
 	if(if_safeMode == 1){
 		if_safeMode = 0;
 		releaseList(node_list);
-		releaseList(list_list);
+		releaseSingleList(list_list);
 	}
 	return 0;
 }
@@ -84,23 +140,35 @@ Node *init_node(void){
 	Node *p_node = (Node *) malloc(sizeof(Node));
 	p_node->id = getId();
 	p_node->if_setvalue = 0;
-	if(if_safeMode) insertInTail(node_list,p_node);
+    p_node->next = NULL;
+    p_node->last = NULL;
+    if(if_safeMode) {
+        if_safeMode = 0;
+        Node *prec_node = init_node();
+        if_safeMode = 1;
+        init_value(prec_node, "pointer", (void *)p_node);
+        insertInTail(node_list,prec_node);
+    }
 	return p_node;
 }
 
 List *init_list(void){
 	List *p_list = (List *) malloc(sizeof(List));
+    p_list->id = getId();
 	p_list->head = NULL;
 	p_list->tail = NULL;
+    p_list->length = 0;
 	if(if_safeMode){
+        if_safeMode = 0;
 		Node *p_node = init_node();
-		init_value(p_node,"pointer",(void *)p_list);
+        if_safeMode = 1;
+        init_value(p_node,"pointer",(void *)p_list);
 		insertInTail(list_list,p_node);
 	}
 	return p_list;
 }
 
-int init_value(Node *p_node,const char *type,void * p_value){
+int init_value(Node *p_node,const char *type,void *p_value){
 	p_node->if_setvalue = 1;
 	p_node->type = type;
 	p_node->value = p_value;
@@ -161,9 +229,15 @@ int releaseNode(Node *p_node){
 	}
 	p_node->last = NULL;
 	p_node->next = NULL;
+    p_node->type = NULL;
+    p_node->value = NULL;
+    p_node->id = 0;
+    p_node->if_setvalue = 0;
 	free(p_node);
 	return 0;
 }
+
+
 
 int releaseList(List *p_list){
 	Node *p_node, *pl_node;
@@ -182,6 +256,7 @@ int releaseList(List *p_list){
 	p_list->head = NULL;
 	p_list->tail = NULL;
 	p_list->length = 0;
+    p_list->id = 0;
 	free(p_list);
 	return 0;
 }
@@ -198,7 +273,7 @@ int removeById(List *p_list, unsigned long id){
 		if(tmp->id == id) {
 			tmp->last->next = tmp->next;
 			tmp->next->last = tmp->last;
-			//releaseNode(tmp); not necessary
+			//releaseNode(tmp); 在安全模式下不必要
 			p_list->length -= 1;
 			return 1;//found
 		}
@@ -218,7 +293,7 @@ int removeByNode(List *p_list, Node *p_node){
 		if(tmp == p_node){
 			tmp->last->next = tmp->next;
 			tmp->next->last = tmp->last;
-			//releaseNode(tmp); not necessary
+			//releaseNode(tmp); 在安全模式下不必要
 			p_list->length -= 1;
 			return 1;//found
 		}
@@ -266,9 +341,7 @@ int popFromTail(List *p_list){
 	return 0;
 }
 
-/*The method in this function won't be better than going through the list 
- * node by node.The worst situation happens when the matched node is in 
- * the middle of the list.*/
+/*该函数算法需要改进*/
 Node *findById(List *p_list, const unsigned long long id){
 	Node *ph_node = p_list->head;
 	Node *pt_node = p_list->tail;
@@ -294,6 +367,7 @@ Node *findById(List *p_list, const unsigned long long id){
 	}
 	return NULL;
 }
+
 
 Node *findByValue(List *p_list, const char *type, const void *value){
 	Node *p_node = p_list->head;
