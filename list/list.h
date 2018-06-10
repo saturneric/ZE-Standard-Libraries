@@ -9,7 +9,7 @@
 typedef struct Node{
 	unsigned long long id;//唯一标识符
 	void *value;
-	int if_setvalue;//记录是否已经初始化值
+	int if_malloc;//记录是否已经初始化值
 	const char *type;//记录值的类型
 	struct Node *next;
 	struct Node *last;
@@ -24,37 +24,40 @@ typedef struct List{
 }List;
 
 int safeMode(int ifon);//安全模式确保显式声明过的内存都会被释放
-int releaseMalloc(void);//释放所有声明过的内存
-int releaseSingleList(List *p_list);
-int releaseSingleNode(List *p_list);
+int releaseSingleListForSafeMode(List *p_list);//释放list_list
+int releaseSingleNodeForSafeMode(List *p_list);//释放node_list
 int releaseAll(void);//安全模式最后调用的函数
 
 List *init_list(void);
 Node *init_node(void);
-int init_value(Node *,const char *,void *);
-void init_rand(void);
 
+int initMallocValue(Node *,const char *,void *);//赋予已分配内存的值，并标明类型
+
+/*有关id的函数*/
+void init_rand(void);
 unsigned long long getId(void);
 
+/*插入函数*/
 int insertInHead(List *p_list, Node *p_node);
 int insertInTail(List *p_list, Node *p_node);
 
+/*移除函数*/
 int removeById(List *p_list, unsigned long id);
 int removeByNode(List *p_list, Node *p_node);
-
 int popFromHead(List *p_list);
 int popFromTail(List *p_list);
 
-unsigned long long len(List *p_list);
+unsigned long long len(List *p_list);//查看链表的长度
 
-Node *findById(List *p_list, const unsigned long long id);
-Node *findByValue(List *p_list, const char *type, const void *value);
+Node *findById(List *p_list, const unsigned long long id);//通过id查找目标链表中的匹配节点
+Node *findByValue(List *p_list, const char *type, const void *value);//通过值来查找目标链表中的匹配节点
 List *mply_findByValue(List *p_list, const char *type, const void *value);//寻找多个值匹配的节点
 
-int releaseList(List *p_list);
-int releaseNode(Node *p_node);
+int releaseList(List *p_list);//释放List并可选择是否释放中所有的其中的Node
+int releaseListForSingle(List *p_list);//单独释放List
+int releaseNode(Node *p_node);//释放Node
 
-int isListEmpty(List *p_list);
+int isListEmpty(List *p_list);//判断List是否为空
 
 /*有关安全模式的变量*/
 int if_safeMode = 0;
@@ -85,7 +88,7 @@ int safeMode(int ifon){
 	return ifon;
 }
 
-int releaseSingleList(List *p_list){
+int releaseSingleListForSafeMode(List *p_list){
     Node *p_node = p_list->head;
     List *plv_node = NULL;
     while(p_node != NULL){
@@ -105,13 +108,13 @@ int releaseSingleList(List *p_list){
     return 0;
 }
 
-int releaseSingleNode(List *p_list){
+int releaseSingleNodeForSafeMode(List *p_list){
     Node *p_node = p_list->head;
     Node *pnv_node = NULL;
     while(p_node != NULL){
         pnv_node = (Node *)p_node->value;
         pnv_node->id = 0;
-        pnv_node->if_setvalue = 0;
+        pnv_node->if_malloc = 0;
         pnv_node->last = NULL;
         pnv_node->next = NULL;
         pnv_node->type = NULL;
@@ -130,8 +133,8 @@ int releaseSingleNode(List *p_list){
 int releaseAll(void){
 	if(if_safeMode == 1){
 		if_safeMode = 0;
-		releaseList(node_list);
-		releaseSingleList(list_list);
+		releaseSingleNodeForSafeMode(node_list);
+		releaseSingleListForSafeMode(list_list);
 	}
 	return 0;
 }
@@ -139,14 +142,14 @@ int releaseAll(void){
 Node *init_node(void){
 	Node *p_node = (Node *) malloc(sizeof(Node));
 	p_node->id = getId();
-	p_node->if_setvalue = 0;
+	p_node->if_malloc = 0;
     p_node->next = NULL;
     p_node->last = NULL;
     if(if_safeMode) {
         if_safeMode = 0;
         Node *prec_node = init_node();
         if_safeMode = 1;
-        init_value(prec_node, "pointer", (void *)p_node);
+        initMallocValue(prec_node, "pointer", (void *)p_node);
         insertInTail(node_list,prec_node);
     }
 	return p_node;
@@ -162,14 +165,14 @@ List *init_list(void){
         if_safeMode = 0;
 		Node *p_node = init_node();
         if_safeMode = 1;
-        init_value(p_node,"pointer",(void *)p_list);
+        initMallocValue(p_node,"pointer",(void *)p_list);
 		insertInTail(list_list,p_node);
 	}
 	return p_list;
 }
 
-int init_value(Node *p_node,const char *type,void *p_value){
-	p_node->if_setvalue = 1;
+int initMallocValue(Node *p_node,const char *type,void *p_value){
+	p_node->if_malloc = 1;
 	p_node->type = type;
 	p_node->value = p_value;
 	return 0;
@@ -223,20 +226,26 @@ int releaseNode(Node *p_node){
 	if(if_safeMode == 1){
 		removeByNode(node_list,p_node);
 	}
-	if(p_node->if_setvalue == 1){
-		free(p_node->value);
-		p_node->value = NULL;
+	if(p_node->if_malloc == 1){
+        if(strcmp(p_node->type,"pointer")) {
+            if(!strcmp(p_node->type, "list")){
+                releaseList((List *)p_node->value);
+            }
+            else{
+                free(p_node->value);
+            }
+        }
+        p_node->value = NULL;
 	}
 	p_node->last = NULL;
 	p_node->next = NULL;
     p_node->type = NULL;
     p_node->value = NULL;
     p_node->id = 0;
-    p_node->if_setvalue = 0;
+    p_node->if_malloc = 0;
 	free(p_node);
 	return 0;
 }
-
 
 
 int releaseList(List *p_list){
@@ -261,6 +270,15 @@ int releaseList(List *p_list){
 	return 0;
 }
 
+int releaseListForSingle(List *p_list){
+    p_list->head = NULL;
+    p_list->tail = NULL;
+    p_list->id = 0;
+    p_list->length = 0;
+    free(p_list);
+    return 0;
+}
+
 unsigned long long len(List *p_list){
 	return p_list->length;
 }
@@ -273,7 +291,6 @@ int removeById(List *p_list, unsigned long id){
 		if(tmp->id == id) {
 			tmp->last->next = tmp->next;
 			tmp->next->last = tmp->last;
-			//releaseNode(tmp); 在安全模式下不必要
 			p_list->length -= 1;
 			return 1;//found
 		}
@@ -293,7 +310,6 @@ int removeByNode(List *p_list, Node *p_node){
 		if(tmp == p_node){
 			tmp->last->next = tmp->next;
 			tmp->next->last = tmp->last;
-			//releaseNode(tmp); 在安全模式下不必要
 			p_list->length -= 1;
 			return 1;//found
 		}
@@ -372,7 +388,10 @@ Node *findById(List *p_list, const unsigned long long id){
 Node *findByValue(List *p_list, const char *type, const void *value){
 	Node *p_node = p_list->head;
 	while(p_node != NULL){
-		if(strcmp(p_node->type,type)) continue;//continue when type is not the same.
+        if(strcmp(p_node->type,type)){
+            p_node = p_node->next;
+            continue;//跳过不合类型的节点
+        }
 		if(!strcmp(type,"int")){
 			if(*((int *)p_node->value) == *((int *)value)){
 				return p_node;
@@ -409,14 +428,14 @@ List *mply_findByValue(List *p_list, const char *type, const void *value){
 		if(!strcmp(type,"int")){
 			if(*((int *)p_node->value) == *((int *)value)){
 				Node *f_node = init_node();
-				init_value(f_node,"pointer",(void *)p_node);
+				initMallocValue(f_node,"pointer",(void *)p_node);
 				insertInTail(f_list,f_node);
 			}
 		}
 		else if(!strcmp(type,"double")){
 			if(*((double *)p_node->value) == *((double *)value)){
 				Node *f_node = init_node();
-				init_value(f_node,"pointer",(void *)p_node);
+				initMallocValue(f_node,"pointer",(void *)p_node);
 				insertInTail(f_list,f_node);
 			}
 		}
@@ -424,14 +443,14 @@ List *mply_findByValue(List *p_list, const char *type, const void *value){
 			if(!strcmp((char *)p_node->value,(char *)value))
 			{
 				Node *f_node = init_node();
-				init_value(f_node,"pointer",(void *)p_node);
+				initMallocValue(f_node,"pointer",(void *)p_node);
 				insertInTail(f_list,f_node);
 			}
 		}
 		else if(!strcmp(type,"pointer")){
 			if(p_node->value == value){
 				Node *f_node = init_node();
-				init_value(f_node,"pointer",(void *)p_node);
+				initMallocValue(f_node,"pointer",(void *)p_node);
 				insertInTail(f_list,f_node);
 			}
 		}
