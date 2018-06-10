@@ -41,6 +41,9 @@ unsigned long long getId(void);
 int insertInHead(List *p_list, Node *p_node);
 int insertInTail(List *p_list, Node *p_node);
 
+/*交换函数*/
+int exchangeLocation(Node *p_node,Node *t_node);
+
 /*移除函数*/
 int removeById(List *p_list, unsigned long id);
 int removeByNode(List *p_list, Node *p_node);
@@ -465,6 +468,20 @@ int isListEmpty(List *p_list){
 	if(p_list->head == NULL || p_list->tail == NULL)// If its head or tail is NULL,it would be thought as empty.
 		return 1;				// But we should ensure that both of them are NULL when we
 	return 0;					// want to make a list empty.
+}
+
+int exchangeLocation(Node *p_node,Node *t_node){
+    Node *temp_next = p_node->next;
+    Node *temp_last = p_node->last;
+    p_node->last->next = t_node;
+    p_node->next->last = t_node;
+    t_node->last->next = p_node;
+    t_node->next->last = p_node;
+    p_node->next = t_node->next;
+    p_node->last = t_node->last;
+    t_node->next = temp_next;
+    t_node->last = temp_last;
+    return 0;
 }
 
 #endif
