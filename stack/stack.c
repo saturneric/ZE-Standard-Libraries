@@ -6,7 +6,7 @@
 //  Copyright © 2018年 ZE. All rights reserved.
 //
 
-#include "stack.h"
+#include "stack_expand.h"
 
 int main(int argc, char **argv){
     
