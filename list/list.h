@@ -31,7 +31,7 @@ int releaseAll(void);//安全模式最后调用的函数
 List *init_list(void);
 Node *init_node(void);
 
-int initMallocValue(Node *,const char *,void *);//赋予已分配内存的值，并标明类型
+int initMalllocValueForNode(Node *,const char *,void *);//赋予已分配内存的值，并标明类型
 
 /*有关id的函数*/
 void init_rand(void);
@@ -156,7 +156,7 @@ Node *init_node(void){
         if_safeMode = 0;
         Node *prec_node = init_node();
         if_safeMode = 1;
-        initMallocValue(prec_node, "pointer", (void *)p_node);
+        initMalllocValueForNode(prec_node, "pointer", (void *)p_node);
         insertInTail(node_list,prec_node);
     }
 	return p_node;
@@ -172,13 +172,13 @@ List *init_list(void){
         if_safeMode = 0;
 		Node *p_node = init_node();
         if_safeMode = 1;
-        initMallocValue(p_node,"pointer",(void *)p_list);
+        initMalllocValueForNode(p_node,"pointer",(void *)p_list);
 		insertInTail(list_list,p_node);
 	}
 	return p_list;
 }
 
-int initMallocValue(Node *p_node,const char *type,void *p_value){
+int initMalllocValueForNode(Node *p_node,const char *type,void *p_value){
 	p_node->if_malloc = 1;
 	p_node->type = type;
 	p_node->value = p_value;

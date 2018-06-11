@@ -43,7 +43,7 @@ Node *nodeWithInt(int m_int){
 	int *p_int = (int *)malloc(sizeof(int));
 	*p_int = m_int;
 	Node *p_node = init_node();
-	initMallocValue(p_node,"int",(void *)p_int);
+	initMalllocValueForNode(p_node,"int",(void *)p_int);
 	return p_node;
 }
 
@@ -51,7 +51,7 @@ Node *nodeWithDouble(double m_double){
     double *p_double = (double *)malloc(sizeof(double));
 	*p_double = m_double;
 	Node *p_node = init_node();
-	initMallocValue(p_node,"double",(void *)p_double);
+	initMalllocValueForNode(p_node,"double",(void *)p_double);
 	return p_node;
 }
 
@@ -59,13 +59,13 @@ Node *nodeWithString(const char *m_string){
 	char *p_string = (char *)malloc(sizeof(char)*(strlen(m_string)+1));
 	strcpy(p_string,m_string);
 	Node *p_node = init_node();
-	initMallocValue(p_node,"string",(void *)p_string);
+	initMalllocValueForNode(p_node,"string",(void *)p_string);
 	return p_node;
 }
 
 Node *nodeWithPointer(void *m_pointer){
 	Node *p_node = init_node();
-	initMallocValue(p_node,"pointer",m_pointer);
+	initMalllocValueForNode(p_node,"pointer",m_pointer);
 	return p_node;
 }
 
@@ -105,22 +105,22 @@ int listThrough(List *p_list, int (*p_func)(void *, const char *)){
 }
 
 int getByInt(Node *p_node){
-    if (strcmp(p_node->type, "int")) return *(int *)(p_node->value);
+    if (!strcmp(p_node->type, "int")) return *(int *)(p_node->value);
     else return -1;
 }
 
 char *getByString(Node *p_node){
-    if (strcmp(p_node->type, "string")) return (char *)(p_node->value);
+    if (!strcmp(p_node->type, "string")) return (char *)(p_node->value);
     else return NULL;
 }
 
 double getByDouble(Node *p_node){
-    if (strcmp(p_node->type, "double")) return *(double *)(p_node->value);
+    if (!strcmp(p_node->type, "double")) return *(double *)(p_node->value);
     else return -1;
 }
 
 void *getByPointer(Node *p_node){
-    if (strcmp(p_node->type, "pointer")) return (void *)(p_node->value);
+    if (!strcmp(p_node->type, "pointer")) return (void *)(p_node->value);
     else return NULL;
 }
 
@@ -258,7 +258,7 @@ int addValueForComplex(Node * p_node, char *type, void *value){
     if(!strcmp(p_node->type ,"list")){
         List *c_list = (List *)p_node->value;
         Node *c_node = init_node();
-        initMallocValue(c_node, type, value);
+        initMalllocValueForNode(c_node, type, value);
         insertInTail(c_list, c_node);
         return  0;
     }
