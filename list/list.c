@@ -9,6 +9,7 @@
 
 int main(int argc, char **argv){	
 	rand_init();
+    safeMode(1);
 	List *t_list = init_list();
 	
 	/*for(int i = 0; i < 9; i++){
@@ -25,20 +26,19 @@ int main(int argc, char **argv){
     
     for(int i = 0; i < 12; i++){
         insertInHead(t_list, nodeWithInt(i));
+        insertInTail(t_list, nodeWithInt(i));
     }
     
     
-    Node *t_node = nodeWithComplex();
-    addIntForComplex(t_node, 32);
-    addIntForComplex(t_node, 64);
-    insertInTail(t_list, t_node);
-    insertInTail(t_list, nodeWithDouble(32.5));
-    insertInTail(t_list, nodeWithString("There"));
-    printNodeInfo(findByString(t_list, "There"), 0);
+   
     printListInfo(t_list,0);
     printList(t_list);
+    List *m_list;
+    m_list = m_findByInt(t_list, 5);
+    printList(m_list);
     printf("\n");
-    releaseList(t_list);
+    
+    releaseAll();
 	
 	return 0;
 }

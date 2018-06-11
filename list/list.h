@@ -44,6 +44,9 @@ int insertInTail(List *p_list, Node *p_node);
 /*交换函数*/
 int exchangeLocation(Node *p_node,Node *t_node);
 
+/*复制函数*/
+Node *copyNode(Node *);
+
 /*移除函数*/
 int removeById(List *p_list, unsigned long id);
 int removeByNode(List *p_list, Node *p_node);
@@ -61,6 +64,7 @@ int releaseListForSingle(List *p_list);//单独释放List
 int releaseNode(Node *p_node);//释放Node
 
 int isListEmpty(List *p_list);//判断List是否为空
+List *copyList(List *p_list);//复制链表
 
 /*有关安全模式的变量*/
 int if_safeMode = 0;
@@ -397,23 +401,23 @@ Node *findByValue(List *p_list, const char *type, const void *value){
         }
 		if(!strcmp(type,"int")){
 			if(*((int *)p_node->value) == *((int *)value)){
-				return p_node;
+				return copyNode(p_node);
 			}
 		}
 		else if(!strcmp(type,"double")){
 			if(*((double *)p_node->value) == *((double *)value)){
-				return p_node;
+				return copyNode(p_node);
 			}
 		}
 		else if(!strcmp	(type,"string")){
 			if(!strcmp((char *)p_node->value,(char *)value))
 			{
-				return p_node;
+				return copyNode(p_node);
 			}
 		}
 		else if(!strcmp(type,"pointer")){
 			if(p_node->value == value){
-				return p_node;
+				return copyNode(p_node);
 			}
 		}
 		
@@ -427,34 +431,33 @@ List *mply_findByValue(List *p_list, const char *type, const void *value){
 	List *f_list = init_list();
 	Node *p_node = p_list->head;
 	while(p_node != NULL){
-		if(strcmp(p_node->type,type)) continue;
+        if(strcmp(p_node->type,type)){
+            p_node = p_node->next;
+            continue;
+        }
 		if(!strcmp(type,"int")){
 			if(*((int *)p_node->value) == *((int *)value)){
-				Node *f_node = init_node();
-				initMallocValue(f_node,"pointer",(void *)p_node);
+                Node *f_node = copyNode(p_node);
 				insertInTail(f_list,f_node);
 			}
 		}
 		else if(!strcmp(type,"double")){
 			if(*((double *)p_node->value) == *((double *)value)){
-				Node *f_node = init_node();
-				initMallocValue(f_node,"pointer",(void *)p_node);
-				insertInTail(f_list,f_node);
+                Node *f_node = copyNode(p_node);
+                insertInTail(f_list,f_node);
 			}
 		}
 		else if(!strcmp	(type,"string")){
 			if(!strcmp((char *)p_node->value,(char *)value))
 			{
-				Node *f_node = init_node();
-				initMallocValue(f_node,"pointer",(void *)p_node);
-				insertInTail(f_list,f_node);
+                Node *f_node = copyNode(p_node);
+                insertInTail(f_list,f_node);
 			}
 		}
 		else if(!strcmp(type,"pointer")){
 			if(p_node->value == value){
-				Node *f_node = init_node();
-				initMallocValue(f_node,"pointer",(void *)p_node);
-				insertInTail(f_list,f_node);
+                Node *f_node = copyNode(p_node);
+                insertInTail(f_list,f_node);
 			}
 		}
 		
@@ -482,6 +485,31 @@ int exchangeLocation(Node *p_node,Node *t_node){
     t_node->next = temp_next;
     t_node->last = temp_last;
     return 0;
+}
+
+Node *copyNode(Node *p_node){
+    Node *t_node = init_node();
+    t_node->id = p_node->id;
+    t_node->last = p_node->last;
+    t_node->next = p_node->next;
+    t_node->if_malloc = p_node->if_malloc;
+    t_node->type = p_node->type;
+    t_node->value = p_node->value;
+    return t_node;
+}
+
+List *copyList(List *p_list){
+    List *t_list = init_list();
+    t_list->head = p_list->head;
+    t_list->tail = p_list->tail;
+    t_list->id = p_list->id;
+    Node *p_node = p_list->head;
+    while(p_node != NULL){
+        Node *t_node = copyNode(p_node);
+        insertInTail(t_list, t_node);
+        p_node = p_node->next;
+    }
+    return t_list;
 }
 
 #endif

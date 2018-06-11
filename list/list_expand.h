@@ -22,6 +22,11 @@ Node *findByDouble(List *, double);//依照特定类型查找一个节点
 Node *findByString(List *, char *);//依照特定类型查找一个节点
 Node *findByPointer(List *, void *);//依照特定类型查找一个节点
 
+List *m_findByInt(List*, int);//根据位置查找所有匹配的节点
+List *m_findByDouble(List*, double);//根据位置查找所有匹配的节点
+List *m_findByString(List*, char *);//根据位置查找所有匹配的节点
+List *m_findByPointer(List*, void *);//根据位置查找所有匹配的节点
+
 void printListInfo(List *p_list,int priority);//打印列表的详细信息
 void printNodeInfo(Node *p_node,int priority);//打印节点的详细信息
 void printList(List *);//打印列表
@@ -237,7 +242,10 @@ Node *findByDouble(List *p_list, double target){
 }
 
 Node *findByString(List *p_list, char *target){
-    Node *t_node = findByValue(p_list, "string", target);
+    char *p_temp = (char *)malloc(sizeof(char)*(strlen(target)+1));
+    strcpy(p_temp, target);
+    Node *t_node = findByValue(p_list, "string", p_temp);
+    free(p_temp);
     return t_node;
 }
 
@@ -293,6 +301,35 @@ int addPointerForComplex(Node *p_node, void *temp){
         return 0;
     }
     return -1;
+}
+
+List *m_findByInt(List* p_list, int temp){
+    int *p_temp = (int *)malloc(sizeof(int));
+    *p_temp = temp;
+    List *t_list = mply_findByValue(p_list, "int", (void *)p_temp);
+    free(p_temp);
+    return t_list;
+}
+
+List *m_findByDouble(List* p_list, double temp){
+    double *p_temp = (double *)malloc(sizeof(double));
+    *p_temp = temp;
+    List *t_list = mply_findByValue(p_list, "double", (void *)p_temp);
+    free(p_temp);
+    return t_list;
+}
+
+List *m_findByString(List* p_list, char *temp){
+    char *p_temp = (char *)malloc(sizeof(char)*(strlen(temp)+1));
+    strcpy(p_temp, temp);
+    List *t_list = mply_findByValue(p_list, "string", (void *)p_temp);
+    free(p_temp);
+    return t_list;
+}
+
+List *m_findByPointer(List* p_list, void *temp){
+    List *t_list = mply_findByValue(p_list, "double", (void *)temp);
+    return t_list;
 }
 
 #endif
