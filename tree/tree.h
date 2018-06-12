@@ -20,6 +20,12 @@ typedef struct tree
 	TNode *root;
 }Tree;
 
+List *tree_list = NULL;
+List *tnode_list = NULL;
+int if_safeModeForTree = 0;
+int safeModeForTree(int ifon);
+int releaseAllForTree(void);
+
 TNode *initTNode(void);
 Tree *initTree(void);
 int *initMallocValueForTNode(TNode *p_tnode, char *type, void *value);
@@ -39,6 +45,36 @@ int removeChildByIndex(TNode *p_tnode, unsigned long long index);
 int removeChildByValue(TNode *p_tnode, char *type, void *value);
 int TreeThroughDown(Tree *p_tree, int(*func)(TNode *, unsigned long long height));
 int TreeThroughUp(Tree *p_tree, int(*func)(TNode *, unsigned long long height));
+int TreeTravel(Tree *p_tree, int(*func)(TNode *, unsigned long long height));
+
+int releaseTree(Tree *p_tree);
+int releaseOnlyTree(Tree *p_tree);
+int releaseTNode(TNode *p_tnode);
+int releaseOnlyTNode(Tree *p_tree);
+
+int safeModeForTree(int ifon) {
+	if (ifon == 1) {
+		if (tnode_list == NULL && tree_list == NULL) {
+			tnode_list = (List *)malloc(sizeof(List));
+			tree_list = (List *)malloc(sizeof(List));
+
+			tree_list->head = NULL;
+			tree_list->length = 0;
+			tree_list->tail = NULL;
+
+			tnode_list->head = NULL;
+			tnode_list->length = 0;
+			tnode_list->tail = NULL;
+
+			if_safeModeForTree = 1;
+		}
+		else {
+			return -1;
+		}
+	}
+
+	return ifon;
+}
 
 TNode *initTNode(void) {
 	TNode *p_tnode = (TNode *)malloc(sizeof(TNode));
@@ -50,6 +86,21 @@ TNode *initTNode(void) {
 	p_tnode->type = NULL;
 	p_tnode->home = initList();
 	p_tnode->room = NULL;
+	if (if_safeModeForTree) {
+		if (if_safeModeForNode) {
+			if_safeModeForNode = 0;
+			Node *s_node = initNode();
+			initMallocValueForTNode(s_node, "pointer", (void *)p_tnode);
+			insertInTail(tnode_list, s_node);
+			if_safeModeForNode = 1;
+		}
+		else
+		{
+			Node *s_node = initNode();
+			initMallocValueForTNode(s_node, "pointer", (void *)p_tnode);
+			insertInTail(tnode_list, s_node);
+		}
+	}
 	return p_tnode;
 }
 
@@ -57,6 +108,21 @@ Tree *initTree(void) {
 	Tree *p_tree = (Tree *)malloc(sizeof(Tree));
 	p_tree->id = getId();
 	p_tree->root = NULL;
+	if (if_safeModeForTree) {
+		if (if_safeModeForNode) {
+			if_safeModeForNode = 0;
+			Node *s_node = initNode();
+			initMallocValueForTNode(s_node, "pointer", (void *)p_tree);
+			if_safeModeForNode = 1;
+			insertInTail(tree_list, s_node);
+		}
+		else
+		{
+			Node *s_node = initNode();
+			initMallocValueForTNode(s_node, "pointer", (void *)p_tree);
+			insertInTail(tree_list, s_node);
+		}
+	}
 	return p_tree;
 }
 
@@ -322,3 +388,104 @@ int _doTreeThroughDown(TNode *p_tnode, int height, int(*func)(TNode *, unsigned 
 	return 0;
 }
 
+int TreeTravel(Tree *p_tree, int(*func)(TNode *, unsigned long long height)) {
+	TNode *p_tnode = p_tree->root;
+	unsigned long long height = 0;
+	if (p_tnode != NULL) {
+		int func_back = func(p_tnode, height);
+		while (func_back > -2) {
+			if (func_back > -1) {
+				p_tnode = getChildByIndex(func_back,func_back);
+				func(p_tnode, height + 1);
+			}
+			else
+			{
+				p_tnode = p_tnode->father;
+				func(p_tnode, height - 1);
+				
+			}
+		}
+	}
+	return 0;
+}
+int releaseTNode(TNode *p_tnode) {
+	if(p_tnode->child_num == 0){
+		releaseList(p_tnode->home);
+		if (p_tnode->father != NULL) {
+			removeChildById(p_tnode->father, p_tnode->id);
+		}
+		if (strcmp(p_tnode->type, "pointer")) {
+			if (!strcmp(p_tnode->type, "list")) {
+				releaseList((List *)p_tnode->value);
+			}
+			else {
+				free(p_tnode->value);
+			}
+		}
+		p_tnode->value = NULL;
+		p_tnode->type = NULL;
+		p_tnode->id = 0;
+		p_tnode->if_malloc = 0;
+		free(p_tnode);
+	}
+	return 0;
+}
+
+int _doreleaseTree(TNode *p_tnode, int height);
+
+int releaseTree(Tree *p_tree) {
+	TreeThroughUp(p_tree, _doreleaseTree);
+	p_tree->root = NULL;
+	p_tree->id = 0;
+	free(p_tree);
+}
+
+int _doreleaseTree(TNode *p_tnode, int height) {
+	releaseTNode(p_tnode);
+	return 0;
+}
+
+
+int releaseOnlyTree(Tree *p_tree) {
+	p_tree->id = 0;
+	p_tree->root = NULL;
+	free(p_tree);
+	return 0;
+}
+
+int releaseOnlyTNode(TNode *p_tnode) {
+	releaseList(p_tnode->home);
+	if (strcmp(p_tnode->type, "pointer")) {
+		if (!strcmp(p_tnode->type, "list")) {
+			releaseList((List *)p_tnode->value);
+		}
+		else {
+			free(p_tnode->value);
+		}
+	}
+	p_tnode->value = NULL;
+	p_tnode->type = NULL;
+	p_tnode->id = 0;
+	p_tnode->if_malloc = 0;
+	free(p_tnode);
+	return 0;
+}
+
+int releaseAllForTree(void) {
+	if (if_safeModeForTree) {
+		if_safeModeForTree = 0;
+		Node *p_node = tnode_list->head;
+		while (p_node != NULL) {
+			TNode *p_tnode = (TNode *)p_node->value;
+			releaseOnlyTNode(p_tnode);
+		}
+		Node *p_node = tree_list->head;
+		while (p_node != NULL) {
+			Tree *p_tree = (Tree *)p_node->value;
+			releaseOnlyTree(p_tree);
+		}
+		releaseList(tnode_list);
+		releaseList(tree_list);
+	}
+	return 0;
+}
