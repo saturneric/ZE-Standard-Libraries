@@ -2,9 +2,11 @@
 
 int stack(void);
 int list(void);
+int tree(void);
 
 int main(int argc, char **argv) {
-	stack();
+	list();
+	tree();
 	getchar();
 	return 0;
 }
