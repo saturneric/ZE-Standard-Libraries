@@ -47,8 +47,9 @@ int tree(void) {
 	addChildInRight(cl_tnode, tnodeWithInt(5));
 	addChildInRight(cr_tnode, tnodeWithInt(6));
 	addChildInRight(cr_tnode, tnodeWithInt(7));
+	
+	removeChildByIndex(cr_tnode, 1);
 	printTNodeWithFamily(t_tnode, 0);
-	//removeChildByIndex(t_tnode, 0);
 	releaseAllForTree();
 	return 0;
 }

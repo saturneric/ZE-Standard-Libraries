@@ -140,19 +140,19 @@ void printNodeInfo(Node *p_node, int priority) {
 	printf("NEXT->%p / LAST->%p / MALLOC:%d\n", p_node->next, p_node->last, p_node->if_malloc);
 	if (!strcmp(p_node->type, "int")) {
 		for (int i = 0; i < priority + 1; i++) printf("   ");
-		printf("VALUE(Int):%d\n", *(int *)(p_node->value));
+		printf("VALUE(int):%d\n", *(int *)(p_node->value));
 	}
 	else if (!strcmp(p_node->type, "double")) {
 		for (int i = 0; i < priority + 1; i++) printf("   ");
-		printf("VALUE(Double):%a\n", *(double *)(p_node->value));
+		printf("VALUE(double):%a\n", *(double *)(p_node->value));
 	}
 	else if (!strcmp(p_node->type, "string")) {
 		for (int i = 0; i < priority + 1; i++) printf("   ");
-		printf("VALUE(String):%s\n", (char *)(p_node->value));
+		printf("VALUE(string):%s\n", (char *)(p_node->value));
 	}
 	else if (!strcmp(p_node->type, "pointer")) {
 		for (int i = 0; i < priority + 1; i++) printf("   ");
-		printf("VALUE(Pointer):%s\n", (char *)(p_node->value));
+		printf("VALUE(pointer):%s\n", (char *)(p_node->value));
 	}
 	else if (!strcmp(p_node->type, "list")) {
 		for (int i = 0; i < priority + 1; i++) printf("   ");
@@ -166,23 +166,31 @@ void printNodeInfo(Node *p_node, int priority) {
 void printNode(Node *p_node) {
 	printf("#NODE(location:%p, id:%llu){\n", p_node, p_node->id);
 	printf("   ");
-	printf("NEXT->%p / LAST->%p / MALLOC:%d\n", p_node->next, p_node->last, p_node->if_malloc);
-	printf("   ");
-	if (!strcmp(p_node->type, "int")) {
-		printf("%d", *(int *)(p_node->value));
+	printf("NEXT->%p / LAST->%p\n", p_node->next, p_node->last, p_node->if_malloc);
+	for (int i = 0; i < 1; i++) printf("   ");
+	printf("ifMalloc: ");
+	if (p_node->if_malloc) {
+		printf("YES\n");
+		for (int i = 0; i < 1; i++) printf("   ");
+		printf("Value(type: %s): ", p_node->type);
+		if (!strcmp(p_node->type, "int")) {
+			printf("%d", *(int *)(p_node->value));
+		}
+		else if (!strcmp(p_node->type, "double")) {
+			printf("%a\n", *(double *)(p_node->value));
+		}
+		else if (!strcmp(p_node->type, "string")) {
+			printf("%s\n", (char *)(p_node->value));
+		}
+		else if (!strcmp(p_node->type, "pointer")) {
+			printf("%s\n", (char *)(p_node->value));
+		}
+		else if (!strcmp(p_node->type, "list")) {
+			printList((List *)p_node->value);
+		}
 	}
-	else if (!strcmp(p_node->type, "double")) {
-		printf("%a\n", *(double *)(p_node->value));
-	}
-	else if (!strcmp(p_node->type, "string")) {
-		printf("%s\n", (char *)(p_node->value));
-	}
-	else if (!strcmp(p_node->type, "pointer")) {
-		printf("%s\n", (char *)(p_node->value));
-	}
-	else if (!strcmp(p_node->type, "list")) {
-		printList((List *)p_node->value);
-	}
+	else printf("NO\n");
+	
 	printf("}\n");
 }
 

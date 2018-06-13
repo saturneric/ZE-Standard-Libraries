@@ -250,7 +250,7 @@ TNode *getChildByIndex(TNode *p_tnode, unsigned long long index) {
 	List *p_home = p_tnode->home;
 	Node *p_node = p_home->head;
 	int m_index = 0;
-	if (index < p_tnode->child_num - 1)
+	if (index < p_tnode->child_num)
 	{
 		while (p_node != NULL && m_index < index) {
 			m_index++;
