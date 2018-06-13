@@ -1,5 +1,9 @@
 #include"tree.h"
 
+unsigned long long target_id = 0;
+TNode *target_value_id = NULL;
+int if_safeModeForTree = 0;
+
 int safeModeForTree(int ifon) {
 	if (ifon == 1) {
 		if (tnode_list == NULL && tree_list == NULL) {
@@ -86,6 +90,7 @@ int addChildInLeft(TNode *f_tnode, TNode *c_tnode) {
 	initMallocValueForNode(p_node, "pointer", c_tnode);
 	insertInHead(f_tnode->home, p_node);
 	c_tnode->father = f_tnode;
+	c_tnode->room = p_node;
 	f_tnode->child_num++;
 	return 0;
 }
@@ -95,6 +100,7 @@ int addChildInRight(TNode *f_tnode, TNode *c_tnode) {
 	initMallocValueForNode(p_node, "pointer", c_tnode);
 	insertInTail(f_tnode->home, p_node);
 	c_tnode->father = f_tnode;
+	c_tnode->room = p_node;
 	f_tnode->child_num++;
 	return 0;
 }
@@ -246,7 +252,7 @@ TNode *getChildByIndex(TNode *p_tnode, unsigned long long index) {
 	int m_index = 0;
 	if (index < p_tnode->child_num - 1)
 	{
-		while (p_node != NULL) {
+		while (p_node != NULL && m_index < index) {
 			m_index++;
 			p_node = p_node->next;
 		}
@@ -273,7 +279,7 @@ unsigned long long getIndexByChild(TNode *f_tnode, TNode *c_tnode) {
 int removeChildByIndex(TNode *p_tnode, unsigned long long index) {
 	TNode *t_tnode = getChildByIndex(p_tnode, index);
 	if (t_tnode != NULL) {
-		TNode *p_fnode = t_tnode->father;
+		TNode *p_fnode = t_tnode->father; 
 		p_fnode->child_num--;
 		removeById(p_fnode->home, t_tnode->room->id);
 		releaseOnlyNode(t_tnode->room);
@@ -402,12 +408,14 @@ int releaseOnlyTree(Tree *p_tree) {
 
 int releaseOnlyTNode(TNode *p_tnode) {
 	releaseList(p_tnode->home);
-	if (strcmp(p_tnode->type, "pointer")) {
-		if (!strcmp(p_tnode->type, "list")) {
-			releaseList((List *)p_tnode->value);
-		}
-		else {
-			free(p_tnode->value);
+	if (p_tnode->if_malloc) {
+		if (strcmp(p_tnode->type, "pointer")) {
+			if (!strcmp(p_tnode->type, "list")) {
+				releaseList((List *)p_tnode->value);
+			}
+			else {
+				free(p_tnode->value);
+			}
 		}
 	}
 	p_tnode->value = NULL;
@@ -425,14 +433,21 @@ int releaseAllForTree(void) {
 		while (p_node != NULL) {
 			TNode *p_tnode = (TNode *)p_node->value;
 			releaseOnlyTNode(p_tnode);
+			p_node = p_node->next;
 		}
 		p_node = tree_list->head;
 		while (p_node != NULL) {
 			Tree *p_tree = (Tree *)p_node->value;
 			releaseOnlyTree(p_tree);
+			p_node = p_node->next;
 		}
 		releaseList(tnode_list);
 		releaseList(tree_list);
 	}
+	return 0;
+}
+
+int setRoot(Tree *p_tree, TNode *p_tnode) {
+	p_tree->root = p_tnode;
 	return 0;
 }

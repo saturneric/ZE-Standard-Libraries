@@ -120,7 +120,7 @@ void printList(List *p_list) {
 			printf("%s", (char *)(p_node->value));
 		}
 		else if (!strcmp(p_node->type, "pointer")) {
-			printf("%s", (char *)(p_node->value));
+			printf("%p", (char *)(p_node->value));
 		}
 		else if (!strcmp(p_node->type, "list")) {
 			printList((List *)p_node->value);

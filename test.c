@@ -1,5 +1,6 @@
 #include "test.h"
 
+
 int list(void) {
 	init_rand();
 	safeModeForNode(1);
@@ -39,6 +40,15 @@ int list(void) {
 int tree(void) {
 	safeModeForTree(1);
 	Tree *t_tree = initTree();
+	TNode *t_tnode = tnodeWithInt(1), *cr_tnode = tnodeWithInt(3),*cl_tnode = tnodeWithInt(2);
+	addChildInRight(t_tnode, cl_tnode);
+	addChildInRight(t_tnode, cr_tnode);
+	addChildInRight(cl_tnode, tnodeWithInt(4));
+	addChildInRight(cl_tnode, tnodeWithInt(5));
+	addChildInRight(cr_tnode, tnodeWithInt(6));
+	addChildInRight(cr_tnode, tnodeWithInt(7));
+	printTNodeWithFamily(t_tnode, 0);
+	//removeChildByIndex(t_tnode, 0);
 	releaseAllForTree();
 	return 0;
 }

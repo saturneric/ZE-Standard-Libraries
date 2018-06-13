@@ -20,8 +20,7 @@ typedef struct tree
 	TNode *root;
 }Tree;
 
-List *tree_list;
-List *tnode_list;
+
 int if_safeModeForTree;
 int safeModeForTree(int ifon);
 int releaseAllForTree(void);
@@ -58,12 +57,18 @@ int releaseOnlyTree(Tree *p_tree);
 int releaseTNode(TNode *p_tnode);
 int releaseOnlyTNode(TNode *p_tnode);
 
+int setRoot(Tree *p_tree, TNode *p_tnode);
+
 char *target_type;
 void *target_value;
 TNode *target_value_value;
 
 unsigned long long target_id;
 TNode *target_value_id;
+
+List *tree_list;
+List *tnode_list;
+int if_safeModeForTree;
 
 
 #endif
