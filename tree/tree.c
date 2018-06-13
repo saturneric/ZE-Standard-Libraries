@@ -107,7 +107,7 @@ int addChildInRight(TNode *f_tnode, TNode *c_tnode) {
 
 TNode *getBrotherInLeft(TNode *p_tnode) {
 	List *p_home = p_tnode->father->home;
-	Node *p_node = p_home->head;
+	Node *p_node = p_tnode->room;
 	unsigned long long index = getIndexByNode(p_home, p_node);
 	if (index > 0) return (TNode *)(findByIndexForNode(p_home, index - 1)->value);
 	return NULL;
@@ -293,7 +293,6 @@ int removeChildByIndex(TNode *p_tnode, unsigned long long index) {
 int TreeThroughUp(Tree *p_tree, int(*func)(TNode *, unsigned long long height)) {
 	TNode *p_tnode = p_tree->root;
 	if (p_tnode != NULL) {
-		func(p_tnode, 0);
 		if (p_tnode->child_num > 0) {
 			for (int i = 0; i < p_tnode->child_num; i++) {
 				if (_doTreeThroughUp(getChildByIndex(p_tnode, i), 1, func) == -1) {
@@ -301,6 +300,7 @@ int TreeThroughUp(Tree *p_tree, int(*func)(TNode *, unsigned long long height)) 
 				}
 			}
 		}
+		func(p_tnode, 0);
 	}
 	return 0;
 }
@@ -320,8 +320,8 @@ int _doTreeThroughUp(TNode *p_tnode, int height, int(*func)(TNode *, unsigned lo
 int TreeThroughDown(Tree *p_tree, int(*func)(TNode *, unsigned long long height)) {
 	TNode *p_tnode = p_tree->root;
 	if (p_tree->root != NULL) {
+		func(p_tnode, 0);
 		if (p_tree->root->child_num > 0) {
-			func(p_tnode, 0);
 			for (int i = 0; i < p_tnode->child_num; i++) {
 				if (_doTreeThroughDown(getChildByIndex(p_tnode, i), 1, func) == -1) {
 					break;

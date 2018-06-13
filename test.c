@@ -37,6 +37,12 @@ int list(void) {
 	return 0;
 }
 
+int _useTreeThroughDown(TNode *p_tnode, unsigned long long height) {
+	printTNode(p_tnode,0);
+	return  0;
+}
+
+
 int tree(void) {
 	safeModeForTree(1);
 	Tree *t_tree = initTree();
@@ -44,12 +50,14 @@ int tree(void) {
 	addChildInRight(t_tnode, cl_tnode);
 	addChildInRight(t_tnode, cr_tnode);
 	addChildInRight(cl_tnode, tnodeWithInt(4));
-	addChildInRight(cl_tnode, tnodeWithInt(5));
+	TNode *gs_tnode = tnodeWithInt(5);
+	addChildInRight(cl_tnode,gs_tnode);
 	addChildInRight(cr_tnode, tnodeWithInt(6));
 	addChildInRight(cr_tnode, tnodeWithInt(7));
-	
-	removeChildByIndex(cr_tnode, 1);
-	printTNodeWithFamily(t_tnode, 0);
+	addChildInRight(gs_tnode, tnodeWithInt(8));
+	setRoot(t_tree, t_tnode);
+	TreeThroughUp(t_tree, _useTreeThroughDown);
+	//printTNodeWithFamily(t_tnode, 0);
 	releaseAllForTree();
 	return 0;
 }
