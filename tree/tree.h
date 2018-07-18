@@ -21,7 +21,6 @@ typedef struct tree
 }Tree;
 
 
-int if_safeModeForTree;
 int safeModeForTree(int ifon);
 int releaseAllForTree(void);
 
@@ -46,29 +45,29 @@ int TreeThroughDown(Tree *p_tree, int(*func)(TNode *, unsigned long long height)
 int TreeThroughUp(Tree *p_tree, int(*func)(TNode *, unsigned long long height));
 int TreeTravel(Tree *p_tree, int(*func)(TNode *, unsigned long long height));
 
-int _dogetChildById(const char *type, void *value);
-int _dogetChildByValue(const char *type, void *value);
-int _doreleaseTree(TNode *p_tnode, unsigned long long height);
-int _doTreeThroughDown(TNode *p_tnode, int height, int(*func)(TNode *, unsigned long long height));
-int _doTreeThroughUp(TNode *p_tnode, int height, int(*func)(TNode *, unsigned long long height));
+static int _dogetChildById(const char *type, void *value);
+static int _dogetChildByValue(const char *type, void *value);
+static int _doreleaseTree(TNode *p_tnode, unsigned long long height);
+static int _doTreeThroughDown(TNode *p_tnode, int height, int(*func)(TNode *, unsigned long long height));
+static int _doTreeThroughUp(TNode *p_tnode, int height, int(*func)(TNode *, unsigned long long height));
 
 int releaseTree(Tree *p_tree);
 int releaseOnlyTree(Tree *p_tree);
 int releaseTNode(TNode *p_tnode);
-int releaseOnlyTNode(TNode *p_tnode);
+static int releaseOnlyTNode(TNode *p_tnode);
 
 int setRoot(Tree *p_tree, TNode *p_tnode);
 
-char *target_type;
-void *target_value;
-TNode *target_value_value;
+static char *target_type;
+static void *target_value;
+static TNode *target_value_value;
 
-unsigned long long target_id;
-TNode *target_value_id;
+static unsigned long long target_id;
+static TNode *target_value_id;
 
-List *tree_list;
-List *tnode_list;
-int if_safeModeForTree;
+static List *tree_list;
+static List *tnode_list;
+static int if_safeModeForTree;
 
 
 #endif
