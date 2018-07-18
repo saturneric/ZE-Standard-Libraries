@@ -1,25 +1,28 @@
 #include "list_expand.h"
 
 Node *nodeWithInt(int m_int) {
+	Node *p_node;
 	int *p_int = (int *)malloc(sizeof(int));
 	*p_int = m_int;
-	Node *p_node = initNode();
+	p_node = initNode();
 	initMallocValueForNode(p_node, "int", (void *)p_int);
 	return p_node;
 }
 
 Node *nodeWithDouble(double m_double) {
+	Node *p_node;
 	double *p_double = (double *)malloc(sizeof(double));
 	*p_double = m_double;
-	Node *p_node = initNode();
+	p_node = initNode();
 	initMallocValueForNode(p_node, "double", (void *)p_double);
 	return p_node;
 }
 
 Node *nodeWithString(const char *m_string) {
+	Node *p_node;
 	char *p_string = (char *)malloc(sizeof(char)*(strlen(m_string) + 1));
 	strcpy_s(p_string, sizeof(p_string), m_string);
-	Node *p_node = initNode();
+	p_node = initNode();
 	initMallocValueForNode(p_node, "string", (void *)p_string);
 	return p_node;
 }
@@ -40,7 +43,8 @@ Node *nodeWithComplex(void) {
 
 Node *findByIndexForNode(List *p_list, unsigned long long m_index) {
 	Node *p_node = p_list->head;
-	for (unsigned long long i = 0; i < m_index; i++) {
+	unsigned long long i;
+	for (i = 0; i < m_index; i++) {
 		p_node = p_node->next;
 	}
 	return p_node;
@@ -86,28 +90,29 @@ void *getByPointerForNode(Node *p_node) {
 }
 
 void printListInfo(List *p_list, int priority) {
-	for (int i = 0; i < priority; i++) printf("   ");
-	printf("###LIST(location:%p, id:%llu){\n", p_list, p_list->id);
-	for (int i = 0; i < priority + 1; i++) printf("   ");
-	printf("HEAD->%p / Tail->%p / Length:%llu\n", p_list->head, p_list->tail, p_list->length);
-	Node *p_node = p_list->head;
 	int i = 0;
+	Node *p_node;
+	for (i = 0; i < priority; i++) printf("   ");
+	printf("###LIST(location:%p, id:%llu){\n", p_list, p_list->id);
+	for (i = 0; i < priority + 1; i++) printf("   ");
+	printf("HEAD->%p / Tail->%p / Length:%llu\n", p_list->head, p_list->tail, p_list->length);
+	p_node = p_list->head;
 	while (p_node != NULL) {
-		for (int i = 0; i < priority + 1; i++) printf("   ");
+		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("%d.... \n", i);
 		printNodeInfo(p_node, priority + 1);
 		p_node = p_node->next;
 		i++;
 	}
-	for (int i = 0; i < priority; i++) printf("   ");
+	for (i = 0; i < priority; i++) printf("   ");
 	printf("}\n");
 
 }
 
 void printList(List *p_list) {
+	int if_nearLast = 0;
 	Node *p_node = p_list->head;
 	printf("[");
-	int if_nearLast = 0;
 	while (p_node != NULL) {
 		if (!if_nearLast && p_node->next == NULL) if_nearLast = 1;
 		if (!strcmp(p_node->type, "int")) {
@@ -134,44 +139,46 @@ void printList(List *p_list) {
 }
 
 void printNodeInfo(Node *p_node, int priority) {
-	for (int i = 0; i < priority; i++) printf("   ");
+	int i;
+	for (i = 0; i < priority; i++) printf("   ");
 	printf("#NODE(location:%p, id:%llu){\n", p_node, p_node->id);
-	for (int i = 0; i < priority + 1; i++) printf("   ");
+	for (i = 0; i < priority + 1; i++) printf("   ");
 	printf("NEXT->%p / LAST->%p / MALLOC:%d\n", p_node->next, p_node->last, p_node->if_malloc);
 	if (!strcmp(p_node->type, "int")) {
-		for (int i = 0; i < priority + 1; i++) printf("   ");
+		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("VALUE(int):%d\n", *(int *)(p_node->value));
 	}
 	else if (!strcmp(p_node->type, "double")) {
-		for (int i = 0; i < priority + 1; i++) printf("   ");
+		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("VALUE(double):%a\n", *(double *)(p_node->value));
 	}
 	else if (!strcmp(p_node->type, "string")) {
-		for (int i = 0; i < priority + 1; i++) printf("   ");
+		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("VALUE(string):%s\n", (char *)(p_node->value));
 	}
 	else if (!strcmp(p_node->type, "pointer")) {
-		for (int i = 0; i < priority + 1; i++) printf("   ");
+		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("VALUE(pointer):%s\n", (char *)(p_node->value));
 	}
 	else if (!strcmp(p_node->type, "list")) {
-		for (int i = 0; i < priority + 1; i++) printf("   ");
+		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("VALUE(List):\n");
 		printListInfo((List *)p_node->value, priority + 2);
 	}
-	for (int i = 0; i < priority; i++) printf("   ");
+	for (i = 0; i < priority; i++) printf("   ");
 	printf("}\n");
 }
 
 void printNode(Node *p_node) {
+	int i;
 	printf("#NODE(location:%p, id:%llu){\n", p_node, p_node->id);
 	printf("   ");
 	printf("NEXT->%p / LAST->%p\n", p_node->next, p_node->last, p_node->if_malloc);
-	for (int i = 0; i < 1; i++) printf("   ");
+	for (i = 0; i < 1; i++) printf("   ");
 	printf("ifMalloc: ");
 	if (p_node->if_malloc) {
 		printf("YES\n");
-		for (int i = 0; i < 1; i++) printf("   ");
+		for (i = 0; i < 1; i++) printf("   ");
 		printf("Value(type: %s): ", p_node->type);
 		if (!strcmp(p_node->type, "int")) {
 			printf("%d", *(int *)(p_node->value));
@@ -196,25 +203,28 @@ void printNode(Node *p_node) {
 
 
 Node *findByIntForNode(List *p_list, int target) {
+	Node *t_node;
 	int *p_target = (int *)malloc(sizeof(int));
 	*p_target = target;
-	Node *t_node = findByValue(p_list, "int", p_target);
+	t_node = findByValue(p_list, "int", p_target);
 	free(p_target);
 	return t_node;
 }
 
 Node *findByDoubleForNode(List *p_list, double target) {
+	Node *t_node;
 	double *p_target = (double *)malloc(sizeof(double));
 	*p_target = target;
-	Node *t_node = findByValue(p_list, "double", p_target);
+	t_node = findByValue(p_list, "double", p_target);
 	free(p_target);
 	return t_node;
 }
 
 Node *findByStringForNode(List *p_list, char *target) {
+	Node *t_node;
 	char *p_temp = (char *)malloc(sizeof(char)*(strlen(target) + 1));
 	strcpy_s(p_temp, sizeof(p_temp), target);
-	Node *t_node = findByValue(p_list, "string", p_temp);
+	t_node = findByValue(p_list, "string", p_temp);
 	free(p_temp);
 	return t_node;
 }
@@ -225,9 +235,11 @@ Node *findByPointerForNode(List *p_list, void *target) {
 }
 
 int addValueForComplex(Node * p_node, char *type, void *value) {
+	List *c_list;
+	Node *c_node;
 	if (!strcmp(p_node->type, "list")) {
-		List *c_list = (List *)p_node->value;
-		Node *c_node = initNode();
+		c_list = (List *)p_node->value;
+		c_node = initNode();
 		initMallocValueForNode(c_node, type, value);
 		insertInTail(c_list, c_node);
 		return  0;
@@ -275,24 +287,27 @@ int addPointerForComplex(Node *p_node, void *temp) {
 
 List *m_findByInt(List* p_list, int temp) {
 	int *p_temp = (int *)malloc(sizeof(int));
+	List *t_list;
 	*p_temp = temp;
-	List *t_list = mply_findByValue(p_list, "int", (void *)p_temp);
+	t_list = mply_findByValue(p_list, "int", (void *)p_temp);
 	free(p_temp);
 	return t_list;
 }
 
 List *m_findByDouble(List* p_list, double temp) {
+	List *t_list;
 	double *p_temp = (double *)malloc(sizeof(double));
 	*p_temp = temp;
-	List *t_list = mply_findByValue(p_list, "double", (void *)p_temp);
+	t_list = mply_findByValue(p_list, "double", (void *)p_temp);
 	free(p_temp);
 	return t_list;
 }
 
 List *m_findByString(List* p_list, char *temp) {
+	List *t_list;
 	char *p_temp = (char *)malloc(sizeof(char)*(strlen(temp) + 1));
 	strcpy_s(p_temp, sizeof(p_temp), temp);
-	List *t_list = mply_findByValue(p_list, "string", (void *)p_temp);
+	t_list = mply_findByValue(p_list, "string", (void *)p_temp);
 	free(p_temp);
 	return t_list;
 }

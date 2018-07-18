@@ -58,17 +58,18 @@ void *getValueByPointerForTree(TNode *p_tnode) {
 }
 
 int printTNode(TNode *p_tnode, int priority) {
+	int i;
 	if (p_tnode != NULL) {
-		for (int i = 0; i < priority; i++) printf("   ");
+		for (i = 0; i < priority; i++) printf("   ");
 		if (priority == 0) printf("###");
 		else printf("#");
 
 		printf("TNode(id: %llu)\n", p_tnode->id);
-		for (int i = 0; i < priority + 1; i++) printf("   ");
+		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("ifMalloc: ");
 		if (p_tnode->if_malloc) {
 			printf("YES\n");
-			for (int i = 0; i < priority + 1; i++) printf("   ");
+			for (i = 0; i < priority + 1; i++) printf("   ");
 			printf("Value(type: %s): ", p_tnode->type);
 			if (!strcmp(p_tnode->type, "int")) {
 				printf("%d\n", *(int *)(p_tnode->value));
@@ -86,7 +87,7 @@ int printTNode(TNode *p_tnode, int priority) {
 		else printf("NO\n");
 
 		if (p_tnode->child_num > 0) {
-			for (int i = 0; i < priority + 1; i++) printf("   ");
+			for (i = 0; i < priority + 1; i++) printf("   ");
 			printf("Child number: %llu\n", p_tnode->child_num);
 		}
 		return 0;
@@ -95,15 +96,18 @@ int printTNode(TNode *p_tnode, int priority) {
 }
 
 int printTNodeWithHome(TNode *p_tnode,int priority) {
+	int i;
+	List *p_home;
+	Node *p_node;
 	if (p_tnode != NULL) {
 		if (priority == 0) printf("###");
 		else printf("#");
 		printf("TNode(id: %llu)\n", p_tnode->id);
-		for (int i = 0; i < priority + 1; i++) printf("   ");
+		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("ifMalloc: ");
 		if (p_tnode->if_malloc) {
 			printf("YES\n");
-			for (int i = 0; i < priority + 1; i++) printf("   ");
+			for (i = 0; i < priority + 1; i++) printf("   ");
 			printf("Value(type: %s): ", p_tnode->type);
 			if (!strcmp(p_tnode->type, "int")) {
 				printf("%d\n", *(int *)(p_tnode->value));
@@ -121,22 +125,22 @@ int printTNodeWithHome(TNode *p_tnode,int priority) {
 		else printf("NO\n");
 
 		if (p_tnode->father != NULL) {
-			for (int i = 0; i < priority + 1; i++) printf("   ");
+			for (i = 0; i < priority + 1; i++) printf("   ");
 			printf("Father id: %llu\n", p_tnode->father->id);
 		}
 		else
 		{
-			for (int i = 0; i < priority + 1; i++) printf("   ");
+			for (i = 0; i < priority + 1; i++) printf("   ");
 			printf("Father: NO\n");
 		}
 
 		if (p_tnode->child_num > 0) {
-			for (int i = 0; i < priority + 1; i++) printf("   ");
+			for (i = 0; i < priority + 1; i++) printf("   ");
 			printf("Child(number: %llu):\n", p_tnode->child_num);
 		}
 
-		List *p_home = p_tnode->home;
-		Node *p_node = p_home->head;
+		p_home = p_tnode->home;
+		p_node = p_home->head;
 		while (p_node != NULL) {
 			printTNode((TNode *)p_node->value, priority + 2);
 			p_node = p_node->next;
@@ -147,16 +151,19 @@ int printTNodeWithHome(TNode *p_tnode,int priority) {
 }
 
 int printTNodeWithFamily(TNode *p_tnode, int priority) {
+	int i;
+	List *p_home;
+	Node *p_node;
 	if (p_tnode != NULL) {
-		for (int i = 0; i < priority; i++) printf("   ");
+		for (i = 0; i < priority; i++) printf("   ");
 		if (priority == 0) printf("###");
 		else printf("#");
 		printf("TNode(id: %llu)\n", p_tnode->id);
-		for (int i = 0; i < priority + 1; i++) printf("   ");
+		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("ifMalloc: ");
 		if (p_tnode->if_malloc) {
 			printf("YES\n");
-			for (int i = 0; i < priority + 1; i++) printf("   ");
+			for (i = 0; i < priority + 1; i++) printf("   ");
 			printf("Value(type: %s): ", p_tnode->type);
 			if (!strcmp(p_tnode->type, "int")) {
 				printf("%d\n", *(int *)(p_tnode->value));
@@ -174,22 +181,22 @@ int printTNodeWithFamily(TNode *p_tnode, int priority) {
 		else printf("NO\n");
 
 		if (p_tnode->father != NULL) {
-			for (int i = 0; i < priority + 1; i++) printf("   ");
+			for (i = 0; i < priority + 1; i++) printf("   ");
 			printf("Father id: %llu\n", p_tnode->father->id);
 		}
 		else
 		{
-			for (int i = 0; i < priority + 1; i++) printf("   ");
+			for (i = 0; i < priority + 1; i++) printf("   ");
 			printf("Father: NO\n");
 		}
 
 		if (p_tnode->child_num > 0) {
-			for (int i = 0; i < priority + 1; i++) printf("   ");
+			for (i = 0; i < priority + 1; i++) printf("   ");
 			printf("Child(number: %llu):\n", p_tnode->child_num);
 		}
 
-		List *p_home = p_tnode->home;
-		Node *p_node = p_home->head;
+		p_home = p_tnode->home;
+		p_node = p_home->head;
 		while (p_node != NULL) {
 			printTNodeWithFamily((TNode *)p_node->value, priority + 2);
 			p_node = p_node->next;

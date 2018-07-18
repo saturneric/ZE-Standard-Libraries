@@ -2,9 +2,11 @@
 
 
 int list(void) {
+	int i;
+	List *t_list, *m_list;;
 	init_rand();
 	safeModeForNode(1);
-	List *t_list = initList();
+	t_list = initList();
 
 	/*for(int i = 0; i < 9; i++){
 	Node *t_node = initNode();
@@ -18,7 +20,7 @@ int list(void) {
 	insertInTail(t_list,t_node);
 	initMalllocValue(t_node,(void *)"there");*/
 
-	for (int i = 0; i < 12; i++) {
+	for (i = 0; i < 12; i++) {
 		insertInHead(t_list, nodeWithInt(i));
 		insertInTail(t_list, nodeWithInt(i));
 	}
@@ -27,7 +29,7 @@ int list(void) {
 
 	printListInfo(t_list, 0);
 	printList(t_list);
-	List *m_list;
+	
 	m_list = m_findByIntForNode(t_list, 5);
 	printList(m_list);
 	printf("\n");
@@ -44,13 +46,18 @@ int _useTreeThroughDown(TNode *p_tnode, unsigned long long height) {
 
 
 int tree(void) {
+	TNode *t_tnode, *cr_tnode, *cl_tnode;
+	Tree *t_tree;
+	TNode *gs_tnode;
 	safeModeForTree(1);
-	Tree *t_tree = initTree();
-	TNode *t_tnode = tnodeWithInt(1), *cr_tnode = tnodeWithInt(3),*cl_tnode = tnodeWithInt(2);
+	t_tree = initTree();
+	t_tnode = tnodeWithInt(1);
+	cr_tnode = tnodeWithInt(3);
+	cl_tnode = tnodeWithInt(2);
 	addChildInRight(t_tnode, cl_tnode);
 	addChildInRight(t_tnode, cr_tnode);
 	addChildInRight(cl_tnode, tnodeWithInt(4));
-	TNode *gs_tnode = tnodeWithInt(5);
+	gs_tnode = tnodeWithInt(5);
 	addChildInRight(cl_tnode,gs_tnode);
 	addChildInRight(cr_tnode, tnodeWithInt(6));
 	addChildInRight(cr_tnode, tnodeWithInt(7));
@@ -63,11 +70,12 @@ int tree(void) {
 }
 
 int stack(void) {
+	int i;
 	Stack *t_stack = initStack();
-	for (int i = 0; i < 10; i++) {
+	for (i = 0; i < 10; i++) {
 		pushStack(t_stack, snodeWithInt(i));
 	}
-	for (int i = 0; i < 10; i++) {
+	for (i = 0; i < 10; i++) {
 		printf("%d", getValueByIntForSNode(popStack(t_stack)));
 	}
 	releaseStack(t_stack);

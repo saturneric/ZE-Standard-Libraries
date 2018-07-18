@@ -29,6 +29,7 @@ int safeModeForTree(int ifon) {
 }
 
 TNode *initTNode(void) {
+	Node *s_node;
 	TNode *p_tnode = (TNode *)malloc(sizeof(TNode));
 	p_tnode->id = getId();
 	p_tnode->child_num = 0;
@@ -41,14 +42,14 @@ TNode *initTNode(void) {
 	if (if_safeModeForTree) {
 		if (if_safeModeForNode) {
 			if_safeModeForNode = 0;
-			Node *s_node = initNode();
+			s_node = initNode();
 			initMallocValueForNode(s_node, "pointer", (void *)p_tnode);
 			insertInTail(tnode_list, s_node);
 			if_safeModeForNode = 1;
 		}
 		else
 		{
-			Node *s_node = initNode();
+			s_node = initNode();
 			initMallocValueForNode(s_node, "pointer", (void *)p_tnode);
 			insertInTail(tnode_list, s_node);
 		}
@@ -57,20 +58,21 @@ TNode *initTNode(void) {
 }
 
 Tree *initTree(void) {
+	Node *s_node;
 	Tree *p_tree = (Tree *)malloc(sizeof(Tree));
 	p_tree->id = getId();
 	p_tree->root = NULL;
 	if (if_safeModeForTree) {
 		if (if_safeModeForNode) {
 			if_safeModeForNode = 0;
-			Node *s_node = initNode();
+			s_node = initNode();
 			initMallocValueForNode(s_node, "pointer", (void *)p_tree);
 			if_safeModeForNode = 1;
 			insertInTail(tree_list, s_node);
 		}
 		else
 		{
-			Node *s_node = initNode();
+			s_node = initNode();
 			initMallocValueForNode(s_node, "pointer", (void *)p_tree);
 			insertInTail(tree_list, s_node);
 		}
@@ -184,14 +186,14 @@ TNode *getChildByValue(TNode *p_tnode, char *type, void *value) {
 int _dogetChildByValue(const char *type, void *value) {
 	if (!strcmp(type, target_type)) {
 		TNode *p_tode = (TNode *)value;
-		if (!strcmp(target_value, "int")) {
+		if (!strcmp((char *)target_value, "int")) {
 			if (*(int *)p_tode->value == *(int *)target_value)
 			{
 				target_value_value = p_tode;
 				return -1;
 			}
 		}
-		else if (!strcmp(target_value, "double"))
+		else if (!strcmp((char *)target_value, "double"))
 		{
 			if (*(double *)p_tode->value == *(double *)target_value)
 			{
@@ -199,7 +201,7 @@ int _dogetChildByValue(const char *type, void *value) {
 				return -1;
 			}
 		}
-		else if (!strcmp(target_value, "string"))
+		else if (!strcmp((char *)target_value, "string"))
 		{
 			if (!strcmp((char *)p_tode->value, (char *)target_value))
 			{
@@ -207,7 +209,7 @@ int _dogetChildByValue(const char *type, void *value) {
 				return -1;
 			}
 		}
-		else if (!strcmp(target_value, "pointer"))
+		else if (!strcmp((char *)target_value, "pointer"))
 		{
 			if (p_tode->value == target_value)
 			{
@@ -291,10 +293,11 @@ int removeChildByIndex(TNode *p_tnode, unsigned long long index) {
 
 
 int TreeThroughUp(Tree *p_tree, int(*func)(TNode *, unsigned long long height)) {
+	int i;
 	TNode *p_tnode = p_tree->root;
 	if (p_tnode != NULL) {
 		if (p_tnode->child_num > 0) {
-			for (int i = 0; i < p_tnode->child_num; i++) {
+			for (i = 0; i < p_tnode->child_num; i++) {
 				if (_doTreeThroughUp(getChildByIndex(p_tnode, i), 1, func) == -1) {
 					break;
 				}
@@ -306,23 +309,26 @@ int TreeThroughUp(Tree *p_tree, int(*func)(TNode *, unsigned long long height)) 
 }
 
 int _doTreeThroughUp(TNode *p_tnode, int height, int(*func)(TNode *, unsigned long long height)) {
+	int i, func_back;
+
 	if (p_tnode->child_num > 0) {
-		for (int i = 0; i < p_tnode->child_num; i++) {
+		for (i = 0; i < p_tnode->child_num; i++) {
 			if (_doTreeThroughUp(getChildByIndex(p_tnode, i), height + 1, func)) return -1;
 		}
 	}
-	int func_back = func(p_tnode, height);
+	func_back = func(p_tnode, height);
 	if (func_back == -1)return -1;
 	return 0;
 }
 
 
 int TreeThroughDown(Tree *p_tree, int(*func)(TNode *, unsigned long long height)) {
+	int i;
 	TNode *p_tnode = p_tree->root;
 	if (p_tree->root != NULL) {
 		func(p_tnode, 0);
 		if (p_tree->root->child_num > 0) {
-			for (int i = 0; i < p_tnode->child_num; i++) {
+			for (i = 0; i < p_tnode->child_num; i++) {
 				if (_doTreeThroughDown(getChildByIndex(p_tnode, i), 1, func) == -1) {
 					break;
 				}
@@ -333,9 +339,10 @@ int TreeThroughDown(Tree *p_tree, int(*func)(TNode *, unsigned long long height)
 }
 
 int _doTreeThroughDown(TNode *p_tnode, int height, int(*func)(TNode *, unsigned long long height)) {
+	int i;
 	int func_back = func(p_tnode, height);
 	if (p_tnode->child_num > 0) {
-		for (int i = 0; i < p_tnode->child_num; i++) {
+		for (i = 0; i < p_tnode->child_num; i++) {
 			if (_doTreeThroughDown(getChildByIndex(p_tnode, i), height + 1, func)) return -1;
 		}
 	}
@@ -427,9 +434,11 @@ int releaseOnlyTNode(TNode *p_tnode) {
 }
 
 int releaseAllForTree(void) {
+	Node *p_node;
+	Tree *p_tree;
 	if (if_safeModeForTree) {
 		if_safeModeForTree = 0;
-		Node *p_node = tnode_list->head;
+		p_node = tnode_list->head;
 		while (p_node != NULL) {
 			TNode *p_tnode = (TNode *)p_node->value;
 			releaseOnlyTNode(p_tnode);
@@ -437,7 +446,7 @@ int releaseAllForTree(void) {
 		}
 		p_node = tree_list->head;
 		while (p_node != NULL) {
-			Tree *p_tree = (Tree *)p_node->value;
+			p_tree = (Tree *)p_node->value;
 			releaseOnlyTree(p_tree);
 			p_node = p_node->next;
 		}
