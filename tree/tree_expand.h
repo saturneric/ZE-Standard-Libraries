@@ -18,4 +18,7 @@ int printTNodeWithHome(TNode *p_tnode, int priority);
 int printTNodeWithFamily(TNode *p_tnode, int priority);
 int printTNode(TNode *p_tnode, int priority);
 
+unsigned long long calTreeMemory(Tree *);
+int _doCalTreeMemory(TNode *p_tnode, unsigned long long height);
+
 #endif

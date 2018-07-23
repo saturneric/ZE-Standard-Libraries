@@ -212,3 +212,16 @@ int printTree(Tree *p_tree) {
 	printTNodeWithFamily(p_tree->root,0);
 	return 0;
 }
+
+static unsigned long long tnodes_size = 0LL;
+
+unsigned long long calTreeMemory(Tree *p_tree){
+    tnodes_size = 0LL;
+    TreeThroughDown(p_tree, _doCalTreeMemory);
+    return sizeof(p_tree) + tnodes_size;
+}
+
+int _doCalTreeMemory(TNode *p_tnode, unsigned long long height){
+    tnodes_size += sizeof(p_tnode) + sizeof(*p_tnode->value);
+    return 0;
+}

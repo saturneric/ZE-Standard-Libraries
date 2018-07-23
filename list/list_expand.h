@@ -37,4 +37,6 @@ void *getByPointerForNode(Node *);//直接得到节点的值
 unsigned long long getIndexByNode(List *p_list,Node *p_node);
 int listThrough(List *p_list, int (*p_func)(int , void *));//遍历链表并不断调用目标函数。目标函数将接受节点储存值的指针及其类型。
 
+unsigned long long calListMemory(List *);
+
 #endif
