@@ -1,8 +1,8 @@
 #include"tree.h"
 
-unsigned long long target_id = 0;
-TNode *target_value_id = NULL;
-int if_safeModeForTree = 0;
+static unsigned long long target_id = 0;
+static TNode *target_value_id = NULL;
+static int if_safeModeForTree = 0;
 
 int safeModeForTree(int ifon) {
 	if (ifon == 1) {
@@ -36,21 +36,21 @@ TNode *initTNode(void) {
 	p_tnode->father = NULL;
 	p_tnode->if_malloc = 0;
 	p_tnode->value = NULL;
-	p_tnode->type = NULL;
+	p_tnode->type = VOID;
 	p_tnode->home = initList();
 	p_tnode->room = NULL;
 	if (if_safeModeForTree) {
 		if (if_safeModeForNode) {
 			if_safeModeForNode = 0;
 			s_node = initNode();
-			initMallocValueForNode(s_node, "pointer", (void *)p_tnode);
+			initMallocValueForNode(s_node, POINTER, (void *)p_tnode);
 			insertInTail(tnode_list, s_node);
 			if_safeModeForNode = 1;
 		}
 		else
 		{
 			s_node = initNode();
-			initMallocValueForNode(s_node, "pointer", (void *)p_tnode);
+			initMallocValueForNode(s_node, POINTER, (void *)p_tnode);
 			insertInTail(tnode_list, s_node);
 		}
 	}
@@ -66,21 +66,21 @@ Tree *initTree(void) {
 		if (if_safeModeForNode) {
 			if_safeModeForNode = 0;
 			s_node = initNode();
-			initMallocValueForNode(s_node, "pointer", (void *)p_tree);
+			initMallocValueForNode(s_node, POINTER, (void *)p_tree);
 			if_safeModeForNode = 1;
 			insertInTail(tree_list, s_node);
 		}
 		else
 		{
 			s_node = initNode();
-			initMallocValueForNode(s_node, "pointer", (void *)p_tree);
+			initMallocValueForNode(s_node, POINTER, (void *)p_tree);
 			insertInTail(tree_list, s_node);
 		}
 	}
 	return p_tree;
 }
 
-int *initMallocValueForTNode(TNode *p_tnode, char *type, void *value) {
+int *initMallocValueForTNode(TNode *p_tnode, int type, void *value) {
 	p_tnode->type = type;
 	p_tnode->value = value;
 	p_tnode->if_malloc = 1;
@@ -89,7 +89,7 @@ int *initMallocValueForTNode(TNode *p_tnode, char *type, void *value) {
 
 int addChildInLeft(TNode *f_tnode, TNode *c_tnode) {
 	Node *p_node = initNode();
-	initMallocValueForNode(p_node, "pointer", c_tnode);
+	initMallocValueForNode(p_node, POINTER, c_tnode);
 	insertInHead(f_tnode->home, p_node);
 	c_tnode->father = f_tnode;
 	c_tnode->room = p_node;
@@ -99,7 +99,7 @@ int addChildInLeft(TNode *f_tnode, TNode *c_tnode) {
 
 int addChildInRight(TNode *f_tnode, TNode *c_tnode) {
 	Node *p_node = initNode();
-	initMallocValueForNode(p_node, "pointer", c_tnode);
+	initMallocValueForNode(p_node, POINTER, c_tnode);
 	insertInTail(f_tnode->home, p_node);
 	c_tnode->father = f_tnode;
 	c_tnode->room = p_node;
@@ -155,8 +155,8 @@ TNode *getChildById(TNode *p_tnode, unsigned long long id) {
 	return NULL;
 }
 
-int _dogetChildById(const char *type, void *value) {
-	if (!strcmp(type, "pointer")) {
+int _dogetChildById(int type, void *value) {
+	if (type == POINTER) {
 		TNode *p_tode = (TNode *)value;
 		if (p_tode->id == target_id) {
 			target_value_id = p_tode;
@@ -166,12 +166,11 @@ int _dogetChildById(const char *type, void *value) {
 	return 0;
 }
 
-char *target_type = NULL;
-void *target_value = NULL;
-TNode *target_value_value = NULL;
-int _dogetChildByValue(const char *type, void *value);
+static int target_type = VOID;
+static void *target_value = NULL;
+static TNode *target_value_value = NULL;
 
-TNode *getChildByValue(TNode *p_tnode, char *type, void *value) {
+TNode *getChildByValue(TNode *p_tnode, int type, void *value) {
 	List *p_home = p_tnode->home;
 	target_value = value;
 	target_type = type;
@@ -183,17 +182,17 @@ TNode *getChildByValue(TNode *p_tnode, char *type, void *value) {
 	return NULL;
 }
 
-int _dogetChildByValue(const char *type, void *value) {
-	if (!strcmp(type, target_type)) {
+int _dogetChildByValue(int type, void *value) {
+	if (type == target_type) {
 		TNode *p_tode = (TNode *)value;
-		if (!strcmp((char *)target_value, "int")) {
+		if (target_type == INT) {
 			if (*(int *)p_tode->value == *(int *)target_value)
 			{
 				target_value_value = p_tode;
 				return -1;
 			}
 		}
-		else if (!strcmp((char *)target_value, "double"))
+		else if (target_type == DOUBLE)
 		{
 			if (*(double *)p_tode->value == *(double *)target_value)
 			{
@@ -201,7 +200,7 @@ int _dogetChildByValue(const char *type, void *value) {
 				return -1;
 			}
 		}
-		else if (!strcmp((char *)target_value, "string"))
+		else if (target_type == STRING)
 		{
 			if (!strcmp((char *)p_tode->value, (char *)target_value))
 			{
@@ -209,7 +208,7 @@ int _dogetChildByValue(const char *type, void *value) {
 				return -1;
 			}
 		}
-		else if (!strcmp((char *)target_value, "pointer"))
+		else if (target_type == POINTER)
 		{
 			if (p_tode->value == target_value)
 			{
@@ -235,7 +234,7 @@ int removeChildById(TNode *p_tnode, unsigned long long id) {
 	return -1;
 }
 
-int removeChildByValue(TNode *p_tnode, char *type, void *value) {
+int removeChildByValue(TNode *p_tnode, int type, void *value) {
 	TNode *t_tnode = getChildByValue(p_tnode, type, value);
 	if (t_tnode != NULL) {
 		TNode *p_fnode = t_tnode->father;
@@ -376,8 +375,8 @@ int releaseTNode(TNode *p_tnode) {
 		if (p_tnode->father != NULL) {
 			removeChildById(p_tnode->father, p_tnode->id);
 		}
-		if (strcmp(p_tnode->type, "pointer")) {
-			if (!strcmp(p_tnode->type, "list")) {
+		if (p_tnode->type != POINTER) {
+			if (p_tnode->type == LIST) {
 				releaseList((List *)p_tnode->value);
 			}
 			else {
@@ -385,7 +384,7 @@ int releaseTNode(TNode *p_tnode) {
 			}
 		}
 		p_tnode->value = NULL;
-		p_tnode->type = NULL;
+		p_tnode->type = VOID;
 		p_tnode->id = 0;
 		p_tnode->if_malloc = 0;
 		free(p_tnode);
@@ -416,8 +415,8 @@ int releaseOnlyTree(Tree *p_tree) {
 int releaseOnlyTNode(TNode *p_tnode) {
 	releaseList(p_tnode->home);
 	if (p_tnode->if_malloc) {
-		if (strcmp(p_tnode->type, "pointer")) {
-			if (!strcmp(p_tnode->type, "list")) {
+		if (p_tnode->type != STRING) {
+			if (p_tnode->type == LIST) {
 				releaseList((List *)p_tnode->value);
 			}
 			else {
@@ -426,7 +425,7 @@ int releaseOnlyTNode(TNode *p_tnode) {
 		}
 	}
 	p_tnode->value = NULL;
-	p_tnode->type = NULL;
+	p_tnode->type = VOID;
 	p_tnode->id = 0;
 	p_tnode->if_malloc = 0;
 	free(p_tnode);

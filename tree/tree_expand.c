@@ -4,7 +4,7 @@ TNode *tnodeWithInt(int temp) {
 	TNode *p_tnode = initTNode();
 	int *p_temp = (int *)malloc(sizeof(int));
 	*p_temp = temp;
-	initMallocValueForTNode(p_tnode, "int", p_temp);
+	initMallocValueForTNode(p_tnode, INT, p_temp);
 	return p_tnode;
 }
 
@@ -12,46 +12,46 @@ TNode *tnodeWithDouble(double temp) {
 	TNode *p_tnode = initTNode();
 	double *p_temp = (double *)malloc(sizeof(double));
 	*p_temp = temp;
-	initMallocValueForTNode(p_tnode, "double", p_temp);
+	initMallocValueForTNode(p_tnode, DOUBLE, p_temp);
 	return p_tnode;
 }
 TNode *tnodeWithString(char *temp) {
 	TNode *p_tnode = initTNode();
 	char *p_temp = (char *)malloc(sizeof(temp));
-	strcpy_s(p_temp, sizeof(p_temp), temp);
-	initMallocValueForTNode(p_tnode, "double", p_temp);
+	strcpy(p_temp, temp);
+	initMallocValueForTNode(p_tnode, STRING, p_temp);
 	return p_tnode;
 }
 
 TNode *tnodeWithPointer(void *temp) {
 	TNode *p_tnode = initTNode();
-	initMallocValueForTNode(p_tnode, "pointer", temp);
+	initMallocValueForTNode(p_tnode, POINTER, temp);
 	return p_tnode;
 }
 
 int getValueByIntForTree(TNode *p_tnode) {
-	if (!strcmp(p_tnode->type, "int")) {
+	if (p_tnode->type == INT) {
 		return *(int *)p_tnode->value;
 	}
 	return -1;
 }
 
 double getValueByDoubleForTree(TNode *p_tnode) {
-	if (!strcmp(p_tnode->type, "double")) {
+	if (p_tnode->type == DOUBLE) {
 		return *(double *)p_tnode->value;
 	}
 	return -1;
 }
 
 char *getValueByStringForTree(TNode *p_tnode) {
-	if (!strcmp(p_tnode->type, "string")) {
+	if (p_tnode->type == STRING) {
 		return (char *)p_tnode->value;
 	}
 	return NULL;
 }
 
 void *getValueByPointerForTree(TNode *p_tnode) {
-	if (!strcmp(p_tnode->type, "pointer")) {
+	if (p_tnode->type == POINTER) {
 		return p_tnode->value;
 	}
 	return NULL;
@@ -70,17 +70,17 @@ int printTNode(TNode *p_tnode, int priority) {
 		if (p_tnode->if_malloc) {
 			printf("YES\n");
 			for (i = 0; i < priority + 1; i++) printf("   ");
-			printf("Value(type: %s): ", p_tnode->type);
-			if (!strcmp(p_tnode->type, "int")) {
+			printf("Value(type: %d): ", p_tnode->type);
+			if (p_tnode->type == INT) {
 				printf("%d\n", *(int *)(p_tnode->value));
 			}
-			else if (!strcmp(p_tnode->type, "double")) {
+			else if (p_tnode->type == DOUBLE) {
 				printf("%a\n", *(double *)(p_tnode->value));
 			}
-			else if (!strcmp(p_tnode->type, "string")) {
+			else if (p_tnode->type == STRING) {
 				printf("%s\n", (char *)(p_tnode->value));
 			}
-			else if (!strcmp(p_tnode->type, "pointer")) {
+			else if (p_tnode->type == POINTER) {
 				printf("%p\n", (char *)(p_tnode->value));
 			}
 		}
@@ -108,17 +108,17 @@ int printTNodeWithHome(TNode *p_tnode,int priority) {
 		if (p_tnode->if_malloc) {
 			printf("YES\n");
 			for (i = 0; i < priority + 1; i++) printf("   ");
-			printf("Value(type: %s): ", p_tnode->type);
-			if (!strcmp(p_tnode->type, "int")) {
+			printf("Value(type: %d): ", p_tnode->type);
+			if (p_tnode->type == INT) {
 				printf("%d\n", *(int *)(p_tnode->value));
 			}
-			else if (!strcmp(p_tnode->type, "double")) {
+			else if (p_tnode->type == DOUBLE) {
 				printf("%a\n", *(double *)(p_tnode->value));
 			}
-			else if (!strcmp(p_tnode->type, "string")) {
+			else if (p_tnode->type == STRING) {
 				printf("%s\n", (char *)(p_tnode->value));
 			}
-			else if (!strcmp(p_tnode->type, "pointer")) {
+			else if (p_tnode->type == POINTER) {
 				printf("%p\n", (char *)(p_tnode->value));
 			}
 		}
@@ -164,17 +164,17 @@ int printTNodeWithFamily(TNode *p_tnode, int priority) {
 		if (p_tnode->if_malloc) {
 			printf("YES\n");
 			for (i = 0; i < priority + 1; i++) printf("   ");
-			printf("Value(type: %s): ", p_tnode->type);
-			if (!strcmp(p_tnode->type, "int")) {
+			printf("Value(type: %d): ", p_tnode->type);
+			if (p_tnode->type == INT) {
 				printf("%d\n", *(int *)(p_tnode->value));
 			}
-			else if (!strcmp(p_tnode->type, "double")) {
+			else if (p_tnode->type == DOUBLE) {
 				printf("%a\n", *(double *)(p_tnode->value));
 			}
-			else if (!strcmp(p_tnode->type, "string")) {
+			else if (p_tnode->type == STRING) {
 				printf("%s\n", (char *)(p_tnode->value));
 			}
-			else if (!strcmp(p_tnode->type, "pointer")) {
+			else if (p_tnode->type == POINTER) {
 				printf("%p\n", (char *)(p_tnode->value));
 			}
 		}

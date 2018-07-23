@@ -2,7 +2,6 @@
 
 
 int list(void) {
-	int i;
 	List *t_list, *m_list;;
 	init_rand();
 	safeModeForNode(1);
@@ -20,7 +19,7 @@ int list(void) {
 	insertInTail(t_list,t_node);
 	initMalllocValue(t_node,(void *)"there");*/
 
-	for (i = 0; i < 12; i++) {
+	for (int i = 0; i < 12; i++) {
 		insertInHead(t_list, nodeWithInt(i));
 		insertInTail(t_list, nodeWithInt(i));
 	}
