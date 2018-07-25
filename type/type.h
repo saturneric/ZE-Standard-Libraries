@@ -15,6 +15,8 @@
 #define STRING 3
 #define POINTER 4
 #define LIST 5
+#define STACK 6
+#define TREE 7
 
 
 

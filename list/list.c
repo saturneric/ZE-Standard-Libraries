@@ -121,21 +121,6 @@ int initMallocValueForNode(Node *p_node, int type, void *p_value) {
     return 0;
 }
 
-void init_rand(void) {
-    srand((unsigned)time(NULL));
-}
-
-unsigned long long getId(void) {
-    int i;
-    unsigned long long id = 0;
-    id = ((rand() % 9) + 1);
-    for (i = 0; i < 15; i++) {
-        id *= 10;
-        id += rand() % 10;
-    }
-    return id;
-}
-
 int insertInHead(List *p_list, Node *p_node) {
     if (isListEmpty(p_list)) {
         p_list->head = p_node;

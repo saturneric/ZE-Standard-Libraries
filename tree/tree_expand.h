@@ -21,4 +21,7 @@ int printTNode(TNode *p_tnode, int priority);
 unsigned long long calTreeMemory(Tree *);
 int _doCalTreeMemory(TNode *p_tnode, unsigned long long height);
 
+List *treeToList(Tree *p_tree);
+
+
 #endif

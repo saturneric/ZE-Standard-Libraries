@@ -6,6 +6,7 @@
 #include <string.h>
 #include <time.h>
 #include "../type/type.h"
+#include "../id/id.h"
 
 typedef struct Node{
     unsigned long long id;//唯一标识符
@@ -33,10 +34,6 @@ List *initList(void);
 Node *initNode(void);
 
 int initMallocValueForNode(Node *,int,void *);//赋予已分配内存的值，并标明类型
-
-/*有关id的函数*/
-void init_rand(void);
-unsigned long long getId(void);
 
 /*插入函数*/
 int insertInHead(List *p_list, Node *p_node);
