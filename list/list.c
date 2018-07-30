@@ -83,6 +83,7 @@ Node *initNode(void) {
     Node *p_node = (Node *)malloc(sizeof(Node));
     Node *prec_node = NULL;
     p_node->id = getId();
+    p_node->s_id = getS_id(LIST_NODE, 2);
     p_node->if_malloc = 0;
     p_node->next = NULL;
     p_node->last = NULL;
@@ -101,6 +102,7 @@ List *initList(void) {
     Node *p_node;
     List *p_list = (List *)malloc(sizeof(List));
     p_list->id = getId();
+    p_list->s_id = getS_id(LIST, 1);
     p_list->head = NULL;
     p_list->tail = NULL;
     p_list->length = 0;
@@ -114,7 +116,7 @@ List *initList(void) {
     return p_list;
 }
 
-int initMallocValueForNode(Node *p_node, int type, void *p_value) {
+int initMallocValueForNode(Node *p_node, unsigned int type, void *p_value) {
     p_node->if_malloc = 1;
     p_node->type = type;
     p_node->value = p_value;
@@ -212,12 +214,12 @@ unsigned long long len(List *p_list) {
     return p_list->length;
 }
 
-int removeById(List *p_list, unsigned long long id) {
+int removeById(List *p_list, const SID *s_id) {
     Node *tmp = p_list->head;
     if (isListEmpty(p_list))
         return -1;
     do {
-        if (tmp->id == id) {
+        if (simFitS_id(tmp->s_id, s_id)) {
             if (tmp != p_list->head) {
                 tmp->last->next = tmp->next;
             }
@@ -298,13 +300,13 @@ int popFromTail(List *p_list) {
 }
 
 /*该函数算法需要改进*/
-Node *findByIdForNode(List *p_list, const unsigned long long id) {
+Node *findByIdForNode(List *p_list, const SID *s_id) {
     Node *ph_node = p_list->head;
     Node *pt_node = p_list->tail;
     int direction = 0;
     while (ph_node != pt_node) {
         if (direction == 0) {
-            if (ph_node->id == id) {
+            if (simFitS_id(ph_node->s_id, s_id)) {
                 return ph_node;
             }
             else {
@@ -313,7 +315,7 @@ Node *findByIdForNode(List *p_list, const unsigned long long id) {
             direction = 1;
         }
         else {
-            if (pt_node->id == id) {
+            if (simFitS_id(pt_node->s_id, s_id)) {
                 return pt_node;
             }
             else {
@@ -325,7 +327,7 @@ Node *findByIdForNode(List *p_list, const unsigned long long id) {
 }
 
 
-Node *findByValue(List *p_list, int type, const void *value) {
+Node *findByValue(List *p_list, unsigned int type, const void *value) {
     Node *p_node = p_list->head;
     while (p_node != NULL) {
         if (p_node->type != type) {
@@ -360,7 +362,7 @@ Node *findByValue(List *p_list, int type, const void *value) {
     return NULL;
 }
 
-List *mply_findByValue(List *p_list, int type, const void *value) {
+List *mply_findByValue(List *p_list, unsigned int type, const void *value) {
     List *f_list = initList();
     Node *p_node = p_list->head;
     while (p_node != NULL) {

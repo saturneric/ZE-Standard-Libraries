@@ -3,7 +3,6 @@
 
 int list(void) {
 	List *t_list, *m_list;;
-	init_rand();
 	safeModeForNode(1);
 	t_list = initList();
 
@@ -83,7 +82,12 @@ int stack(void) {
 
 
 int main(int argc, char **argv) {
-	tree();
+	//tree();
+    init_rand();
+    SID *p_sid = getS_id(LIST_NODE, 3);
+    char *string = s_idToASCIIString(p_sid);
+    SID *t_sid = asciiStringToS_id(string);
+    int if_same = simFitS_id(p_sid, t_sid);
 	getchar();
 	return 0;
 }

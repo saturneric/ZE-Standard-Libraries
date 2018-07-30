@@ -1,7 +1,7 @@
 #include"tree.h"
 
-static unsigned long long target_id = 0;
-static TNode *target_value_id = NULL;
+static SID *target_sid = NULL;
+static TNode *target_value_sid = NULL;
 static int if_safeModeForTree = 0;
 
 int safeModeForTree(int ifon) {
@@ -32,6 +32,7 @@ TNode *initTNode(void) {
 	Node *s_node;
 	TNode *p_tnode = (TNode *)malloc(sizeof(TNode));
 	p_tnode->id = getId();
+    p_tnode->s_id = getS_id(TREE_NODE, 2);
 	p_tnode->child_num = 0;
 	p_tnode->father = NULL;
 	p_tnode->if_malloc = 0;
@@ -61,6 +62,7 @@ Tree *initTree(void) {
 	Node *s_node;
 	Tree *p_tree = (Tree *)malloc(sizeof(Tree));
 	p_tree->id = getId();
+    p_tree->s_id = getS_id(TREE, 1);
 	p_tree->root = NULL;
 	if (if_safeModeForTree) {
 		if (if_safeModeForNode) {
@@ -80,7 +82,7 @@ Tree *initTree(void) {
 	return p_tree;
 }
 
-int *initMallocValueForTNode(TNode *p_tnode, int type, void *value) {
+int *initMallocValueForTNode(TNode *p_tnode, unsigned int type, void *value) {
 	p_tnode->type = type;
 	p_tnode->value = value;
 	p_tnode->if_malloc = 1;
@@ -144,22 +146,22 @@ int removeChildInRight(TNode *p_tnode) {
 }
 
 
-TNode *getChildById(TNode *p_tnode, unsigned long long id) {
+TNode *getChildById(TNode *p_tnode, const SID *s_id) {
 	List *p_home = p_tnode->home;
-	target_id = 0;
-	target_value_id = NULL;
+	target_sid = NULL;
+	target_value_sid = NULL;
 	listThrough(p_home, _dogetChildById);
-	if (target_value_id != NULL) {
-		return target_value_id;
+	if (target_value_sid != NULL) {
+		return target_value_sid;
 	}
 	return NULL;
 }
 
-int _dogetChildById(int type, void *value) {
+int _dogetChildById(unsigned int type, void *value) {
 	if (type == POINTER) {
 		TNode *p_tode = (TNode *)value;
-		if (p_tode->id == target_id) {
-			target_value_id = p_tode;
+		if (simFitS_id(p_tode->s_id, target_sid)) {
+			target_value_sid = p_tode;
 			return -1;
 		}
 	}
@@ -170,7 +172,7 @@ static int target_type = VOID;
 static void *target_value = NULL;
 static TNode *target_value_value = NULL;
 
-TNode *getChildByValue(TNode *p_tnode, int type, void *value) {
+TNode *getChildByValue(TNode *p_tnode, unsigned int type, void *value) {
 	List *p_home = p_tnode->home;
 	target_value = value;
 	target_type = type;
@@ -182,7 +184,7 @@ TNode *getChildByValue(TNode *p_tnode, int type, void *value) {
 	return NULL;
 }
 
-int _dogetChildByValue(int type, void *value) {
+int _dogetChildByValue(unsigned int type, void *value) {
 	if (type == target_type) {
 		TNode *p_tode = (TNode *)value;
 		if (target_type == INT) {
@@ -221,12 +223,12 @@ int _dogetChildByValue(int type, void *value) {
 	return 0;
 }
 
-int removeChildById(TNode *p_tnode, unsigned long long id) {
-	TNode *t_tnode = getChildById(p_tnode, id);
+int removeChildById(TNode *p_tnode, const SID *s_id) {
+	TNode *t_tnode = getChildById(p_tnode, s_id);
 	if (t_tnode != NULL) {
 		TNode *p_fnode = t_tnode->father;
 		p_fnode->child_num--;
-		removeById(p_fnode->home, t_tnode->room->id);
+		removeById(p_fnode->home, t_tnode->room->s_id);
 		releaseOnlyNode(t_tnode->room);
 		t_tnode->room = NULL;
 		return 0;
@@ -234,12 +236,12 @@ int removeChildById(TNode *p_tnode, unsigned long long id) {
 	return -1;
 }
 
-int removeChildByValue(TNode *p_tnode, int type, void *value) {
+int removeChildByValue(TNode *p_tnode, unsigned int type, void *value) {
 	TNode *t_tnode = getChildByValue(p_tnode, type, value);
 	if (t_tnode != NULL) {
 		TNode *p_fnode = t_tnode->father;
 		p_fnode->child_num--;
-		removeById(p_fnode->home, t_tnode->room->id);
+		removeById(p_fnode->home, t_tnode->room->s_id);
 		releaseOnlyNode(t_tnode->room);
 		t_tnode->room = NULL;
 		return 0;
@@ -282,7 +284,7 @@ int removeChildByIndex(TNode *p_tnode, unsigned long long index) {
 	if (t_tnode != NULL) {
 		TNode *p_fnode = t_tnode->father; 
 		p_fnode->child_num--;
-		removeById(p_fnode->home, t_tnode->room->id);
+		removeById(p_fnode->home, t_tnode->room->s_id);
 		releaseOnlyNode(t_tnode->room);
 		t_tnode->room = NULL;
 		return 0;
@@ -373,7 +375,7 @@ int releaseTNode(TNode *p_tnode) {
 	if (p_tnode->child_num == 0) {
 		releaseList(p_tnode->home);
 		if (p_tnode->father != NULL) {
-			removeChildById(p_tnode->father, p_tnode->id);
+			removeChildById(p_tnode->father, p_tnode->s_id);
 		}
 		if (p_tnode->type != POINTER) {
 			if (p_tnode->type == LIST) {

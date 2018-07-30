@@ -6,21 +6,25 @@
 
 typedef struct stack_node{
     unsigned long long id;
-    int if_malloc;
-    int type;
+    SID *s_id;
+    _Bool if_malloc;
+    _Bool if_sid;
+    unsigned int type;
     void *value;
     struct stack_node *next;
 } SNode;
 
 typedef struct stack{
     unsigned long long id;
+    SID *s_id;
     unsigned long long length;
     SNode *top;
+    _Bool if_sid;
 } Stack;
 
 Stack *initStack(void);
 SNode *initSNode(void);
-int initMallocValueForSNode(SNode *p_snode, int type, void *value);
+int initMallocValueForSNode(SNode *p_snode, unsigned int type, void *value);
 
 SNode *popStack(Stack *p_stack);
 int pushStack(Stack *p_stack, SNode *p_snode);

@@ -3,6 +3,7 @@
 Stack *initStack(void) {
     Stack *p_stack = (Stack *)malloc(sizeof(Stack));
     p_stack->id = getId();
+    p_stack->s_id = getS_id(STACK, 1);
     p_stack->length = 0;
     p_stack->top = NULL;
     return p_stack;
@@ -11,6 +12,7 @@ Stack *initStack(void) {
 SNode *initSNode(void) {
     SNode *p_snode = (SNode *)malloc(sizeof(SNode));
     p_snode->id = getId();
+    p_snode->s_id = getS_id(STACK_NODE, 2);
     p_snode->if_malloc = 0;
     p_snode->next = NULL;
     p_snode->value = NULL;
@@ -60,7 +62,7 @@ int releaseSNode(SNode *p_snode) {
     return 0;
 }
 
-int initMallocValueForSNode(SNode *p_snode, int type, void *value) {
+int initMallocValueForSNode(SNode *p_snode, unsigned int type, void *value) {
     p_snode->if_malloc = 1;
     p_snode->type = type;
     p_snode->value = value;

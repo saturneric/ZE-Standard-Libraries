@@ -50,7 +50,7 @@ Node *findByIndexForNode(List *p_list, unsigned long long m_index) {
 	return p_node;
 }
 
-int listThrough(List *p_list, int(*p_func)(int, void *)) {
+int listThrough(List *p_list, int(*p_func)(unsigned int, void *)) {
 	Node *p_node = p_list->head;
 	while (p_node != NULL) {
 		if (p_node->if_malloc == 1) {

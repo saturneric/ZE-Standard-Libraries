@@ -7,18 +7,22 @@
 typedef struct tree_node
 {
 	unsigned long long id;
+    SID *s_id;
 	List *home;
 	struct tree_node *father;
 	Node *room;
 	unsigned long long child_num;
-	int type;
+	unsigned int type;
 	void *value;
-	int if_malloc;
+	_Bool if_malloc;
+    _Bool if_sid;
 }TNode;
 
 typedef struct tree
 {
 	unsigned long long id;
+    SID *s_id;
+    _Bool if_sid;
 	TNode *root;
 }Tree;
 
@@ -28,7 +32,7 @@ int releaseAllForTree(void);
 
 TNode *initTNode(void);
 Tree *initTree(void);
-int *initMallocValueForTNode(TNode *p_tnode, int type, void *value);
+int *initMallocValueForTNode(TNode *p_tnode, unsigned int type, void *value);
 
 int addChildInLeft(TNode *f_tnode, TNode *c_tnode);
 int addChildInRight(TNode *f_tnode, TNode *c_tnode);
@@ -36,19 +40,19 @@ TNode *getBrotherInLeft(TNode *p_tnode);
 TNode *getBrotherInRight(TNode *p_node);
 int removeChildInLeft(TNode *p_tnode);
 int removeChildInRight(TNode *p_tnode);
-TNode *getChildById(TNode *p_tnode, unsigned long long id);
-TNode *getChildByValue(TNode *p_tnode, int type, void *value);
+TNode *getChildById(TNode *p_tnode, const SID *s_id);
+TNode *getChildByValue(TNode *p_tnode, unsigned int type, void *value);
 TNode *getChildByIndex(TNode *p_tnode, unsigned long long index);
 unsigned long long getIndexByChild(TNode *f_tnode, TNode *c_tnode);
-int removeChildById(TNode *p_tnode, unsigned long long id);
+int removeChildById(TNode *p_tnode, const SID *s_id);
 int removeChildByIndex(TNode *p_tnode, unsigned long long index);
-int removeChildByValue(TNode *p_tnode, int type, void *value);
+int removeChildByValue(TNode *p_tnode, unsigned int type, void *value);
 int TreeThroughDown(Tree *p_tree, int(*func)(TNode *, unsigned long long height));
 int TreeThroughUp(Tree *p_tree, int(*func)(TNode *, unsigned long long height));
 int TreeTravel(Tree *p_tree, int(*func)(TNode *, unsigned long long height));
 
-int _dogetChildById(int type, void *value);
-int _dogetChildByValue(int type, void *value);
+int _dogetChildById(unsigned int type, void *value);
+int _dogetChildByValue(unsigned int type, void *value);
 int _doreleaseTree(TNode *p_tnode, unsigned long long height);
 int _doTreeThroughDown(TNode *p_tnode, int height, int(*func)(TNode *, unsigned long long height));
 int _doTreeThroughUp(TNode *p_tnode, int height, int(*func)(TNode *, unsigned long long height));
@@ -64,8 +68,8 @@ static int target_type;
 static void *target_value;
 static TNode *target_value_value;
 
-static unsigned long long target_id;
-static TNode *target_value_id;
+static SID *target_sid;
+static TNode *target_value_sid;
 
 static List *tree_list;
 static List *tnode_list;

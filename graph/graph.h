@@ -4,14 +4,14 @@
 #include "../list/list_expand.h"
 
 typedef struct GNode{
-	unsigned long long id;
+    SID *s_id;
 	void *value;
 	List *routes;
 	int if_setValue;
 }GNode;
 
 typedef struct route{
-	unsigned long long id;
+    SID *s_id;
 	double distance;
 	int if_setValue;
 	GNode from, to;
