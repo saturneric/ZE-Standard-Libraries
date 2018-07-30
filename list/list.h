@@ -9,8 +9,7 @@
 #include "../id/id.h"
 
 typedef struct Node{
-    unsigned long long id;//唯一标识符
-    SID *s_id;
+    SID *s_id;//唯一标识符
     void *value;
     _Bool if_malloc;//记录是否已经初始化值
     _Bool if_sid;
@@ -21,8 +20,7 @@ typedef struct Node{
 
 
 typedef struct List{
-    unsigned long long id;//唯一标识符
-    SID *s_id;
+    SID *s_id;//唯一标识符
     Node *head;
     Node *tail;
     unsigned long long length;//链表长度

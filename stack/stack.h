@@ -5,7 +5,6 @@
 #include "../list/list_expand.h"
 
 typedef struct stack_node{
-    unsigned long long id;
     SID *s_id;
     _Bool if_malloc;
     _Bool if_sid;
@@ -15,7 +14,6 @@ typedef struct stack_node{
 } SNode;
 
 typedef struct stack{
-    unsigned long long id;
     SID *s_id;
     unsigned long long length;
     SNode *top;

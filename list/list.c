@@ -82,7 +82,6 @@ int releaseAllForNode(void) {
 Node *initNode(void) {
     Node *p_node = (Node *)malloc(sizeof(Node));
     Node *prec_node = NULL;
-    p_node->id = getId();
     p_node->s_id = getS_id(LIST_NODE, 2);
     p_node->if_malloc = 0;
     p_node->next = NULL;
@@ -101,7 +100,6 @@ Node *initNode(void) {
 List *initList(void) {
     Node *p_node;
     List *p_list = (List *)malloc(sizeof(List));
-    p_list->id = getId();
     p_list->s_id = getS_id(LIST, 1);
     p_list->head = NULL;
     p_list->tail = NULL;
@@ -172,7 +170,7 @@ int releaseNode(Node *p_node) {
     p_node->next = NULL;
     p_node->type = VOID;
     p_node->value = NULL;
-    p_node->id = 0;
+    freeS_id(p_node->s_id);
     p_node->if_malloc = 0;
     free(p_node);
     return 0;
@@ -196,7 +194,7 @@ int releaseList(List *p_list) {
     p_list->head = NULL;
     p_list->tail = NULL;
     p_list->length = 0;
-    p_list->id = 0;
+    freeS_id(p_list->s_id)
     free(p_list);
     return 0;
 }
@@ -204,7 +202,7 @@ int releaseList(List *p_list) {
 int releaseListForSingle(List *p_list) {
     p_list->head = NULL;
     p_list->tail = NULL;
-    p_list->id = 0;
+    freeS_id(p_list->s_id);
     p_list->length = 0;
     free(p_list);
     return 0;
@@ -424,7 +422,7 @@ int exchangeLocation(Node *p_node, Node *t_node) {
 
 Node *copyNode(Node *p_node) {
     Node *t_node = initNode();
-    t_node->id = p_node->id;
+    t_node->s_id = p_node->s_id;
     t_node->last = p_node->last;
     t_node->next = p_node->next;
     t_node->if_malloc = p_node->if_malloc;
@@ -450,7 +448,7 @@ List *copyList(List *p_list) {
 }
 
 int releaseOnlyNode(Node *p_node) {
-    p_node->id = 0;
+    freeS_id(p_node->s_id);
     p_node->if_malloc = 0;
     p_node->last = NULL;
     p_node->next = NULL;

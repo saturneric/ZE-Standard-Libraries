@@ -37,5 +37,6 @@ char *s_idToASCIIString(const SID *s_id);
 SID *asciiStringToS_id(const char *string);
 
 SID *initS_id(unsigned int deep_level);
+int freeS_id(SID *s_id);
 
 #endif /* id_h */

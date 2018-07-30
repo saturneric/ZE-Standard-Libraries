@@ -6,7 +6,6 @@
 
 typedef struct tree_node
 {
-	unsigned long long id;
     SID *s_id;
 	List *home;
 	struct tree_node *father;
@@ -20,7 +19,6 @@ typedef struct tree_node
 
 typedef struct tree
 {
-	unsigned long long id;
     SID *s_id;
     _Bool if_sid;
 	TNode *root;

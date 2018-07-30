@@ -31,7 +31,6 @@ int safeModeForTree(int ifon) {
 TNode *initTNode(void) {
 	Node *s_node;
 	TNode *p_tnode = (TNode *)malloc(sizeof(TNode));
-	p_tnode->id = getId();
     p_tnode->s_id = getS_id(TREE_NODE, 2);
 	p_tnode->child_num = 0;
 	p_tnode->father = NULL;
@@ -61,7 +60,6 @@ TNode *initTNode(void) {
 Tree *initTree(void) {
 	Node *s_node;
 	Tree *p_tree = (Tree *)malloc(sizeof(Tree));
-	p_tree->id = getId();
     p_tree->s_id = getS_id(TREE, 1);
 	p_tree->root = NULL;
 	if (if_safeModeForTree) {
@@ -270,7 +268,7 @@ unsigned long long getIndexByChild(TNode *f_tnode, TNode *c_tnode) {
 	int m_index = 0;
 	while (p_node != NULL) {
 		TNode *p_tnode = (TNode *)p_node->value;
-		if (p_tnode->id == c_tnode->id) {
+		if (p_tnode->s_id == c_tnode->s_id) {
 			return m_index;
 		}
 		m_index++;
@@ -387,7 +385,7 @@ int releaseTNode(TNode *p_tnode) {
 		}
 		p_tnode->value = NULL;
 		p_tnode->type = VOID;
-		p_tnode->id = 0;
+        freeS_id(p_tnode->s_id);
 		p_tnode->if_malloc = 0;
 		free(p_tnode);
 	}
@@ -397,7 +395,7 @@ int releaseTNode(TNode *p_tnode) {
 int releaseTree(Tree *p_tree) {
 	TreeThroughUp(p_tree, _doreleaseTree);
 	p_tree->root = NULL;
-	p_tree->id = 0;
+    freeS_id(p_tree->s_id);
 	free(p_tree);
 	return 0;
 }
@@ -408,7 +406,7 @@ int _doreleaseTree(TNode *p_tnode, unsigned long long height) {
 }
 
 int releaseOnlyTree(Tree *p_tree) {
-	p_tree->id = 0;
+    freeS_id(p_tree->s_id);
 	p_tree->root = NULL;
 	free(p_tree);
 	return 0;
@@ -428,7 +426,7 @@ int releaseOnlyTNode(TNode *p_tnode) {
 	}
 	p_tnode->value = NULL;
 	p_tnode->type = VOID;
-	p_tnode->id = 0;
+    freeS_id(p_tnode->s_id);
 	p_tnode->if_malloc = 0;
 	free(p_tnode);
 	return 0;

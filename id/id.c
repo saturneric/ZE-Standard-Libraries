@@ -231,3 +231,20 @@ SID *asciiStringToS_id(const char *string){
     }
     return s_id;
 }
+
+int freeS_id(SID *s_id){
+    if(s_id->value != NULL){
+        free(s_id->value);
+        s_id->value = NULL;
+    }
+    if(s_id->value_deeper != NULL){
+        free(s_id->value_deeper);
+        s_id->value_deeper = NULL;
+    }
+    if(s_id->value_deepest != NULL){
+        free(s_id->value_deepest);
+        s_id->value_deepest = NULL;
+    }
+    free(s_id);
+    return 0;
+}
