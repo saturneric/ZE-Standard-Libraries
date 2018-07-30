@@ -64,7 +64,7 @@ int printTNode(TNode *p_tnode, int priority) {
 		if (priority == 0) printf("###");
 		else printf("#");
 
-		printf("TNode(id: %llu)\n", p_tnode->id);
+		printf("TNode(id: %s)\n", s_idToASCIIString(p_tnode->s_id));
 		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("ifMalloc: ");
 		if (p_tnode->if_malloc) {
@@ -102,7 +102,7 @@ int printTNodeWithHome(TNode *p_tnode,int priority) {
 	if (p_tnode != NULL) {
 		if (priority == 0) printf("###");
 		else printf("#");
-		printf("TNode(id: %llu)\n", p_tnode->id);
+		printf("TNode(id: %s)\n", s_idToASCIIString(p_tnode->s_id));
 		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("ifMalloc: ");
 		if (p_tnode->if_malloc) {
@@ -126,7 +126,7 @@ int printTNodeWithHome(TNode *p_tnode,int priority) {
 
 		if (p_tnode->father != NULL) {
 			for (i = 0; i < priority + 1; i++) printf("   ");
-			printf("Father id: %llu\n", p_tnode->father->id);
+			printf("Father id: %s\n", s_idToASCIIString(p_tnode->father->s_id));
 		}
 		else
 		{
@@ -158,7 +158,7 @@ int printTNodeWithFamily(TNode *p_tnode, int priority) {
 		for (i = 0; i < priority; i++) printf("   ");
 		if (priority == 0) printf("###");
 		else printf("#");
-		printf("TNode(id: %llu)\n", p_tnode->id);
+		printf("TNode(id: %s)\n", s_idToASCIIString(p_tnode->s_id));
 		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("ifMalloc: ");
 		if (p_tnode->if_malloc) {
@@ -182,7 +182,7 @@ int printTNodeWithFamily(TNode *p_tnode, int priority) {
 
 		if (p_tnode->father != NULL) {
 			for (i = 0; i < priority + 1; i++) printf("   ");
-			printf("Father id: %llu\n", p_tnode->father->id);
+			printf("Father id: %s\n", s_idToASCIIString(p_tnode->father->s_id));
 		}
 		else
 		{
@@ -208,7 +208,7 @@ int printTNodeWithFamily(TNode *p_tnode, int priority) {
 
 int printTree(Tree *p_tree) {
 	printf("###");
-	printf("Tree(id: %llu)",p_tree->id);
+	printf("Tree(id: %s)",s_idToASCIIString(p_tree->s_id));
 	printTNodeWithFamily(p_tree->root,0);
 	return 0;
 }

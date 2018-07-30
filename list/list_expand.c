@@ -93,7 +93,7 @@ void printListInfo(List *p_list, int priority) {
 	int i = 0;
 	Node *p_node;
 	for (i = 0; i < priority; i++) printf("   ");
-	printf("###LIST(location:%p, id:%llu){\n", p_list, p_list->id);
+	printf("###LIST(location:%p, id:%s){\n", p_list, s_idToASCIIString(p_list->s_id));
 	for (i = 0; i < priority + 1; i++) printf("   ");
 	printf("HEAD->%p / Tail->%p / Length:%llu\n", p_list->head, p_list->tail, p_list->length);
 	p_node = p_list->head;
@@ -141,7 +141,7 @@ void printList(List *p_list) {
 void printNodeInfo(Node *p_node, int priority) {
 	int i;
 	for (i = 0; i < priority; i++) printf("   ");
-	printf("#NODE(location:%p, id:%llu){\n", p_node, p_node->id);
+	printf("#NODE(location:%p, id:%s){\n", p_node, s_idToASCIIString(p_node->s_id));
 	for (i = 0; i < priority + 1; i++) printf("   ");
 	printf("NEXT->%p / LAST->%p / MALLOC:%d\n", p_node->next, p_node->last, p_node->if_malloc);
 	if (p_node->type == INT) {
@@ -171,7 +171,7 @@ void printNodeInfo(Node *p_node, int priority) {
 
 void printNode(Node *p_node) {
 	int i;
-	printf("#NODE(location:%p, id:%llu){\n", p_node, p_node->id);
+	printf("#NODE(location:%p, id:%s){\n", p_node, s_idToASCIIString(p_node->s_id));
 	printf("   ");
 	printf("NEXT->%p / LAST->%p\n", p_node->next, p_node->last);
 	for (i = 0; i < 1; i++) printf("   ");
@@ -321,7 +321,7 @@ unsigned long long getIndexByNode(List *p_list, Node *p_node) {
 	Node *t_node = p_list->head;
 	unsigned long long index = 0;
 	while (t_node != NULL) {
-		if (p_node->id == t_node->id) return index;
+		if (p_node->s_id == t_node->s_id) return index;
 		index++;
 		t_node = t_node->next;
 	}

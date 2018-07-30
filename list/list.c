@@ -33,7 +33,7 @@ int releaseSingleListForsafeModeForNode(List *p_list) {
     List *plv_node = NULL;
     while (p_node != NULL) {
         plv_node = (List *)p_node->value;
-        plv_node->id = 0;
+        freeS_id(plv_node->s_id);
         plv_node->head = NULL;
         plv_node->length = 0;
         plv_node->tail = NULL;
@@ -43,7 +43,7 @@ int releaseSingleListForsafeModeForNode(List *p_list) {
     p_list->head = NULL;
     p_list->length = 0;
     p_list->tail = NULL;
-    p_list->id = 0;
+    freeS_id(p_list->s_id);
     free(p_list);
     return 0;
 }
@@ -53,7 +53,7 @@ int releaseSingleNodeForsafeModeForNode(List *p_list) {
     Node *pnv_node = NULL;
     while (p_node != NULL) {
         pnv_node = (Node *)p_node->value;
-        pnv_node->id = 0;
+        freeS_id(pnv_node->s_id);
         pnv_node->if_malloc = 0;
         pnv_node->last = NULL;
         pnv_node->next = NULL;
@@ -62,7 +62,7 @@ int releaseSingleNodeForsafeModeForNode(List *p_list) {
         free(pnv_node);
         p_node = p_node->next;
     }
-    p_list->id = 0;
+    free(p_list->s_id);
     p_list->head = NULL;
     p_list->length = 0;
     p_list->tail = NULL;
@@ -194,7 +194,7 @@ int releaseList(List *p_list) {
     p_list->head = NULL;
     p_list->tail = NULL;
     p_list->length = 0;
-    freeS_id(p_list->s_id)
+    freeS_id(p_list->s_id);
     free(p_list);
     return 0;
 }
@@ -437,7 +437,7 @@ List *copyList(List *p_list) {
     List *t_list = initList();
     t_list->head = p_list->head;
     t_list->tail = p_list->tail;
-    t_list->id = p_list->id;
+    t_list->s_id = p_list->s_id;
     p_node = p_list->head;
     while (p_node != NULL) {
         t_node = copyNode(p_node);
