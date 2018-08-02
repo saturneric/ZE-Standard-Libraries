@@ -1,6 +1,6 @@
 #ifndef LIST_EXPAND_H
 #define LIST_EXPAND_H
-#include "list.h"
+#include "list.c"
 
 Node *nodeWithInt(int);//快速初始化一个单一值节点并赋值
 Node *nodeWithDouble(double);//快速初始化一个节单一值点并赋值
