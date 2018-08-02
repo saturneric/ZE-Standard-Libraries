@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "init_node:list.h">
+         <PersistentStrings>
+            <PersistentString
+               value = "list_list">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "releaseNULLList:list.h">
+      </ContextState>
+      <ContextState
+         contextName = "insertInTail:list.h">
+         <PersistentStrings>
+            <PersistentString
+               value = "node_list">
+            </PersistentString>
+            <PersistentString
+               value = "list_list">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "releaseMalloc:list.h">
+      </ContextState>
+      <ContextState
+         contextName = "init_list:list.h">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
