@@ -32,6 +32,7 @@ TNode *initTNode(void) {
 	Node *s_node;
 	TNode *p_tnode = (TNode *)malloc(sizeof(TNode));
     p_tnode->s_id = getS_id(TREE_NODE, 2);
+    p_tnode->if_sid = 1;
 	p_tnode->child_num = 0;
 	p_tnode->father = NULL;
 	p_tnode->if_malloc = 0;
@@ -61,6 +62,7 @@ Tree *initTree(void) {
 	Node *s_node;
 	Tree *p_tree = (Tree *)malloc(sizeof(Tree));
     p_tree->s_id = getS_id(TREE, 1);
+    p_tree->if_sid = 1;
 	p_tree->root = NULL;
 	if (if_safeModeForTree) {
 		if (if_safeModeForNode) {

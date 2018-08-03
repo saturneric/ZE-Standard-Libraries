@@ -52,32 +52,7 @@ int loadFromFile(FILE *fp,char* number) {
 	return 1;
 }
 
-int pushInfo(Info *p_info, const char *head, const char *body) {
-	p_info->head = (char *)malloc(sizeof(char) * strlen(head));
-	p_info->body = (char *)malloc(sizeof(char) * strlen(body));
-	strcpy(p_info->head, head);
-	strcpy(p_info->body, body);
-    return 0;
-}
-
-int pushError(unsigned int type, int pri, Info *p_info) {
-	Error error;
-	error.type = type;
-	error.priority = pri;
-	error.p_info = p_info;
-	error.time = time(NULL);
-    return 0;
-}
-
-int pushNotice(unsigned int type, Info *p_info) {
-	Notice notice;
-	notice.type = type;
-	notice.p_info = p_info;
-	notice.time = time(NULL);
-    return 0;
-}
-
-static int saveError(Error *p_error) {
+int saveError(Error *p_error) {
 	fprintf(logfile.fp,
 		"--------------------\n\
 		ERROR\n\
@@ -88,10 +63,10 @@ static int saveError(Error *p_error) {
 		%s\n\
 		%s\n\
 		---------------------\n",
-		p_error->type, p_error->priority, ctime( &(p_error->time) ), p_error->p_info->head, p_error->p_info->body);
+		p_error->type, p_error->priority, ctime( &(p_error->time) ), p_error->info.head, p_error->info.body);
     return 0;
 }
-static int saveNotice(Notice *p_notice) {
+int saveNotice(Notice *p_notice) {
 	fprintf(logfile.fp,
 		"--------------------\n\
 		NOTICE\n\
@@ -101,6 +76,6 @@ static int saveNotice(Notice *p_notice) {
 		%s\n\
 		%s\n\
 		----------------------\n",
-		p_notice->type, ctime( &(p_notice->time) ), p_notice->p_info->head, p_notice->p_info->body);
+		p_notice->type, ctime( &(p_notice->time) ), p_notice->info.head, p_notice->info.body);
     return 0;
 }

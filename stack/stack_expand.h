@@ -1,7 +1,6 @@
 #ifndef STACK_EXPAND_H
 #define STACK_EXPAND_H
 
-#include <string.h>
 #include "stack.h"
 
 SNode *snodeWithInt(int);

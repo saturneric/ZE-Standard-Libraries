@@ -83,6 +83,7 @@ Node *initNode(void) {
     Node *p_node = (Node *)malloc(sizeof(Node));
     Node *prec_node = NULL;
     p_node->s_id = getS_id(LIST_NODE, 2);
+    p_node->if_sid = 1;
     p_node->if_malloc = 0;
     p_node->next = NULL;
     p_node->last = NULL;
@@ -101,6 +102,7 @@ List *initList(void) {
     Node *p_node;
     List *p_list = (List *)malloc(sizeof(List));
     p_list->s_id = getS_id(LIST, 1);
+    p_list->if_sid = 1;
     p_list->head = NULL;
     p_list->tail = NULL;
     p_list->length = 0;
@@ -297,7 +299,6 @@ int popFromTail(List *p_list) {
     return 0;
 }
 
-/*该函数算法需要改进*/
 Node *findByIdForNode(List *p_list, const SID *s_id) {
     Node *ph_node = p_list->head;
     Node *pt_node = p_list->tail;
@@ -330,7 +331,7 @@ Node *findByValue(List *p_list, unsigned int type, const void *value) {
     while (p_node != NULL) {
         if (p_node->type != type) {
             p_node = p_node->next;
-            continue;//跳过不合类型的节点
+            continue;
         }
         if (type == INT) {
             if (*((int *)p_node->value) == *((int *)value)) {
@@ -455,5 +456,97 @@ int releaseOnlyNode(Node *p_node) {
     p_node->type = VOID;
     p_node->value = NULL;
     free(p_node);
+    return 0;
+}
+
+int releaseNodeForCustom(Node *p_node, int (*func)(void *)){
+    if (if_safeModeForNode == 1) {
+        removeByNode(node_list, p_node);
+    }
+    if (p_node->if_malloc == 1) {
+        if (!func(p_node->value))
+            showError(pushError(LIST_NODE, STANDARD, initInfo("releaseNodeForCustom()", "Error in using custom freeing value function.")));
+        p_node->value = NULL;
+    }
+    p_node->last = NULL;
+    p_node->next = NULL;
+    p_node->type = VOID;
+    p_node->value = NULL;
+    freeS_id(p_node->s_id);
+    p_node->if_malloc = 0;
+    free(p_node);
+    return 0;
+}
+
+int releaseListForCustom(List *p_list, int (*func)(void *)){
+    Node *p_node, *pl_node;
+    p_node = p_list->head;
+    if (if_safeModeForNode == 1) {
+        Node *tar_list = findByValue(list_list, POINTER, (void *)p_list);
+        removeByNode(list_list, tar_list);
+    }
+    while (p_node != NULL) {
+        pl_node = p_node;
+        p_node = p_node->next;
+        pl_node->next = NULL;
+        pl_node->last = NULL;
+        releaseNodeForCustom(pl_node,func);
+    }
+    p_list->head = NULL;
+    p_list->tail = NULL;
+    p_list->length = 0;
+    freeS_id(p_list->s_id);
+    free(p_list);
+    return  0;
+}
+
+int pushInfo(Info *p_info, const char *head, const char *body) {
+    strcpy(p_info->head, head);
+    strcpy(p_info->body, body);
+    return 0;
+}
+
+Error *pushError(unsigned int type, int pri, Info *p_info) {
+    Error *p_error  = (Error *)malloc(sizeof(Error));
+    p_error->type = type;
+    p_error->priority = pri;
+    p_error->info = *p_info;
+    p_error->time = time(NULL);
+    free(p_info);
+    return p_error;
+}
+
+Notice *pushNotice(unsigned int type, Info *p_info) {
+    Notice *p_notice = (Notice *)malloc(sizeof(Notice));
+    p_notice->type = type;
+    p_notice->info = *p_info;
+    p_notice->time = time(NULL);
+    free(p_info);
+    return p_notice;
+}
+
+Info *initInfo(const char *head, const char *body){
+    Info *p_info = (Info *)malloc(sizeof(Info));
+    pushInfo(p_info, head, body);
+    return p_info;
+}
+
+int showError(Error *p_error){
+    printf("\n");
+    for (int i = 0; i < p_error->priority; i++) {
+        printf("!");
+    }
+    
+    printf("(Error) %s\n",asctime(localtime(&p_error->time)));
+    printf("%s: %s.\n",p_error->info.head,p_error->info.body);
+    free(p_error);
+    return 0;
+}
+
+int showWarning(Notice *p_notice){
+    printf("\n@");
+    printf("(Warning) %s\n",asctime(localtime(&p_notice->time)));
+    printf("%s: %s.\n",p_notice->info.head,p_notice->info.body);
+    free(p_notice);
     return 0;
 }
