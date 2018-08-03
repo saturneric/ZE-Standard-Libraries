@@ -3,10 +3,33 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "init_node:list.h">
+         contextName = "freeS_id:id.c">
+      </ContextState>
+      <ContextState
+         contextName = "asciiStringToS_id:id.c">
          <PersistentStrings>
             <PersistentString
-               value = "list_list">
+               value = "buff[string_len-1]">
+            </PersistentString>
+            <PersistentString
+               value = "5 + i * 5 + j">
+            </PersistentString>
+            <PersistentString
+               value = "s_id-&gt;value[i]">
+            </PersistentString>
+            <PersistentString
+               value = "strlen(string)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "s_idToASCIIString:id.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "sizeof(char)">
+            </PersistentString>
+            <PersistentString
+               value = "buff[buff_count]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -28,7 +51,26 @@
          contextName = "releaseMalloc:list.h">
       </ContextState>
       <ContextState
+         contextName = "init_node:list.h">
+         <PersistentStrings>
+            <PersistentString
+               value = "list_list">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "initS_id:id.c">
+      </ContextState>
+      <ContextState
          contextName = "init_list:list.h">
+      </ContextState>
+      <ContextState
+         contextName = "main:test.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "strlen(string)">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
    </ContextStates>
 </VariablesViewState>

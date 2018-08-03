@@ -4,27 +4,6 @@
 #include <stdio.h>
 #include "../list/list_expand.h"
 
-typedef struct tree_node
-{
-    SID *s_id;
-	List *home;
-	struct tree_node *father;
-	Node *room;
-	unsigned long long child_num;
-	unsigned int type;
-	void *value;
-	_Bool if_malloc;
-    _Bool if_sid;
-}TNode;
-
-typedef struct tree
-{
-    SID *s_id;
-    _Bool if_sid;
-	TNode *root;
-}Tree;
-
-
 int safeModeForTree(int ifon);
 int releaseAllForTree(void);
 

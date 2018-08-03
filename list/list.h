@@ -1,30 +1,7 @@
 #ifndef LIST_H
 #define LIST_H
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
 #include "../type/type.h"
 #include "../id/id.h"
-
-typedef struct Node{
-    SID *s_id;
-    void *value;
-    _Bool if_malloc;
-    _Bool if_sid;
-    unsigned int type;
-    struct Node *next;
-    struct Node *last;
-} Node;
-
-
-typedef struct List{
-    SID *s_id;
-    Node *head;
-    Node *tail;
-    unsigned long long length;
-} List;
 
 int safeModeForNode(int ifon);
 int releaseSingleListForsafeModeForNode(List *p_list);
@@ -55,12 +32,24 @@ Node *findByValue(List *p_list, unsigned int type, const void *value);
 List *mply_findByValue(List *p_list, unsigned int type, const void *value);
 
 int releaseList(List *p_list);
+int releaseListForCustom(List *p_list, int (*func)(void *));
 int releaseListForSingle(List *p_list);
 int releaseNode(Node *p_node);
+int releaseNodeForCustom(Node *p_node, int (*func)(void *));
 int releaseOnlyNode(Node *p_node);
 
 int isListEmpty(List *p_list);
 List *copyList(List *p_list);
+
+int pushInfo(Info *p_info, const char *head,const char *body);
+Error *pushError(unsigned int type, int pri, Info *p_info);
+Notice *pushNotice(unsigned int type, Info *p_info);
+
+Info *initInfo(const char *head, const char *body);
+Error *createError(Info *info,unsigned int type,int pri);
+Notice *createWarning(Info *info, unsigned int type, int pri);
+int showError(Error *);
+int showWarning(Notice *);
 
 static int if_safeModeForNode;
 static List *node_list;

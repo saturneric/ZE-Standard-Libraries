@@ -222,6 +222,6 @@ unsigned long long calTreeMemory(Tree *p_tree){
 }
 
 int _doCalTreeMemory(TNode *p_tnode, unsigned long long height){
-    tnodes_size += sizeof(p_tnode) + sizeof(*p_tnode->value);
+    tnodes_size += sizeof(p_tnode);
     return 0;
 }

@@ -8,8 +8,15 @@ int safeModeForTree(int ifon) {
 	if (ifon == 1) {
 		if (tnode_list == NULL && tree_list == NULL) {
 			tnode_list = (List *)malloc(sizeof(List));
+            if(tnode_list == NULL){
+                showError(pushError(TREE_NODE, HIGH, initInfo("safeModeForTree()", "Error in get the memory of tnode_list.")));
+                return -1;
+            }
 			tree_list = (List *)malloc(sizeof(List));
-
+            if(tree_list == NULL){
+                showError(pushError(TREE_NODE, HIGH, initInfo("safeModeForTree()", "Error in get the memory of tree_list.")));
+                return -1;
+            }
 			tree_list->head = NULL;
 			tree_list->length = 0;
 			tree_list->tail = NULL;
@@ -31,7 +38,12 @@ int safeModeForTree(int ifon) {
 TNode *initTNode(void) {
 	Node *s_node;
 	TNode *p_tnode = (TNode *)malloc(sizeof(TNode));
+    if(p_tnode == NULL){
+        showError(pushError(TREE_NODE, STANDARD, initInfo("initTNode()", "Error in get the memory of tnode.")));
+        return NULL;
+    }
     p_tnode->s_id = getS_id(TREE_NODE, 2);
+    p_tnode->if_sid = 1;
 	p_tnode->child_num = 0;
 	p_tnode->father = NULL;
 	p_tnode->if_malloc = 0;
@@ -60,7 +72,12 @@ TNode *initTNode(void) {
 Tree *initTree(void) {
 	Node *s_node;
 	Tree *p_tree = (Tree *)malloc(sizeof(Tree));
+    if(p_tree == NULL){
+        showError(pushError(TREE, STANDARD, initInfo("initTree()", "Error in get the memory of tree.")));
+        return NULL;
+    }
     p_tree->s_id = getS_id(TREE, 1);
+    p_tree->if_sid = 1;
 	p_tree->root = NULL;
 	if (if_safeModeForTree) {
 		if (if_safeModeForNode) {
