@@ -1,11 +1,3 @@
-//
-//  id.h
-//  ZE-Standard-Libraries
-//
-//  Created by 胡一兵 on 2018/7/25.
-//  Copyright © 2018年 ZE. All rights reserved.
-//
-
 #ifndef id_h
 #define id_h
 
@@ -23,11 +15,9 @@ typedef struct s_id{
     unsigned int deep;
 }SID;
 
-/*有关id的函数*/
 void init_rand(void);
 unsigned long long getId(void);
 
-/*有关s_id函数*/
 SID *getS_id(unsigned int type ,unsigned int deep_level);
 
 int fitS_id(const SID *fs_id, const SID *ss_id);
