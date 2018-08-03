@@ -173,7 +173,7 @@ char *s_idToASCIIString(const SID *s_id){
 SID *asciiStringToS_id(const char *string){
     SID *s_id = NULL;
     unsigned long long string_len = strlen(string);
-    unsigned int buff[string_len - 1];
+    unsigned int *buff = (unsigned int *) malloc(sizeof(string_len - 1));
     for(int i = 0; i < string_len; i++){
         buff[i] = string[i] - 48;
     }
@@ -221,6 +221,7 @@ SID *asciiStringToS_id(const char *string){
             (*s_id->value_deepest)[i] /= 10;
         }
     }
+    free(buff);
     return s_id;
 }
 

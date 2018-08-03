@@ -9,15 +9,13 @@ int initErrorSystem(void) {
 
 int setLogDirectory(const char *path) {
 	logfile.id = getId();
-	int memory_space = strlen(path) + 256;
+	unsigned long memory_space = strlen(path) + 256;
 	char *file_path = (char *)malloc(sizeof(char)*memory_space);
 
-	//建立完整的文件路径
 	strcat(file_path, path);
 	strcat(file_path, "log");
-	sprintf(file_path, "%d", logfile.id);
+	sprintf(file_path, "%lu", logfile.id);
 
-	//打开文件,若失败,返回0
 	if ((logfile.fp = fopen(file_path, "w")) == NULL) {
 		printf("Cannot set logfile!");
 		return 0;
@@ -46,6 +44,7 @@ int closeLogDirectory(void) {
 	if_error = 0;
 	fclose(logfile.fp);
 	logfile.if_enable = 0;
+    return 0;
 }
 
 int loadFromFile(FILE *fp,char* number) {
@@ -58,6 +57,7 @@ int pushInfo(Info *p_info, const char *head, const char *body) {
 	p_info->body = (char *)malloc(sizeof(char) * strlen(body));
 	strcpy(p_info->head, head);
 	strcpy(p_info->body, body);
+    return 0;
 }
 
 int pushError(unsigned int type, int pri, Info *p_info) {
@@ -66,6 +66,7 @@ int pushError(unsigned int type, int pri, Info *p_info) {
 	error.priority = pri;
 	error.p_info = p_info;
 	error.time = time(NULL);
+    return 0;
 }
 
 int pushNotice(unsigned int type, Info *p_info) {
@@ -73,6 +74,7 @@ int pushNotice(unsigned int type, Info *p_info) {
 	notice.type = type;
 	notice.p_info = p_info;
 	notice.time = time(NULL);
+    return 0;
 }
 
 static int saveError(Error *p_error) {
@@ -87,6 +89,7 @@ static int saveError(Error *p_error) {
 		%s\n\
 		---------------------\n",
 		p_error->type, p_error->priority, ctime( &(p_error->time) ), p_error->p_info->head, p_error->p_info->body);
+    return 0;
 }
 static int saveNotice(Notice *p_notice) {
 	fprintf(logfile.fp,
@@ -99,4 +102,5 @@ static int saveNotice(Notice *p_notice) {
 		%s\n\
 		----------------------\n",
 		p_notice->type, ctime( &(p_notice->time) ), p_notice->p_info->head, p_notice->p_info->body);
+    return 0;
 }

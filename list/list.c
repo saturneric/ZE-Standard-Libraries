@@ -1,8 +1,8 @@
 #include "list.h"
 
 static int if_safeModeForNode = 0;
-static List *node_list = NULL; //储存声明过的节点.
-static List *list_list = NULL; //储存声明过的链表.
+static List *node_list = NULL;
+static List *list_list = NULL;
 
 int safeModeForNode(int ifon) {
     if (ifon == 1) {

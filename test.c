@@ -84,7 +84,7 @@ int stack(void) {
 int main(int argc, char **argv) {
 	//tree();
     init_rand();
-    SID *p_sid = getS_id(LIST_NODE, 3);
+    SID *p_sid = getS_id(LIST_NODE, 1);
     char *string = s_idToASCIIString(p_sid);
     SID *t_sid = asciiStringToS_id(string);
     int if_same = simFitS_id(p_sid, t_sid);
