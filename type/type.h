@@ -17,6 +17,7 @@
 #define LIST_NODE 8
 #define TREE_NODE 9
 #define STACK_NODE 10
+#define T_SID 11
 
 #define  DEEPC 1
 #define  DEEPB 2

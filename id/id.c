@@ -17,14 +17,32 @@ unsigned long long getId(void) {
 
 SID *initS_id(unsigned int deep_level){
     SID *p_sid = (SID *) malloc(sizeof(SID));
+    if(p_sid == NULL){
+        printf("\ninitS_id(): Error in getting the memory of sid.\n");
+    }
     p_sid->type = VOID;
     p_sid->deep = deep_level;
     p_sid->value = NULL;
     p_sid->value_deeper = NULL;
     p_sid->value_deepest = NULL;
-    if (deep_level > 0) p_sid->value = (unsigned int *)malloc(sizeof(unsigned int)*DEEPC_LEN);
-    if (deep_level > 1) p_sid->value_deeper = (unsigned int *)malloc(sizeof(unsigned int)*DEEPB_LEN);
-    if (deep_level > 2) p_sid->value_deepest = (unsigned int *)malloc(sizeof(unsigned int)*DEEPA_LEN);
+    if (deep_level > 0) {
+        p_sid->value = (unsigned int *)malloc(sizeof(unsigned int)*DEEPC_LEN);
+        if(p_sid->value == NULL){
+            printf("\ninitS_id(): Error in getting the memory of sid.value.\n");
+        }
+    }
+    if (deep_level > 1){
+        p_sid->value_deeper = (unsigned int *)malloc(sizeof(unsigned int)*DEEPB_LEN);
+        if(p_sid->value_deeper == NULL){
+            printf("\ninitS_id(): Error in getting the memory of sid.value_deeper.\n");
+        }
+    }
+    if (deep_level > 2){
+        p_sid->value_deepest = (unsigned int *)malloc(sizeof(unsigned int)*DEEPA_LEN);
+        if(p_sid->value_deepest == NULL){
+            printf("\ninitS_id(): Error in getting the memory of sid.value_deepest.\n");
+        }
+    }
     return p_sid;
 }
 
@@ -98,6 +116,9 @@ char *s_idToASCIIString(const SID *s_id){
             deep_len = DEEPC_LEN + DEEPB_LEN + DEEPA_LEN + 1;
             deep_len *= DATA_BIT;
         }
+        if(string == NULL){
+            printf("\ns_idToASCIIString(): Error in getting the memory of string.\n");
+        }
         string[deep_len] = '\0';
         temp = s_id->type;
         buff_count = DATA_BIT - 1;
@@ -168,11 +189,12 @@ SID *asciiStringToS_id(const char *string){
     else return NULL;
     
     unsigned int *buff = (unsigned int *) malloc(sizeof(unsigned int) * (string_len));
+    if(buff == NULL){
+        printf("\ns_idToASCIIString(): Error in getting the memory of string.\n");
+    }
     for(int i = 0; i < string_len; i++){
         buff[i] = (unsigned int)string[i] - 48;
     }
-    
-    printf("%s\n",string);
     
     s_id->type = 0;
     for (int i = 0; i < 5; i++){

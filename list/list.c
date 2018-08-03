@@ -8,8 +8,15 @@ int safeModeForNode(int ifon) {
     if (ifon == 1) {
         if (node_list == NULL && list_list == NULL) {
             node_list = (List *)malloc(sizeof(List));
+            if(node_list == NULL){
+                showError(pushError(LIST, HIGH, initInfo("safeModeForNode()", "Error in get the memory of node_list.")));
+                return -1;
+            }
             list_list = (List *)malloc(sizeof(List));
-            
+            if(list_list == NULL){
+                showError(pushError(LIST, HIGH, initInfo("safeModeForNode()", "Error in get the memory of list_list.")));
+                return -1;
+            }
             list_list->head = NULL;
             list_list->length = 0;
             list_list->tail = NULL;
@@ -81,6 +88,10 @@ int releaseAllForNode(void) {
 
 Node *initNode(void) {
     Node *p_node = (Node *)malloc(sizeof(Node));
+    if(p_node == NULL){
+        showError(pushError(LIST_NODE, STANDARD, initInfo("initNode()", "Error in get the memory of node.")));
+        return NULL;
+    }
     Node *prec_node = NULL;
     p_node->s_id = getS_id(LIST_NODE, 2);
     p_node->if_sid = 1;
@@ -99,8 +110,12 @@ Node *initNode(void) {
 }
 
 List *initList(void) {
-    Node *p_node;
+    Node *p_node = NULL;
     List *p_list = (List *)malloc(sizeof(List));
+    if(p_list == NULL){
+        showError(pushError(LIST_NODE, STANDARD, initInfo("initList()", "Error in get the memory of list.")));
+        return NULL;
+    }
     p_list->s_id = getS_id(LIST, 1);
     p_list->if_sid = 1;
     p_list->head = NULL;

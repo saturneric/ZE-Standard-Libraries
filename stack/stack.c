@@ -2,6 +2,10 @@
 
 Stack *initStack(void) {
     Stack *p_stack = (Stack *)malloc(sizeof(Stack));
+    if(p_stack == NULL){
+        showError(pushError(STACK, STANDARD, initInfo("initStack()", "Error in get the memory of stack.")));
+        return NULL;
+    }
     p_stack->s_id = getS_id(STACK, 1);
     p_stack->length = 0;
     p_stack->top = NULL;
@@ -10,6 +14,10 @@ Stack *initStack(void) {
 
 SNode *initSNode(void) {
     SNode *p_snode = (SNode *)malloc(sizeof(SNode));
+    if(p_snode == NULL){
+        showError(pushError(STACK_NODE, STANDARD, initInfo("initSNode()", "Error in get the memory of snode.")));
+        return NULL;
+    }
     p_snode->s_id = getS_id(STACK_NODE, 2);
     p_snode->if_malloc = 0;
     p_snode->next = NULL;
