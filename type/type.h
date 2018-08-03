@@ -1,11 +1,3 @@
-//
-//  type.h
-//  ZE-Standard-Libraries
-//
-//  Created by 胡一兵 on 2018/7/23.
-//  Copyright © 2018年 ZE. All rights reserved.
-//
-
 #ifndef type_h
 #define type_h
 

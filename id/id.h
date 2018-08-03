@@ -23,11 +23,9 @@ typedef struct s_id{
     unsigned int deep;
 }SID;
 
-/*有关id的函数*/
 void init_rand(void);
 unsigned long long getId(void);
 
-/*有关s_id函数*/
 SID *getS_id(unsigned int type ,unsigned int deep_level);
 
 int fitS_id(const SID *fs_id, const SID *ss_id);
