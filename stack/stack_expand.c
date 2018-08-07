@@ -3,6 +3,10 @@
 SNode *snodeWithInt(int temp) {
 	SNode *p_snode = initSNode();
 	int *p_temp = (int *)malloc(sizeof(int));
+    if(p_temp == NULL){
+        showError(pushError(INT, STANDARD, initInfo("snodeWithInt()", "Error in getting the memory of int.")));
+        return NULL;
+    }
 	*p_temp = temp;
 	initMallocValueForSNode(p_snode, INT, p_temp);
 	return p_snode;
@@ -11,6 +15,10 @@ SNode *snodeWithInt(int temp) {
 SNode *snodeWithDouble(double temp) {
 	SNode *p_snode = initSNode();
 	double *p_temp = (double *)malloc(sizeof(double));
+    if(p_temp == NULL){
+        showError(pushError(DOUBLE, STANDARD, initInfo("snodeWithDouble()", "Error in getting the memory of double.")));
+        return NULL;
+    }
 	*p_temp = temp;
 	initMallocValueForSNode(p_snode, DOUBLE, p_temp);
 	return p_snode;
@@ -19,6 +27,10 @@ SNode *snodeWithDouble(double temp) {
 SNode *snodeWithString(char *temp) {
 	SNode *p_snode = initSNode();
 	char *p_temp = (char *)malloc(sizeof(char)*(strlen(temp) + 1));
+    if(p_temp == NULL){
+        showError(pushError(STRING, STANDARD, initInfo("snodeWithString()", "Error in getting the memory of string.")));
+        return NULL;
+    }
 	strcpy(p_temp, temp);
 	initMallocValueForSNode(p_snode, STRING, p_temp);
 	return p_snode;

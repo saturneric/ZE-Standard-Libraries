@@ -1,7 +1,5 @@
 #include"tree.h"
 
-static SID *target_sid = NULL;
-static TNode *target_value_sid = NULL;
 static int if_safeModeForTree = 0;
 
 int safeModeForTree(int ifon) {
@@ -39,7 +37,7 @@ TNode *initTNode(void) {
 	Node *s_node;
 	TNode *p_tnode = (TNode *)malloc(sizeof(TNode));
     if(p_tnode == NULL){
-        showError(pushError(TREE_NODE, STANDARD, initInfo("initTNode()", "Error in get the memory of tnode.")));
+        showError(pushError(TREE_NODE, STANDARD, initInfo("initTNode()", "Error in getting the memory of tnode.")));
         return NULL;
     }
     p_tnode->s_id = getS_id(TREE_NODE, 2);
@@ -73,7 +71,7 @@ Tree *initTree(void) {
 	Node *s_node;
 	Tree *p_tree = (Tree *)malloc(sizeof(Tree));
     if(p_tree == NULL){
-        showError(pushError(TREE, STANDARD, initInfo("initTree()", "Error in get the memory of tree.")));
+        showError(pushError(TREE, STANDARD, initInfo("initTree()", "Error in getting the memory of tree.")));
         return NULL;
     }
     p_tree->s_id = getS_id(TREE, 1);
@@ -163,79 +161,100 @@ int removeChildInRight(TNode *p_tnode) {
 
 TNode *getChildById(TNode *p_tnode, const SID *s_id) {
 	List *p_home = p_tnode->home;
-	target_sid = NULL;
 	target_value_sid = NULL;
-	listThrough(p_home, _dogetChildById);
-	if (target_value_sid != NULL) {
-		return target_value_sid;
+    List *er_list = initList();
+    insertInTail(er_list, nodeWithPointer(s_id));
+	List *rtnc_list = listThrough(p_home, _dogetChildById, er_list);
+    free(er_list);
+    Node *p_node= findByIndexForNode(rtnc_list, 1);
+	if (p_node != NULL) {
+        TNode *p_tnode = getByPointerForNode(p_node);
+        free(rtnc_list);
+		return p_tnode;
 	}
 	return NULL;
 }
 
-int _dogetChildById(unsigned int type, void *value) {
+List *_dogetChildById(unsigned int type, void *value, List *er_list) {
+    SID *target_sid = getByPointerForNode(findByIndexForNode(er_list, 0));
+    List *rtn_list = initList();
 	if (type == POINTER) {
 		TNode *p_tode = (TNode *)value;
 		if (simFitS_id(p_tode->s_id, target_sid)) {
 			target_value_sid = p_tode;
-			return -1;
+            insertInTail(rtn_list, nodeWithInt(-1));
+            insertInTail(rtn_list, nodeWithPointer(target_value_sid));
+			return rtn_list;
 		}
 	}
-	return 0;
+    insertInTail(rtn_list, nodeWithInt(0));
+	return rtn_list;
 }
-
-static int target_type = VOID;
-static void *target_value = NULL;
-static TNode *target_value_value = NULL;
 
 TNode *getChildByValue(TNode *p_tnode, unsigned int type, void *value) {
 	List *p_home = p_tnode->home;
 	target_value = value;
 	target_type = type;
 	target_value_value = NULL;
-	listThrough(p_home, _dogetChildByValue);
-	if (target_value_value != NULL) {
-		return target_value_value;
+    List *er_list = initList();
+    insertInTail(er_list, nodeWithUInt(type));
+    insertInTail(er_list, nodeWithPointer(value));
+    List *rtnc_list = listThrough(p_home, _dogetChildByValue,er_list);
+    free(er_list);
+    Node *p_node = NULL;
+	if ((p_node = findByIndexForNode(rtnc_list, 1)) != NULL) {
+        TNode *p_tnode = getByPointerForNode(p_node);
+        free(rtnc_list);
+		return p_tnode;
 	}
 	return NULL;
 }
 
-int _dogetChildByValue(unsigned int type, void *value) {
+List *_dogetChildByValue(unsigned int type, void *value, List *er_list) {
+    List *rtn_list = initList();
+    unsigned int target_type = getByUIntForNode(findByIndexForNode(rtn_list, 0));
+    void *target_value = getByPointerForNode(findByIndexForNode(rtn_list, 1));
 	if (type == target_type) {
 		TNode *p_tode = (TNode *)value;
 		if (target_type == INT) {
 			if (*(int *)p_tode->value == *(int *)target_value)
 			{
-				target_value_value = p_tode;
-				return -1;
+                insertInTail(rtn_list, nodeWithInt(-1));
+                insertInTail(rtn_list, nodeWithPointer(p_tode));
+				return rtn_list;
 			}
 		}
 		else if (target_type == DOUBLE)
 		{
 			if (*(double *)p_tode->value == *(double *)target_value)
 			{
-				target_value_value = p_tode;
-				return -1;
+                insertInTail(rtn_list, nodeWithInt(-1));
+                insertInTail(rtn_list, nodeWithPointer(p_tode));
+				return rtn_list;
 			}
 		}
 		else if (target_type == STRING)
 		{
 			if (!strcmp((char *)p_tode->value, (char *)target_value))
 			{
-				target_value_value = p_tode;
-				return -1;
+                insertInTail(rtn_list, nodeWithInt(-1));
+                insertInTail(rtn_list, nodeWithPointer(p_tode));
+				return rtn_list;
 			}
 		}
 		else if (target_type == POINTER)
 		{
 			if (p_tode->value == target_value)
 			{
-				target_value_value = p_tode;
-				return -1;
+                insertInTail(rtn_list, nodeWithInt(-1));
+                insertInTail(rtn_list, nodeWithPointer(p_tode));
+				return rtn_list;
 			}
 		}
 
 	}
-	return 0;
+    insertInTail(rtn_list, nodeWithInt(0));
+	return rtn_list;
 }
 
 int removeChildById(TNode *p_tnode, const SID *s_id) {

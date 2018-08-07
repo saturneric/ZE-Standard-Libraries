@@ -11,7 +11,7 @@ int releaseAllForNode(void);
 List *initList(void);
 Node *initNode(void);
 
-int initMallocValueForNode(Node *,unsigned int,void *);
+int initMallocValueForNode(Node *,unsigned int,const void *);
 
 int insertInHead(List *p_list, Node *p_node);
 int insertInTail(List *p_list, Node *p_node);

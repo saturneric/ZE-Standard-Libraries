@@ -5,6 +5,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #define VOID 0
 #define INT 1
@@ -18,6 +19,9 @@
 #define TREE_NODE 9
 #define STACK_NODE 10
 #define T_SID 11
+#define UINT 12
+#define STANDARD_DATA 13
+#define DATA_FILE 14
 
 #define  DEEPC 1
 #define  DEEPB 2
@@ -27,6 +31,12 @@
 #define  DEEPB_LEN 8
 #define  DEEPA_LEN 32
 #define DATA_BIT 5
+#define DEEP_LEN 25
+#define DEEPER_LEN 65
+#define DEEPEST_LEN 225
+#define FILE_TSET_LEN 18
+#define HEAD_TEST_LEN 9
+
 
 #define HIGH 0x3
 #define STANDARD 0x2
@@ -82,6 +92,22 @@ typedef struct Log{
     int if_enable;
     unsigned long int id;
 }Log;
+
+typedef struct stack_node{
+    SID *s_id;
+    _Bool if_malloc;
+    _Bool if_sid;
+    unsigned int type;
+    void *value;
+    struct stack_node *next;
+} SNode;
+
+typedef struct stack{
+    SID *s_id;
+    unsigned long long length;
+    SNode *top;
+    _Bool if_sid;
+} Stack;
 
 typedef struct tree_node
 {

@@ -4,9 +4,10 @@
 #include "list.h"
 
 Node *nodeWithInt(int);
+Node *nodeWithUInt(unsigned int);
 Node *nodeWithDouble(double);
 Node *nodeWithString(const char *);
-Node *nodeWithPointer(void *);
+Node *nodeWithPointer(const void *);
 
 Node *nodeWithComplex(void);
 int addValueForComplex(Node *, int type, void *value);
@@ -14,6 +15,12 @@ int addIntForComplex(Node *, int);
 int addDoubleForComplex(Node *, double);
 int addStringForComplex(Node *, char *);
 int addPointerForComplex(Node *, void *);
+
+int updateValueWithInt(Node *,int);
+int updateValueWithDouble(Node *,double);
+int updateValueWithString(Node *,char *);
+int updateValueWithPointer(Node *,void *);
+
 
 Node *findByIndexForNode(List *, unsigned long long);
 Node *findByIntForNode(List *, int);
@@ -32,11 +39,12 @@ void printList(List *);
 void printNode(Node *p_node);
 
 int getByIntForNode(Node *);
+unsigned int getByUIntForNode(Node *);
 double getByDoubleForNode(Node *);
 char *getByStringForNode(Node *);
 void *getByPointerForNode(Node *);
 unsigned long long getIndexByNode(List *p_list,Node *p_node);
-int listThrough(List *p_list, int (*p_func)(unsigned int type, void *value));
+List *listThrough(List *p_list, List *(*p_func)(unsigned int type, void *value, List *), List *expand_resources);
 unsigned long long calListMemory(List *);
 
 #endif

@@ -3,15 +3,36 @@
 Node *nodeWithInt(int m_int) {
 	Node *p_node;
 	int *p_int = (int *)malloc(sizeof(int));
+    if(p_int == NULL){
+        showError(pushError(INT, STANDARD, initInfo("nodeWithInt()", "Error in getting the memory of int.")));
+        return NULL;
+    }
 	*p_int = m_int;
 	p_node = initNode();
 	initMallocValueForNode(p_node, INT, (void *)p_int);
 	return p_node;
 }
 
+Node *nodeWithUInt(unsigned int m_uint){
+    Node *p_node;
+    unsigned int *pu_int = (unsigned int *)malloc(sizeof(unsigned int));
+    if(pu_int == NULL){
+        showError(pushError(INT, STANDARD, initInfo("nodeWithUInt()", "Error in getting the memory of int.")));
+        return NULL;
+    }
+    *pu_int = m_uint;
+    p_node = initNode();
+    initMallocValueForNode(p_node, INT, (void *)pu_int);
+    return p_node;
+}
+
 Node *nodeWithDouble(double m_double) {
 	Node *p_node;
 	double *p_double = (double *)malloc(sizeof(double));
+    if(p_double == NULL){
+        showError(pushError(DOUBLE, STANDARD, initInfo("nodeWithDouble()", "Error in getting the memory of double.")));
+        return NULL;
+    }
 	*p_double = m_double;
 	p_node = initNode();
 	initMallocValueForNode(p_node, DOUBLE, (void *)p_double);
@@ -21,13 +42,17 @@ Node *nodeWithDouble(double m_double) {
 Node *nodeWithString(const char *m_string) {
 	Node *p_node;
 	char *p_string = (char *)malloc(sizeof(char)*(strlen(m_string) + 1));
+    if(p_string == NULL){
+        showError(pushError(STRING, STANDARD, initInfo("initWithString()", "Error in getting the memory of string.")));
+        return NULL;
+    }
 	strcpy(p_string, m_string);
 	p_node = initNode();
 	initMallocValueForNode(p_node, STRING, (void *)p_string);
 	return p_node;
 }
 
-Node *nodeWithPointer(void *m_pointer) {
+Node *nodeWithPointer(const void *m_pointer) {
 	Node *p_node = initNode();
 	initMallocValueForNode(p_node, POINTER, m_pointer);
 	return p_node;
@@ -50,28 +75,38 @@ Node *findByIndexForNode(List *p_list, unsigned long long m_index) {
 	return p_node;
 }
 
-int listThrough(List *p_list, int(*p_func)(unsigned int, void *)) {
+List *listThrough(List *p_list, List *(*p_func)(unsigned int, void *, List *), List *expand_resources) {
 	Node *p_node = p_list->head;
+    List *m_rtnlst = NULL;
 	while (p_node != NULL) {
 		if (p_node->if_malloc == 1) {
-			int m_return = (*p_func)(p_node->type, p_node->value);
-			if (m_return == -1) break;
-			else if (m_return == 1) {
+			List *m_rtnlst = (*p_func)(p_node->type, p_node->value, expand_resources);
+            int status = getByIntForNode(findByIndexForNode(m_rtnlst, 0));
+			if (status == -1) break;
+			else if (status == 1) {
 				p_node = p_node->last;
+                releaseList(m_rtnlst);
+                m_rtnlst = NULL;
 				continue;
 			}
 			else {
-
+                releaseList(m_rtnlst);
+                m_rtnlst = NULL;
 			}
 		}
 		p_node = p_node->next;
 	}
-	return 0;
+	return m_rtnlst;
 }
 
 int getByIntForNode(Node *p_node) {
 	if (p_node->type == INT) return *(int *)(p_node->value);
 	else return -1;
+}
+
+unsigned int getByUIntForNode(Node *p_node){
+    if (p_node->type == UINT) return *(unsigned int *)(p_node->value);
+    else return -1;
 }
 
 char *getByStringForNode(Node *p_node) {
@@ -250,6 +285,10 @@ int addValueForComplex(Node * p_node, int type, void *value) {
 int addIntForComplex(Node *p_node, int temp) {
 	if (p_node->type == LIST) {
 		int *p_temp = (int *)malloc(sizeof(int));
+        if(p_temp == NULL){
+            showError(pushError(INT, STANDARD, initInfo("addIntForComplex()", "Error in getting the memory of int.")));
+            return -1;
+        }
 		*p_temp = temp;
 		addValueForComplex(p_node, INT, p_temp);
 		return 0;
@@ -260,6 +299,10 @@ int addIntForComplex(Node *p_node, int temp) {
 int addDoubleForComplex(Node *p_node, double temp) {
 	if (p_node->type == LIST) {
 		double *p_temp = (double *)malloc(sizeof(double));
+        if(p_temp == NULL){
+            showError(pushError(DOUBLE, STANDARD, initInfo("addDoubleForComplex()", "Error in getting the memory of double.")));
+            return -1;
+        }
 		*p_temp = temp;
 		addValueForComplex(p_node, DOUBLE, p_temp);
 		return 0;
@@ -270,6 +313,10 @@ int addDoubleForComplex(Node *p_node, double temp) {
 int addStringForComplex(Node *p_node, char *temp) {
     if (p_node->type == LIST) {
 		char *p_temp = (char *)malloc(sizeof(strlen(temp) + 1));
+        if(p_temp == NULL){
+            showError(pushError(STRING, STANDARD, initInfo("addStringForComplex()", "Error in getting the memory of string.")));
+            return -1;
+        }
 		strcpy(p_temp, temp);
 		addValueForComplex(p_node, STRING, p_temp);
 		return 0;
@@ -287,6 +334,10 @@ int addPointerForComplex(Node *p_node, void *temp) {
 
 List *m_findByInt(List* p_list, int temp) {
 	int *p_temp = (int *)malloc(sizeof(int));
+    if(p_temp == NULL){
+        showError(pushError(INT, STANDARD, initInfo("m_findByInt()", "Error in getting the memory of int.")));
+        return NULL;
+    }
 	List *t_list;
 	*p_temp = temp;
 	t_list = mply_findByValue(p_list, INT, (void *)p_temp);
@@ -297,6 +348,10 @@ List *m_findByInt(List* p_list, int temp) {
 List *m_findByDouble(List* p_list, double temp) {
 	List *t_list;
 	double *p_temp = (double *)malloc(sizeof(double));
+    if(p_temp == NULL){
+        showError(pushError(DOUBLE, STANDARD, initInfo("m_findByDouble()", "Error in getting the memory of double.")));
+        return NULL;
+    }
 	*p_temp = temp;
 	t_list = mply_findByValue(p_list, DOUBLE, (void *)p_temp);
 	free(p_temp);
@@ -306,6 +361,10 @@ List *m_findByDouble(List* p_list, double temp) {
 List *m_findByString(List* p_list, char *temp) {
 	List *t_list;
 	char *p_temp = (char *)malloc(sizeof(char)*(strlen(temp) + 1));
+    if(p_temp == NULL){
+        showError(pushError(STRING, STANDARD, initInfo("m_findByString()", "Error in getting the memory of string.")));
+        return NULL;
+    }
 	strcpy(p_temp, temp);
 	t_list = mply_findByValue(p_list, STRING, (void *)p_temp);
 	free(p_temp);
@@ -329,19 +388,31 @@ unsigned long long getIndexByNode(List *p_list, Node *p_node) {
 }
 
 List *m_findByIntForNode(List* p_list, int temp) {
-	int *p_temp = (int *)malloc(sizeof(int));
+    int *p_temp = (int *)malloc(sizeof(int));
+    if(p_temp == NULL){
+        showError(pushError(INT, STANDARD, initInfo("m_findByIntForNode()", "Error in getting the memory of int.")));
+        return NULL;
+    }
 	*p_temp = temp;
 	return mply_findByValue(p_list, INT, (void *)p_temp);
 }
 
 List *m_findByDoubleForNode(List* p_list, double temp) {
 	double *p_temp = (double *)malloc(sizeof(double));
+    if(p_temp == NULL){
+        showError(pushError(DOUBLE, STANDARD, initInfo("m_findByDoubleForNode()", "Error in getting the memory of double.")));
+        return NULL;
+    }
 	*p_temp = temp;
 	return mply_findByValue(p_list, DOUBLE, (void *)p_temp);
 }
 
 List *m_findByStringForNode(List* p_list, char *temp) {
 	char *p_temp = (char *)malloc(sizeof(char) * (strlen(temp) + 1));
+    if(p_temp == NULL){
+        showError(pushError(STRING, STANDARD, initInfo("m_findByStringForNode()", "Error in getting the memory of string.")));
+        return NULL;
+    }
 	strcpy(p_temp, temp);
 	return mply_findByValue(p_list, STRING, (void *)p_temp);
 }
@@ -359,4 +430,46 @@ unsigned long long calListMemory(List * p_list){
         p_node = p_node->next;
     }
     return  list_size + nodes_size;
+}
+
+int updateValueWithInt(Node *p_node,int value){
+    int *p_value = (int *)malloc(sizeof(int));
+    if(p_value == NULL){
+        showError(pushError(INT, STANDARD, initInfo("updateValueWithInt()", "Error in getting the memory of int.")));
+        return -1;
+    }
+    *p_value = value;
+    free(p_node->value);
+    p_node->value = p_value;
+    return 0;
+}
+
+int updateValueWithDouble(Node *p_node, double value){
+    double *p_value = (double *)malloc(sizeof(double));
+    if(p_value == NULL){
+        showError(pushError(DOUBLE, STANDARD, initInfo("updateValueWithDouble()", "Error in getting the memory of double.")));
+        return -1;
+    }
+    *p_value = value;
+    free(p_node->value);
+    p_node->value = p_value;
+    return 0;
+}
+
+int updateValueWithString(Node *p_node, char *string){
+    char *p_value = (char *)malloc(sizeof(strlen(string)) + 1);
+    if(p_value == NULL){
+        showError(pushError(STRING, STANDARD, initInfo("updateValueWithString()", "Error in getting the memory of string.")));
+        return -1;
+    }
+    strcpy(p_value, string);
+    free(p_node->value);
+    p_node->value = p_value;
+    return 0;
+}
+
+int updateValueWithPointer(Node *p_node, void *pointer){
+    free(p_node->value);
+    p_node->value = pointer;
+    return 0;
 }

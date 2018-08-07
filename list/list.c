@@ -9,12 +9,12 @@ int safeModeForNode(int ifon) {
         if (node_list == NULL && list_list == NULL) {
             node_list = (List *)malloc(sizeof(List));
             if(node_list == NULL){
-                showError(pushError(LIST, HIGH, initInfo("safeModeForNode()", "Error in get the memory of node_list.")));
+                showError(pushError(LIST, HIGH, initInfo("safeModeForNode()", "Error in getting the memory of node_list.")));
                 return -1;
             }
             list_list = (List *)malloc(sizeof(List));
             if(list_list == NULL){
-                showError(pushError(LIST, HIGH, initInfo("safeModeForNode()", "Error in get the memory of list_list.")));
+                showError(pushError(LIST, HIGH, initInfo("safeModeForNode()", "Error in getting the memory of list_list.")));
                 return -1;
             }
             list_list->head = NULL;
@@ -89,7 +89,7 @@ int releaseAllForNode(void) {
 Node *initNode(void) {
     Node *p_node = (Node *)malloc(sizeof(Node));
     if(p_node == NULL){
-        showError(pushError(LIST_NODE, STANDARD, initInfo("initNode()", "Error in get the memory of node.")));
+        showError(pushError(LIST_NODE, STANDARD, initInfo("initNode()", "Error in getting the memory of node.")));
         return NULL;
     }
     Node *prec_node = NULL;
@@ -113,7 +113,7 @@ List *initList(void) {
     Node *p_node = NULL;
     List *p_list = (List *)malloc(sizeof(List));
     if(p_list == NULL){
-        showError(pushError(LIST_NODE, STANDARD, initInfo("initList()", "Error in get the memory of list.")));
+        showError(pushError(LIST_NODE, STANDARD, initInfo("initList()", "Error in getting the memory of list.")));
         return NULL;
     }
     p_list->s_id = getS_id(LIST, 1);
@@ -131,10 +131,10 @@ List *initList(void) {
     return p_list;
 }
 
-int initMallocValueForNode(Node *p_node, unsigned int type, void *p_value) {
+int initMallocValueForNode(Node *p_node, unsigned int type, const void *p_value) {
     p_node->if_malloc = 1;
     p_node->type = type;
-    p_node->value = p_value;
+    p_node->value = (void *)p_value;
     return 0;
 }
 
@@ -479,7 +479,7 @@ int releaseNodeForCustom(Node *p_node, int (*func)(void *)){
         removeByNode(node_list, p_node);
     }
     if (p_node->if_malloc == 1) {
-        if (!func(p_node->value))
+        if (func(p_node->value))
             showError(pushError(LIST_NODE, STANDARD, initInfo("releaseNodeForCustom()", "Error in using custom freeing value function.")));
         p_node->value = NULL;
     }

@@ -3,7 +3,62 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "freeS_id:id.c">
+         contextName = "init_node:list.h">
+         <PersistentStrings>
+            <PersistentString
+               value = "list_list">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "listToSTD:communicate.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "(int *)p_node-&gt;value">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "releaseMalloc:list.h">
+      </ContextState>
+      <ContextState
+         contextName = "initS_id:id.c">
+      </ContextState>
+      <ContextState
+         contextName = "getByIntForNode:list_expand.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "(int *)p_node-&gt;value">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "listThrough:list_expand.c">
+      </ContextState>
+      <ContextState
+         contextName = "initStandardDBlocks:communicate.c">
+      </ContextState>
+      <ContextState
+         contextName = "dataForStandardDBlock:communicate.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "(int *)p_stdb-&gt;buff">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "insertInTail:list.h">
+         <PersistentStrings>
+            <PersistentString
+               value = "node_list">
+            </PersistentString>
+            <PersistentString
+               value = "list_list">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "releaseNULLList:list.h">
       </ContextState>
       <ContextState
          contextName = "asciiStringToS_id:id.c">
@@ -23,6 +78,45 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "_doStandardDBlockWrite:communicate.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "&amp;p_stdb-&gt;blocks_num">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "dataFileReadOut:communicate.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "strlen(string_sid)">
+            </PersistentString>
+            <PersistentString
+               value = "(int *)content">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "_doStandardDataInfoWrite:communicate.c">
+      </ContextState>
+      <ContextState
+         contextName = "standardDataAddBlock:communicate.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "(int *)data">
+            </PersistentString>
+            <PersistentString
+               value = "(int *)p_stdb-&gt;buff">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "dataFileWriteIn:communicate.c">
+      </ContextState>
+      <ContextState
+         contextName = "freeS_id:id.c">
+      </ContextState>
+      <ContextState
          contextName = "s_idToASCIIString:id.c">
          <PersistentStrings>
             <PersistentString
@@ -34,43 +128,21 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "releaseNULLList:list.h">
-      </ContextState>
-      <ContextState
-         contextName = "insertInTail:list.h">
-         <PersistentStrings>
-            <PersistentString
-               value = "node_list">
-            </PersistentString>
-            <PersistentString
-               value = "list_list">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "releaseMalloc:list.h">
-      </ContextState>
-      <ContextState
-         contextName = "init_node:list.h">
-         <PersistentStrings>
-            <PersistentString
-               value = "list_list">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "initS_id:id.c">
-      </ContextState>
-      <ContextState
-         contextName = "init_list:list.h">
-      </ContextState>
-      <ContextState
          contextName = "main:test.c">
          <PersistentStrings>
+            <PersistentString
+               value = "(int *)p_node-&gt;value">
+            </PersistentString>
+            <PersistentString
+               value = "((STD_DATA *)(p_dfiler-&gt;pf_stdlst-&gt;head-&gt;value))-&gt;pd_blocklst">
+            </PersistentString>
             <PersistentString
                value = "strlen(string)">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "init_list:list.h">
       </ContextState>
    </ContextStates>
 </VariablesViewState>

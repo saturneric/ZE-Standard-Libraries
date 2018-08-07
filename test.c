@@ -82,7 +82,24 @@ int stack(void) {
 
 
 int main(int argc, char **argv) {
-	//tree();
     init_rand();
+    for (int j = 0; j < 65535; j++) {
+        List *t_list = initList();
+        for (int i = 0; i < 12; i++) {
+            insertInHead(t_list, nodeWithInt(i));
+        }
+        STD_DATA *p_std = listToSTD(t_list);
+        D_FILE *p_dfilew = initDataFileForWrite("data.df");
+        dataFileAddStandardData(p_dfilew, p_std);
+        dataFileWriteIn(p_dfilew);
+        releaseDFile(p_dfilew);
+        D_FILE *p_dfiler = initDataFileForRead("data.df");
+        dataFileReadOut(p_dfiler);
+        releaseDFile(p_dfiler);
+        releaseList(t_list);
+        
+        printf("%d\n",j);
+        usleep(2000);
+    }
 	return 0;
 }
