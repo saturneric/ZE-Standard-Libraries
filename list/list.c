@@ -93,7 +93,7 @@ Node *initNode(void) {
         return NULL;
     }
     Node *prec_node = NULL;
-    p_node->s_id = getS_id(LIST_NODE, 2);
+    p_node->s_id = getS_id(LIST_NODE, 1);
     p_node->if_sid = 1;
     p_node->if_malloc = 0;
     p_node->next = NULL;

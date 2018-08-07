@@ -1,11 +1,12 @@
 #include "communicate.h"
 
-STD_BLOCKS *initStandardDBlocks(SID *p_sid, unsigned long long data_size){
+STD_BLOCKS *initStandardDBlocks(SID *p_sid, unsigned int type, unsigned long long data_size){
     STD_BLOCKS *p_stdb = (STD_BLOCKS *)malloc(sizeof(STD_BLOCKS));
     p_stdb->sid = s_idToASCIIString(p_sid);
     p_stdb->if_data = 0;
     unsigned int blocks_num = (unsigned int)(data_size/sizeof(char));
     p_stdb->blocks_num = blocks_num;
+    p_stdb->type = type;
     p_stdb->buff = (char *)malloc(sizeof(char) * blocks_num);
     return p_stdb;
 }
@@ -34,13 +35,13 @@ STD_DATA *initStandardData(unsigned int type){
     p_std->pd_ctnlst = initList();
     p_std->lock = 0;
     p_std->type = type;
-    p_std->s_id = getS_id(STANDARD_DATA, 2);
+    p_std->s_id = getS_id(STANDARD_DATA, 1);
     return p_std;
 }
 
-int standardDataAddBlock(STD_DATA *p_std, SID *p_sid ,void *data, unsigned long long data_size){
+int standardDataAddBlock(STD_DATA *p_std, SID *p_sid ,unsigned int type, void *data, unsigned long long data_size){
     if (p_std->lock) return -1;
-    STD_BLOCKS *p_stdb = initStandardDBlocks(p_sid, data_size);
+    STD_BLOCKS *p_stdb = initStandardDBlocks(p_sid, type,data_size);
     dataForStandardDBlock(p_stdb, data);
     insertInTail(p_std->pd_blocklst, nodeWithPointer(p_stdb));
     return 0;
@@ -150,6 +151,7 @@ List *_doStandardDBlockWrite(unsigned int type, void *value, List *er_list){
     unsigned long sid_len = strlen(p_stdb->sid)+1, blocks_num = p_stdb->blocks_num;
     fwrite(&sid_len, sizeof(unsigned long), 1, fp);
     fwrite(p_stdb->sid, sizeof(char), sid_len, fp);
+    fwrite(&p_stdb->type, sizeof(unsigned int), 1, fp);
     fwrite(&blocks_num, sizeof(unsigned long), 1, fp);
     fwrite(p_stdb->buff, sizeof(char), p_stdb->blocks_num, fp);
     return p_rtnlst;
@@ -164,7 +166,7 @@ STD_DATA *listToSTD(List *p_list){
         else if (p_node->type == DOUBLE) data_size = sizeof(double);
         else if (p_node->type == STRING) data_size = strlen((char *)p_node->value) + 1;
         else data_size = sizeof(void *);
-        standardDataAddBlock(p_std, p_node->s_id, p_node->value, data_size);
+        standardDataAddBlock(p_std, p_node->s_id, p_node->type, p_node->value, data_size);
         p_node = p_node->next;
     }
     return p_std;
@@ -220,7 +222,9 @@ int dataFileReadOut(D_FILE *p_dfile){
                         char *content = (char *)malloc(sizeof(char) * blk_len);
                         fread(content, sizeof(char), blk_len, p_dfile->fp);
                         SID *s_id = asciiStringToS_id(string_sid);
-                        standardDataAddBlock(p_std, s_id, content, blk_len);
+                        unsigned int type = VOID;
+                        fread(&type, sizeof(unsigned int), 1, p_dfile->fp);
+                        standardDataAddBlock(p_std, s_id, type, content, blk_len);
                         freeS_id(s_id);
                         free(string_sid);
                         free(content);
@@ -229,6 +233,9 @@ int dataFileReadOut(D_FILE *p_dfile){
                 }
                 else break;
             }
+        }
+        else{
+            
         }
     }
     showError(pushError(DATA_FILE, STANDARD, initInfo("dataFileReadOut()", "Datafile not complete.")));
@@ -263,4 +270,26 @@ int releaseDFile(D_FILE *p_dfile){
     free(p_dfile->pf_head);
     free(p_dfile);
     return 0;
+}
+
+List *standardDataToList(STD_DATA *p_std){
+    List *p_list = initList();
+    List *er_list = initList();
+    insertInTail(er_list, nodeWithPointer(er_list));
+    listThrough(p_std->pd_blocklst, _doStandardDataToList, er_list);
+    return p_list;
+}
+
+List *_doStandardDataToList(unsigned int type, void *value, List *er_list){
+    List *rtn_list = initList();
+    insertInTail(rtn_list, nodeWithInt(0));
+    List *p_list = getByPointerForNode(findByIndexForNode(er_list, 0));
+    STD_BLOCKS *p_stdb = value;
+    Node *p_node = initNode();
+    p_node->s_id = asciiStringToS_id(p_stdb->sid);
+    p_node->type = p_stdb->type;
+    p_node->value = malloc(sizeof(p_stdb->blocks_num));
+    memcpy(p_node->value, p_stdb->buff, sizeof(p_stdb->blocks_num));
+    insertInTail(p_list, p_node);
+    return rtn_list;
 }

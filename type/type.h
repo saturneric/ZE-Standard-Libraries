@@ -6,6 +6,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 #define VOID 0
 #define INT 1
@@ -129,5 +130,41 @@ typedef struct tree
     TNode *root;
 }Tree;
 
+typedef struct file_head{
+    char head_test[18];
+    unsigned long long data_num;
+}F_HEAD;
+
+typedef struct data_file{
+    FILE *fp;
+    F_HEAD *pf_head;
+    List *pf_stdlst;
+}D_FILE;
+
+typedef struct standard_data_blocks{
+    unsigned int type;
+    char *sid;
+    _Bool if_data;
+    unsigned int blocks_num;
+    char *buff;
+}STD_BLOCKS;
+
+typedef struct standard_data_connection{
+    char *f_sid;
+    char *s_sid;
+}STD_CTN;
+
+typedef struct standard_data_head{
+    unsigned long long data_blk_num;
+    unsigned long long data_ctn_num;
+}STD_HEAD;
+
+typedef struct standard_data{
+    SID *s_id;
+    unsigned int type;
+    _Bool lock;
+    List *pd_blocklst;
+    List *pd_ctnlst;
+}STD_DATA;
 
 #endif /* type_h */

@@ -18,7 +18,7 @@ SNode *initSNode(void) {
         showError(pushError(STACK_NODE, STANDARD, initInfo("initSNode()", "Error in getting the memory of snode.")));
         return NULL;
     }
-    p_snode->s_id = getS_id(STACK_NODE, 2);
+    p_snode->s_id = getS_id(STACK_NODE, 1);
     p_snode->if_malloc = 0;
     p_snode->next = NULL;
     p_snode->value = NULL;

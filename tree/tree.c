@@ -40,7 +40,7 @@ TNode *initTNode(void) {
         showError(pushError(TREE_NODE, STANDARD, initInfo("initTNode()", "Error in getting the memory of tnode.")));
         return NULL;
     }
-    p_tnode->s_id = getS_id(TREE_NODE, 2);
+    p_tnode->s_id = getS_id(TREE_NODE, 1);
     p_tnode->if_sid = 1;
 	p_tnode->child_num = 0;
 	p_tnode->father = NULL;
