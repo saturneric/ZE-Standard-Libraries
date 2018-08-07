@@ -6,6 +6,7 @@
 
 typedef struct message{
     SID *p_sid;
+    time_t time;
     char titile[16];
     unsigned long size;
     char content[0];
@@ -37,6 +38,9 @@ List *_doStandardDBlockWrite(unsigned int type, void *value, List *er_list);
 STD_DATA *listToSTD(List *);
 List *standardDataToList(STD_DATA *);
 List *_doStandardDataToList(unsigned int type, void *value, List *er_list);
+
+MSG *createMessage(char *title, void *data, unsigned long data_size);
+int sendMessageIPv4(MSG *p_msg, char *ip, unsigned int port);
 //STD_DATA *stackToSTD(Stack *);
 //STD_DATA *treeToSTD(Tree *);
 

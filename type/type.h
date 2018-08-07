@@ -8,6 +8,13 @@
 #include <unistd.h>
 #include <inttypes.h>
 
+/*
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+*/
+ 
 #define VOID 0
 #define INT 1
 #define DOUBLE 2
@@ -23,6 +30,7 @@
 #define UINT 12
 #define STANDARD_DATA 13
 #define DATA_FILE 14
+#define MESSAGE 15
 
 #define  DEEPC 1
 #define  DEEPB 2
