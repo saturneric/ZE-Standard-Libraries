@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9233C310212292B000FB2485 /* md5.c in Sources */ = {isa = PBXBuildFile; fileRef = 9233C30F212292B000FB2485 /* md5.c */; };
 		9246995F20CE655900B4E894 /* tree.c in Sources */ = {isa = PBXBuildFile; fileRef = 9246995E20CE655900B4E894 /* tree.c */; };
 		9269D4E8210F1B3D00161557 /* stack_expand.c in Sources */ = {isa = PBXBuildFile; fileRef = 9269D4E7210F1B3D00161557 /* stack_expand.c */; };
 		9269D4EA210F1B4B00161557 /* list_expand.c in Sources */ = {isa = PBXBuildFile; fileRef = 9269D4E9210F1B4B00161557 /* list_expand.c */; };
@@ -32,6 +33,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		9233C30E212292B000FB2485 /* md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = md5.h; path = id/md5.h; sourceTree = "<group>"; };
+		9233C30F212292B000FB2485 /* md5.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = md5.c; path = id/md5.c; sourceTree = "<group>"; };
 		9246994F20CD000300B4E894 /* list.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = list.c; sourceTree = "<group>"; };
 		9246995020CD000300B4E894 /* list_expand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = list_expand.h; sourceTree = "<group>"; };
 		9246995120CD000300B4E894 /* list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
@@ -70,10 +73,10 @@
 		9246994E20CD000300B4E894 /* list */ = {
 			isa = PBXGroup;
 			children = (
+				9246995120CD000300B4E894 /* list.h */,
 				9246994F20CD000300B4E894 /* list.c */,
 				9246995020CD000300B4E894 /* list_expand.h */,
 				9269D4E9210F1B4B00161557 /* list_expand.c */,
-				9246995120CD000300B4E894 /* list.h */,
 			);
 			path = list;
 			sourceTree = "<group>";
@@ -111,8 +114,10 @@
 		9269D4F1210F1B9E00161557 /* id */ = {
 			isa = PBXGroup;
 			children = (
-				9269D4F2210F1BB000161557 /* id.c */,
 				9269D4F3210F1BB000161557 /* id.h */,
+				9269D4F2210F1BB000161557 /* id.c */,
+				9233C30E212292B000FB2485 /* md5.h */,
+				9233C30F212292B000FB2485 /* md5.c */,
 			);
 			name = id;
 			sourceTree = "<group>";
@@ -223,6 +228,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9233C310212292B000FB2485 /* md5.c in Sources */,
 				9269D4F6210F1CD900161557 /* stack.c in Sources */,
 				9286EB7A211400C900752977 /* error.c in Sources */,
 				9269D4E8210F1B3D00161557 /* stack_expand.c in Sources */,

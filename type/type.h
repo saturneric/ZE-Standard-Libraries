@@ -51,32 +51,70 @@
 #define STANDARD 0x2
 #define LOW 0x1
 
-typedef struct s_id{
+typedef struct md5_ctx{
+    unsigned int count[2];
+    unsigned int state[4];
+    unsigned char buffer[64];
+}MD5_CTX;
+
+struct sid_raw{
     unsigned int type;
     unsigned int *value;//4
     unsigned int *value_deeper;//8
     unsigned int *value_deepest;//32
+};
+
+typedef struct s_id{
+    struct sid_raw *sr;
     unsigned int deep;
+    MD5_CTX *md5;
+    unsigned char decrypt_hex[16];
+    char *decrypt_str;
+    
 }SID;
 
 typedef struct Node{
-    SID *s_id;
-    void *value;
-    _Bool if_malloc;
-    _Bool if_sid;
+    unsigned long long f_number;
     unsigned int type;
+    void *value;
     struct Node *next;
     struct Node *last;
+    SID *s_id;
 } Node;
 
+typedef struct simple_Node{
+    void *value;
+    struct simple_Node *next;
+}s_Node;
+
+struct lst_std_id{
+    unsigned long long start_idx;
+    unsigned long long end_idx;
+    SID *sid;
+};
+
+struct list_quick;
 
 typedef struct List{
-    SID *s_id;
     Node *head;
     Node *tail;
-    _Bool if_sid;
+    s_Node *s_head;
+    s_Node *s_tail;
+    struct list_quick *p_lq;
     unsigned long long length;
+    SID *s_id;
 } List;
+
+struct list_quick{
+    Node **fn_node;
+    unsigned long long last_index;
+    Node *p_lindex;
+    unsigned long long head_index;
+    unsigned long long tail_index;
+    unsigned long long rlst_len;
+    FILE *fp;
+    List *stdid_lst;
+};
 
 typedef struct Info{
     char head[64];
@@ -86,14 +124,14 @@ typedef struct Info{
 typedef struct Error{
     unsigned int type;
     int priority;
-    Info info;
     time_t time;
+    Info info;
 }Error;
 
 typedef struct Notice{
     unsigned int type;
-    Info info;
     time_t time;
+    Info info;
 }Notice;
 
 typedef struct Log{
@@ -103,19 +141,16 @@ typedef struct Log{
 }Log;
 
 typedef struct stack_node{
-    SID *s_id;
-    _Bool if_malloc;
-    _Bool if_sid;
     unsigned int type;
     void *value;
     struct stack_node *next;
+    SID *s_id;
 } SNode;
 
 typedef struct stack{
-    SID *s_id;
     unsigned long long length;
     SNode *top;
-    _Bool if_sid;
+    SID *s_id;
 } Stack;
 
 typedef struct tree_node
@@ -127,15 +162,18 @@ typedef struct tree_node
     unsigned long long child_num;
     unsigned int type;
     void *value;
-    _Bool if_malloc;
-    _Bool if_sid;
 }TNode;
+
+typedef  struct simple_tree_node{
+    void *value;
+    struct simple_tree_node *childs[2];
+}s_TNode;
 
 typedef struct tree
 {
     SID *s_id;
-    _Bool if_sid;
     TNode *root;
+    s_TNode *s_root;
 }Tree;
 
 typedef struct file_head{

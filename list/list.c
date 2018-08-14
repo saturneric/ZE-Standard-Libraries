@@ -61,7 +61,6 @@ int releaseSingleNodeForsafeModeForNode(List *p_list) {
     while (p_node != NULL) {
         pnv_node = (Node *)p_node->value;
         freeS_id(pnv_node->s_id);
-        pnv_node->if_malloc = 0;
         pnv_node->last = NULL;
         pnv_node->next = NULL;
         pnv_node->type = VOID;
@@ -86,22 +85,22 @@ int releaseAllForNode(void) {
     return 0;
 }
 
-Node *initNode(void) {
+Node *initNode(_Bool if_sid) {
     Node *p_node = (Node *)malloc(sizeof(Node));
     if(p_node == NULL){
         showError(pushError(LIST_NODE, STANDARD, initInfo("initNode()", "Error in getting the memory of node.")));
         return NULL;
     }
     Node *prec_node = NULL;
-    p_node->s_id = getS_id(LIST_NODE, 1);
-    p_node->if_sid = 1;
-    p_node->if_malloc = 0;
+    if (if_sid)p_node->s_id = getS_id(LIST_NODE, 1);
+        else p_node->s_id = NULL;
     p_node->next = NULL;
     p_node->last = NULL;
     p_node->type = VOID;
+    p_node->f_number = 0;
     if (if_safeModeForNode) {
         if_safeModeForNode = 0;
-        prec_node = initNode();
+        prec_node = initNode(0);
         if_safeModeForNode = 1;
         initMallocValueForNode(prec_node, POINTER, (void *)p_node);
         insertInTail(node_list, prec_node);
@@ -109,21 +108,29 @@ Node *initNode(void) {
     return p_node;
 }
 
-List *initList(void) {
+inline s_Node *s_initNode(void){
+    s_Node *s_p_node = (s_Node *)malloc(sizeof(s_Node));
+    s_p_node->next = NULL;
+    return s_p_node;
+}
+
+List *initList(_Bool if_sid) {
     Node *p_node = NULL;
     List *p_list = (List *)malloc(sizeof(List));
     if(p_list == NULL){
         showError(pushError(LIST_NODE, STANDARD, initInfo("initList()", "Error in getting the memory of list.")));
         return NULL;
     }
-    p_list->s_id = getS_id(LIST, 1);
-    p_list->if_sid = 1;
+    if(if_sid) p_list->s_id = getS_id(LIST, 1);
+        else p_list->s_id = NULL;
     p_list->head = NULL;
     p_list->tail = NULL;
     p_list->length = 0;
+    p_list->p_lq = NULL;
+    p_list->s_head = NULL;
     if (if_safeModeForNode) {
         if_safeModeForNode = 0;
-        p_node = initNode();
+        p_node = initNode(0);
         if_safeModeForNode = 1;
         initMallocValueForNode(p_node, POINTER, (void *)p_list);
         insertInTail(list_list, p_node);
@@ -132,7 +139,6 @@ List *initList(void) {
 }
 
 int initMallocValueForNode(Node *p_node, unsigned int type, const void *p_value) {
-    p_node->if_malloc = 1;
     p_node->type = type;
     p_node->value = (void *)p_value;
     return 0;
@@ -153,6 +159,18 @@ int insertInHead(List *p_list, Node *p_node) {
     return 0;
 }
 
+inline int s_insertInHead(List *p_list, s_Node *s_p_node){
+    if(p_list->s_head == NULL && p_list->s_tail == NULL){
+        p_list->s_head = s_p_node;
+        p_list->s_tail = s_p_node;
+    }
+    else{
+        s_p_node->next = p_list->s_head;
+        p_list->s_head = s_p_node;
+    }
+    return 0;
+}
+
 int insertInTail(List *p_list, Node *p_node) {
     if (isListEmpty(p_list)) {
         p_list->head = p_node;
@@ -168,17 +186,29 @@ int insertInTail(List *p_list, Node *p_node) {
     return 0;
 }
 
+inline int s_insertInTail(List *p_list, s_Node *s_p_node){
+    if(p_list->s_head == NULL && p_list->s_tail == NULL){
+        p_list->s_head = s_p_node;
+        p_list->s_tail = s_p_node;
+    }
+    else{
+        p_list->s_tail->next = s_p_node;
+        p_list->s_tail = s_p_node;
+    }
+    return 0;
+}
+
 int releaseNode(Node *p_node) {
     if (if_safeModeForNode == 1) {
         removeByNode(node_list, p_node);
     }
-    if (p_node->if_malloc == 1) {
+    if (p_node->value != NULL) {
         if (p_node->type != POINTER) {
             if (p_node->type == LIST) {
                 releaseList((List *)p_node->value);
             }
             else {
-                free(p_node->value);
+                //free(p_node->value);
             }
         }
         p_node->value = NULL;
@@ -187,9 +217,13 @@ int releaseNode(Node *p_node) {
     p_node->next = NULL;
     p_node->type = VOID;
     p_node->value = NULL;
-    freeS_id(p_node->s_id);
-    p_node->if_malloc = 0;
+    if (p_node->s_id != NULL) freeS_id(p_node->s_id);
     free(p_node);
+    return 0;
+}
+
+inline int s_releaseNode(s_Node *s_p_node){
+    free(s_p_node);
     return 0;
 }
 
@@ -211,7 +245,7 @@ int releaseList(List *p_list) {
     p_list->head = NULL;
     p_list->tail = NULL;
     p_list->length = 0;
-    freeS_id(p_list->s_id);
+    if (p_list->s_id != NULL) freeS_id(p_list->s_id);
     free(p_list);
     return 0;
 }
@@ -219,7 +253,7 @@ int releaseList(List *p_list) {
 int releaseListForSingle(List *p_list) {
     p_list->head = NULL;
     p_list->tail = NULL;
-    freeS_id(p_list->s_id);
+    if (p_list->s_id != NULL) freeS_id(p_list->s_id);
     p_list->length = 0;
     free(p_list);
     return 0;
@@ -377,7 +411,7 @@ Node *findByValue(List *p_list, unsigned int type, const void *value) {
 }
 
 List *mply_findByValue(List *p_list, unsigned int type, const void *value) {
-    List *f_list = initList();
+    List *f_list = initList(0);
     Node *p_node = p_list->head;
     while (p_node != NULL) {
         if (p_node->type != type) {
@@ -422,26 +456,13 @@ int isListEmpty(List *p_list) {
     return 0;                    // want to make a list empty.
 }
 
-int exchangeLocation(Node *p_node, Node *t_node) {
-    Node *temp_next = p_node->next;
-    Node *temp_last = p_node->last;
-    p_node->last->next = t_node;
-    p_node->next->last = t_node;
-    t_node->last->next = p_node;
-    t_node->next->last = p_node;
-    p_node->next = t_node->next;
-    p_node->last = t_node->last;
-    t_node->next = temp_next;
-    t_node->last = temp_last;
-    return 0;
-}
-
 Node *copyNode(Node *p_node) {
-    Node *t_node = initNode();
+    Node *t_node = NULL;
+    if (p_node->s_id == NULL) t_node = initNode(0);
+        else t_node = initNode(p_node->s_id->deep);
     t_node->s_id = p_node->s_id;
     t_node->last = p_node->last;
     t_node->next = p_node->next;
-    t_node->if_malloc = p_node->if_malloc;
     t_node->type = p_node->type;
     t_node->value = p_node->value;
     return t_node;
@@ -450,7 +471,9 @@ Node *copyNode(Node *p_node) {
 List *copyList(List *p_list) {
     Node *p_node;
     Node *t_node;
-    List *t_list = initList();
+    List *t_list = NULL;
+    if (p_list->s_id == NULL) t_list = initList(0);
+        else t_list = initList(p_list->s_id->deep);
     t_list->head = p_list->head;
     t_list->tail = p_list->tail;
     t_list->s_id = p_list->s_id;
@@ -464,8 +487,7 @@ List *copyList(List *p_list) {
 }
 
 int releaseOnlyNode(Node *p_node) {
-    freeS_id(p_node->s_id);
-    p_node->if_malloc = 0;
+    if (p_node->s_id != NULL) freeS_id(p_node->s_id);
     p_node->last = NULL;
     p_node->next = NULL;
     p_node->type = VOID;
@@ -475,10 +497,10 @@ int releaseOnlyNode(Node *p_node) {
 }
 
 int releaseNodeForCustom(Node *p_node, int (*func)(void *)){
-    if (if_safeModeForNode == 1) {
+    if (if_safeModeForNode) {
         removeByNode(node_list, p_node);
     }
-    if (p_node->if_malloc == 1) {
+    if (p_node->value != NULL) {
         if (func(p_node->value))
             showError(pushError(LIST_NODE, STANDARD, initInfo("releaseNodeForCustom()", "Error in using custom freeing value function.")));
         p_node->value = NULL;
@@ -487,9 +509,14 @@ int releaseNodeForCustom(Node *p_node, int (*func)(void *)){
     p_node->next = NULL;
     p_node->type = VOID;
     p_node->value = NULL;
-    freeS_id(p_node->s_id);
-    p_node->if_malloc = 0;
+    if (p_node->s_id != NULL) freeS_id(p_node->s_id);
     free(p_node);
+    return 0;
+}
+
+inline int s_releaseNodeForCustom(s_Node *s_p_node, int (*func)(void *)){
+    func(s_p_node->value);
+    free(s_p_node);
     return 0;
 }
 
@@ -510,7 +537,20 @@ int releaseListForCustom(List *p_list, int (*func)(void *)){
     p_list->head = NULL;
     p_list->tail = NULL;
     p_list->length = 0;
-    freeS_id(p_list->s_id);
+    if (p_list->s_id != NULL) freeS_id(p_list->s_id);
+    free(p_list);
+    return  0;
+}
+
+int s_releaseListForCustom(List *p_list, int (*func)(void *)){
+    register s_Node *s_p_node, *s_pl_node;
+    s_p_node = p_list->s_head;
+    while (s_p_node != NULL) {
+        s_pl_node = s_p_node;
+        s_p_node = s_p_node->next;
+        s_pl_node->next = NULL;
+        s_releaseNodeForCustom(s_pl_node,func);
+    }
     free(p_list);
     return  0;
 }
@@ -564,4 +604,38 @@ int showWarning(Notice *p_notice){
     printf("%s: %s.\n",p_notice->info.head,p_notice->info.body);
     free(p_notice);
     return 0;
+}
+
+int replaceNode(List *p_list, Node *pt_node, Node *p_node){
+    p_node->next = pt_node->next;
+    p_node->last = pt_node->last;
+    if (p_list->head != pt_node) pt_node->last->next = p_node;
+        else p_list->head = p_node;
+    if(p_list->tail != pt_node) pt_node->next->last = p_node;
+    else p_list->tail = p_node;
+    return 0;
+}
+
+int sortListById(List *p_list){
+    
+}
+
+int enableListQuick(List *p_list){
+    if(p_list->length > 1500){
+        p_list->p_lq = malloc(sizeof(struct list_quick));
+        register Node *p_node = p_list->head;
+        unsigned long long i = 0;
+        p_list->p_lq->rlst_len = p_list->length;
+        p_list->p_lq->fn_node = malloc(sizeof(Node *) * p_list->length);
+        p_list->p_lq->p_lindex = 0;
+        p_list->p_lq->head_index = 0;
+        p_list->p_lq->tail_index = p_list->length - 1;
+        while (p_node != NULL) {
+            p_node->f_number = i++;
+            p_list->p_lq->fn_node[i] = p_node;
+            p_node = p_node->next;
+        }
+        return 0;
+    }
+    return -1;
 }

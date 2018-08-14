@@ -14,7 +14,6 @@ STD_BLOCKS *initStandardDBlocks(SID *p_sid, unsigned int type, unsigned long lon
 int dataForStandardDBlock(STD_BLOCKS *p_stdb,void *data){
     char *t_data = (char *)data;
     /*unsigned int data_size = sizeof(data);*/
-    
     for(int i = 0; i < p_stdb->blocks_num; i++){
         p_stdb->buff[i] = t_data[i];
     }
@@ -31,11 +30,11 @@ STD_CTN *initStandardDConnection(SID *f_sid, SID *s_sid){
 
 STD_DATA *initStandardData(unsigned int type){
     STD_DATA *p_std = (STD_DATA *)malloc(sizeof(STD_DATA));
-    p_std->pd_blocklst = initList();
-    p_std->pd_ctnlst = initList();
+    p_std->pd_blocklst = initList(0);
+    p_std->pd_ctnlst = initList(0);
     p_std->lock = 0;
     p_std->type = type;
-    p_std->s_id = getS_id(STANDARD_DATA, 1);
+    p_std->s_id = NULL;
     return p_std;
 }
 
@@ -60,7 +59,7 @@ D_FILE *initDataFileForWrite(char *route){
     p_dfile->pf_head = (F_HEAD *)malloc(sizeof(F_HEAD));
     strcpy(p_dfile->pf_head->head_test,"ZESTDLIB_STDDFILE");
     p_dfile->pf_head->data_num = 0;
-    p_dfile->pf_stdlst = initList();
+    p_dfile->pf_stdlst = initList(0);
     return p_dfile;
 }
 
@@ -69,7 +68,7 @@ D_FILE *initDataFileForRead(char *route){
     p_dfile->fp = fopen(route, "rb");
     p_dfile->pf_head = (F_HEAD *)malloc(sizeof(F_HEAD));
     p_dfile->pf_head->data_num = 0;
-    p_dfile->pf_stdlst = initList();
+    p_dfile->pf_stdlst = initList(0);
     return p_dfile;
 }
 
@@ -83,7 +82,7 @@ int dataFileWriteIn(D_FILE *p_dfile){
     fwrite(p_dfile->pf_head->head_test, sizeof(char), 18, p_dfile->fp);
     fwrite(&p_dfile->pf_head->data_num, sizeof(unsigned long long), 1, p_dfile->fp);
     fwrite("HEAD_END", sizeof(char), 9, p_dfile->fp);
-    List *er_list = initList();
+    List *er_list = initList(0);
     insertInTail(er_list, nodeWithPointer(p_dfile->fp));
     /*fwrite("STDINFO", sizeof(char), 8, p_dfile->fp);
     listThrough(p_dfile->pf_stdlst, _doStandardDataInfoWrite, er_list);*/
@@ -93,7 +92,7 @@ int dataFileWriteIn(D_FILE *p_dfile){
     return 0;
 }
 List *_doStandardDataInfoWrite(unsigned int type, void *value, List *er_list){
-    List *p_rtnlst = initList();
+    List *p_rtnlst = initList(0);
     FILE *fp = getByPointerForNode(findByIndexForNode(er_list, 0));
     STD_DATA *p_std = value;
     insertInTail(p_rtnlst, nodeWithInt(0));
@@ -107,11 +106,11 @@ List *_doStandardDataInfoWrite(unsigned int type, void *value, List *er_list){
 }
 
 List *_doStandardDataWrite(unsigned int type, void *value, List *er_list){
-    List *p_rtnlst = initList();
+    List *p_rtnlst = initList(0);
     FILE *fp = getByPointerForNode(findByIndexForNode(er_list, 0));
     insertInTail(p_rtnlst, nodeWithInt(0));
     STD_DATA *p_std = value;
-    List *erc_list = initList();
+    List *erc_list = initList(0);
     insertInTail(erc_list, nodeWithPointer(fp));
     fwrite("STD", sizeof(char), 4, fp);
     char *string_sid = s_idToASCIIString(p_std->s_id);
@@ -131,7 +130,7 @@ List *_doStandardDataWrite(unsigned int type, void *value, List *er_list){
 }
 
 List *_doStandardDConnectionWrite(unsigned int type, void *value, List *er_list){
-    List *p_rtnlst = initList();
+    List *p_rtnlst = initList(0);
     insertInTail(p_rtnlst, nodeWithInt(0));
     FILE *fp = getByPointerForNode(findByIndexForNode(er_list, 0));
     STD_CTN *p_stdc = value;
@@ -144,7 +143,7 @@ List *_doStandardDConnectionWrite(unsigned int type, void *value, List *er_list)
 }
 
 List *_doStandardDBlockWrite(unsigned int type, void *value, List *er_list){
-    List *p_rtnlst = initList();
+    List *p_rtnlst = initList(0);
     insertInTail(p_rtnlst, nodeWithInt(0));
     STD_BLOCKS *p_stdb = value;
     FILE *fp = getByPointerForNode(findByIndexForNode(er_list, 0));
@@ -160,6 +159,7 @@ List *_doStandardDBlockWrite(unsigned int type, void *value, List *er_list){
 STD_DATA *listToSTD(List *p_list){
     STD_DATA *p_std = initStandardData(LIST);
     Node *p_node = p_list->head;
+    if (p_list->s_id != NULL) p_std->s_id = p_list->s_id;
     while (p_node != NULL) {
         unsigned long long data_size = 0;
         if(p_node->type == INT) data_size = sizeof(int);
@@ -250,14 +250,13 @@ int releaseSTDConnection(STD_CTN *p_stdc){
 }
 
 int releaseSTDBlocks(STD_BLOCKS *p_stdb){
-    free(p_stdb->sid);
     free(p_stdb->buff);
+    free(p_stdb->sid);
     free(p_stdb);
     return 0;
 }
 
 int releaseStandardData(STD_DATA *p_std){
-    freeS_id(p_std->s_id);
     releaseListForCustom(p_std->pd_blocklst, (int (*)(void *))releaseSTDBlocks);
     releaseListForCustom(p_std->pd_ctnlst, (int (*)(void *))releaseSTDConnection);
     free(p_std);
@@ -273,19 +272,19 @@ int releaseDFile(D_FILE *p_dfile){
 }
 
 List *standardDataToList(STD_DATA *p_std){
-    List *p_list = initList();
-    List *er_list = initList();
+    List *p_list = initList(0);
+    List *er_list = initList(0);
     insertInTail(er_list, nodeWithPointer(er_list));
     listThrough(p_std->pd_blocklst, _doStandardDataToList, er_list);
     return p_list;
 }
 
 List *_doStandardDataToList(unsigned int type, void *value, List *er_list){
-    List *rtn_list = initList();
+    List *rtn_list = initList(0);
     insertInTail(rtn_list, nodeWithInt(0));
     List *p_list = getByPointerForNode(findByIndexForNode(er_list, 0));
     STD_BLOCKS *p_stdb = value;
-    Node *p_node = initNode();
+    Node *p_node = initNode(0);
     p_node->s_id = asciiStringToS_id(p_stdb->sid);
     p_node->type = p_stdb->type;
     p_node->value = malloc(sizeof(p_stdb->blocks_num));

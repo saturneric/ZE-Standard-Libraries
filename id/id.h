@@ -6,19 +6,25 @@
 #include <string.h>
 #include <time.h>
 #include "../type/type.h"
+#include "md5.h"
 
 void init_rand(void);
 unsigned long long getId(void);
 
 SID *getS_id(unsigned int type, unsigned int deep_level);
 
-int fitS_id(const SID *fs_id, const SID *ss_id);
-int simFitS_id(const SID *fs_id, const SID *ss_id);
+int fitS_id(SID * const fs_id, SID * const ss_id);
+int simFitS_id(SID * const fs_id, SID * const ss_id);
 
-char *s_idToASCIIString(const SID *s_id);
-SID *asciiStringToS_id(const char *string);
+char *s_idToASCIIString(SID * const s_id);
+SID *asciiStringToS_id(char * const string);
+
+void s_idToMD5(SID *s_id);
+char hexToChar(unsigned char);
 
 SID *initS_id(unsigned int deep_level);
+int freeSidRaw(SID *s_id);
 int freeS_id(SID *s_id);
 
+static _Bool if_rand;
 #endif /* id_h */

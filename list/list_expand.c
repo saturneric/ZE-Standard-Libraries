@@ -1,6 +1,6 @@
 #include "list_expand.h"
 
-Node *nodeWithInt(int m_int) {
+Node *nodeWithInt(int m_int, _Bool if_sid) {
 	Node *p_node;
 	int *p_int = (int *)malloc(sizeof(int));
     if(p_int == NULL){
@@ -8,12 +8,12 @@ Node *nodeWithInt(int m_int) {
         return NULL;
     }
 	*p_int = m_int;
-	p_node = initNode();
+	p_node = initNode(if_sid);
 	initMallocValueForNode(p_node, INT, (void *)p_int);
 	return p_node;
 }
 
-Node *nodeWithUInt(unsigned int m_uint){
+Node *nodeWithUInt(unsigned int m_uint, _Bool if_sid){
     Node *p_node;
     unsigned int *pu_int = (unsigned int *)malloc(sizeof(unsigned int));
     if(pu_int == NULL){
@@ -21,12 +21,12 @@ Node *nodeWithUInt(unsigned int m_uint){
         return NULL;
     }
     *pu_int = m_uint;
-    p_node = initNode();
+    p_node = initNode(if_sid);
     initMallocValueForNode(p_node, INT, (void *)pu_int);
     return p_node;
 }
 
-Node *nodeWithDouble(double m_double) {
+Node *nodeWithDouble(double m_double, _Bool if_sid) {
 	Node *p_node;
 	double *p_double = (double *)malloc(sizeof(double));
     if(p_double == NULL){
@@ -34,12 +34,12 @@ Node *nodeWithDouble(double m_double) {
         return NULL;
     }
 	*p_double = m_double;
-	p_node = initNode();
+	p_node = initNode(if_sid);
 	initMallocValueForNode(p_node, DOUBLE, (void *)p_double);
 	return p_node;
 }
 
-Node *nodeWithString(const char *m_string) {
+Node *nodeWithString(const char *m_string, _Bool if_sid) {
 	Node *p_node;
 	char *p_string = (char *)malloc(sizeof(char)*(strlen(m_string) + 1));
     if(p_string == NULL){
@@ -47,39 +47,53 @@ Node *nodeWithString(const char *m_string) {
         return NULL;
     }
 	strcpy(p_string, m_string);
-	p_node = initNode();
+	p_node = initNode(if_sid);
 	initMallocValueForNode(p_node, STRING, (void *)p_string);
 	return p_node;
 }
 
-Node *nodeWithPointer(const void *m_pointer) {
-	Node *p_node = initNode();
+Node *nodeWithPointer(const void *m_pointer, _Bool if_sid) {
+	Node *p_node = initNode(if_sid);
 	initMallocValueForNode(p_node, POINTER, m_pointer);
 	return p_node;
 }
 
 Node *nodeWithComplex(void) {
-	Node *p_node = initNode();
+	Node *p_node = initNode(0);
 	p_node->type = LIST;
-	p_node->value = initList();
-	p_node->if_malloc = 1;
+	p_node->value = initList(0);
 	return p_node;
 }
 
 Node *findByIndexForNode(List *p_list, unsigned long long m_index) {
-	Node *p_node = p_list->head;
-	unsigned long long i;
-	for (i = 0; i < m_index; i++) {
-		p_node = p_node->next;
-	}
-	return p_node;
+    if(p_list->p_lq != NULL){
+        register struct list_quick *p_lq = p_list->p_lq;
+        if(m_index > p_lq->head_index && p_lq->last_index) return p_lq->fn_node[m_index];
+    }
+    else{
+        Node *p_node = p_list->head;
+        unsigned long long i;
+        for (i = 0; i < m_index; i++) {
+            p_node = p_node->next;
+        }
+        return p_node;
+    }
+}
+
+s_Node *s_findByIndexForNode(List *p_list, unsigned long long m_index) {
+    s_Node *s_p_node = p_list->s_head;
+    unsigned long long i;
+    for (i = 0; i < m_index; i++) {
+        s_p_node = s_p_node->next;
+    }
+    return s_p_node;
 }
 
 List *listThrough(List *p_list, List *(*p_func)(unsigned int, void *, List *), List *expand_resources) {
 	Node *p_node = p_list->head;
     List *m_rtnlst = NULL;
 	while (p_node != NULL) {
-		if (p_node->if_malloc == 1) {
+		if (p_node->value != NULL) {
 			List *m_rtnlst = (*p_func)(p_node->type, p_node->value, expand_resources);
             int status = getByIntForNode(findByIndexForNode(m_rtnlst, 0));
 			if (status == -1) break;
@@ -178,7 +192,7 @@ void printNodeInfo(Node *p_node, int priority) {
 	for (i = 0; i < priority; i++) printf("   ");
 	printf("#NODE(location:%p, id:%s){\n", p_node, s_idToASCIIString(p_node->s_id));
 	for (i = 0; i < priority + 1; i++) printf("   ");
-	printf("NEXT->%p / LAST->%p / MALLOC:%d\n", p_node->next, p_node->last, p_node->if_malloc);
+	printf("NEXT->%p / LAST->%p\n", p_node->next, p_node->last);
 	if (p_node->type == INT) {
 		for (i = 0; i < priority + 1; i++) printf("   ");
 		printf("VALUE(int):%d\n", *(int *)(p_node->value));
@@ -211,7 +225,7 @@ void printNode(Node *p_node) {
 	printf("NEXT->%p / LAST->%p\n", p_node->next, p_node->last);
 	for (i = 0; i < 1; i++) printf("   ");
 	printf("ifMalloc: ");
-	if (p_node->if_malloc) {
+	if (p_node->value != NULL) {
 		printf("YES\n");
 		for (i = 0; i < 1; i++) printf("   ");
 		printf("Value(type: %d): ", p_node->type);
@@ -274,7 +288,7 @@ int addValueForComplex(Node * p_node, int type, void *value) {
 	Node *c_node;
 	if (p_node->type == LIST) {
 		c_list = (List *)p_node->value;
-		c_node = initNode();
+		c_node = initNode(0);
 		initMallocValueForNode(c_node, type, value);
 		insertInTail(c_list, c_node);
 		return  0;
@@ -377,17 +391,24 @@ List *m_findByPointer(List* p_list, void *temp) {
 }
 
 unsigned long long getIndexByNode(List *p_list, Node *p_node) {
-	Node *t_node = p_list->head;
-	unsigned long long index = 0;
-	while (t_node != NULL) {
-		if (p_node->s_id == t_node->s_id) return index;
-		index++;
-		t_node = t_node->next;
-	}
+    if (p_list->p_lq != NULL){
+        register Node **p_fn_node = p_list->p_lq->fn_node;
+        register Node *rp_node = p_node;
+        for (register int i = 0; i < p_list->length; i++) if (p_fn_node[i] == rp_node) return i;
+    }
+    else{
+        register Node *t_node = p_list->head;
+        register unsigned long long index = 0;
+        while (t_node != NULL) {
+            if (p_node->s_id == t_node->s_id) return index;
+            index++;
+            t_node = t_node->next;
+        }
+    }
 	return 0;
 }
 
-List *m_findByIntForNode(List* p_list, int temp) {
+List *plym_findByIntForNode(List* p_list, int temp) {
     int *p_temp = (int *)malloc(sizeof(int));
     if(p_temp == NULL){
         showError(pushError(INT, STANDARD, initInfo("m_findByIntForNode()", "Error in getting the memory of int.")));
@@ -397,7 +418,7 @@ List *m_findByIntForNode(List* p_list, int temp) {
 	return mply_findByValue(p_list, INT, (void *)p_temp);
 }
 
-List *m_findByDoubleForNode(List* p_list, double temp) {
+List *mply_findByDoubleForNode(List* p_list, double temp) {
 	double *p_temp = (double *)malloc(sizeof(double));
     if(p_temp == NULL){
         showError(pushError(DOUBLE, STANDARD, initInfo("m_findByDoubleForNode()", "Error in getting the memory of double.")));
@@ -407,7 +428,7 @@ List *m_findByDoubleForNode(List* p_list, double temp) {
 	return mply_findByValue(p_list, DOUBLE, (void *)p_temp);
 }
 
-List *m_findByStringForNode(List* p_list, char *temp) {
+List *mply_findByStringForNode(List* p_list, char *temp) {
 	char *p_temp = (char *)malloc(sizeof(char) * (strlen(temp) + 1));
     if(p_temp == NULL){
         showError(pushError(STRING, STANDARD, initInfo("m_findByStringForNode()", "Error in getting the memory of string.")));
@@ -417,7 +438,7 @@ List *m_findByStringForNode(List* p_list, char *temp) {
 	return mply_findByValue(p_list, STRING, (void *)p_temp);
 }
 
-List *m_findByPointerForNode(List* p_list, void *temp) {
+List *mply_findByPointerForNode(List* p_list, void *temp) {
 	return mply_findByValue(p_list, POINTER, (void *)temp);
 }
 
@@ -472,4 +493,39 @@ int updateValueWithPointer(Node *p_node, void *pointer){
     free(p_node->value);
     p_node->value = pointer;
     return 0;
+}
+
+inline s_Node *s_nodeWithInt(int t_int){
+    s_Node *s_p_node = s_initNode();
+    int *pt_int = malloc(sizeof(int));
+    *pt_int = t_int;
+    s_p_node->value = pt_int;
+    return s_p_node;
+}
+
+inline s_Node *s_nodeWithUInt(unsigned int t_uint){
+    s_Node *s_p_node = s_initNode();
+    unsigned int *pt_uint = malloc(sizeof(unsigned int));
+    *pt_uint = t_uint;
+    s_p_node->value = pt_uint;
+    return s_p_node;
+}
+inline s_Node *s_nodeWithDouble(double t_double){
+    s_Node *s_p_node = s_initNode();
+    unsigned int *pt_double = malloc(sizeof(double));
+    *pt_double = t_double;
+    s_p_node->value = pt_double;
+    return s_p_node;
+}
+inline s_Node *s_nodeWithString(const char *t_string){
+    s_Node *s_p_node = s_initNode();
+    char *pt_string = malloc(strlen(t_string) + 1);
+    strcpy(pt_string, t_string);
+    s_p_node->value = pt_string;
+    return s_p_node;
+}
+inline s_Node *s_nodeWithPointer(const void *t_pointer){
+    s_Node *s_p_node = s_initNode();
+    s_p_node->value = (void *) t_pointer;
+    return s_p_node;
 }
