@@ -82,19 +82,9 @@ int stack(void) {
 
 
 int main(int argc, char **argv) {
-    init_rand();
-    List *t_list = initList();
-    for (int i = 0; i < 100; i++) {
-        insertInHead(t_list, nodeWithInt(i));
-    }
-    STD_DATA *p_std = listToSTD(t_list);
-    D_FILE *p_dfilew = initDataFileForWrite("data.df");
-    dataFileAddStandardData(p_dfilew, p_std);
-    dataFileWriteIn(p_dfilew);
-    releaseDFile(p_dfilew);
-    D_FILE *p_dfiler = initDataFileForRead("data.df");
-    dataFileReadOut(p_dfiler);
-    releaseDFile(p_dfiler);
-    releaseList(t_list);
+    SID *p_sid = getS_id(VOID, 2);
+    s_idToASCIIString(p_sid);
+    printf("%s",p_sid->decrypt_str);
+    freeS_id(p_sid);
 	return 0;
 }

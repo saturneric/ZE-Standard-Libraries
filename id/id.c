@@ -30,6 +30,10 @@ SID *initS_id(unsigned int deep_level){
     p_sid->sr->value_deeper = NULL;
     p_sid->sr->value_deepest = NULL;
     p_sid->md5 = NULL;
+    return p_sid;
+}
+
+void getRawS_id(SID *p_sid, unsigned int type, unsigned int deep_level){
     if (deep_level > 0) {
         p_sid->sr->value = (unsigned int *)malloc(sizeof(unsigned int)*DEEPC_LEN);
         if(p_sid->sr->value == NULL){
@@ -48,17 +52,17 @@ SID *initS_id(unsigned int deep_level){
             printf("\ninitS_id(): Error in getting the memory of sid.value_deepest.\n");
         }
     }
-    return p_sid;
-}
-
-SID *getS_id(unsigned int type, unsigned int deep_level){
-    SID *p_sid = initS_id(deep_level);
     p_sid->sr->type = type;
     if(deep_level > 0){
         for(register int i = 0; i < DEEPC_LEN; i++) p_sid->sr->value[i] = rand()%65535;
         if(deep_level > 1) for(register int i = 0; i < DEEPB_LEN; i++) p_sid->sr->value_deeper[i] = rand()%65535;
         if (deep_level > 2) for(register int i = 0; i < DEEPA_LEN; i++) p_sid->sr->value_deepest[i] = rand()%65535;
     }
+}
+
+SID *getS_id(unsigned int type, unsigned int deep_level){
+    SID *p_sid = initS_id(deep_level);
+    getRawS_id(p_sid, type, deep_level);
     s_idToMD5(p_sid);
     return p_sid;
 }
@@ -69,7 +73,7 @@ int fitS_id(SID * const fs_id, SID * const ss_id){
     return strcmp(fs_id->decrypt_str, ss_id->decrypt_str);
 }
 
-int simFitS_id(SID * const fs_id, SID * const ss_id){
+int simFitS_id(SID * fs_id, SID * ss_id){
     return !fitS_id(fs_id, ss_id);
 }
 
@@ -87,7 +91,9 @@ char *s_idToASCIIString(SID * const s_id){
         free(s_id->md5);
         s_id->md5 = NULL;
     }
-    return s_id->decrypt_str;
+    char *rtn_str = malloc(sizeof(char) * 33);
+    strcpy(rtn_str, s_id->decrypt_str);
+    return rtn_str;
 }
 
 char *s_idToASCIIRawString(SID * const s_id){
@@ -286,4 +292,11 @@ char hexToChar(unsigned char n){
             break;
     }
     return '0';
+}
+
+SID *copyS_id(SID *f_sid){
+    SID *s_sid = initS_id(f_sid->deep);
+    for(int i = 0; i < 16; i++)
+        s_sid->decrypt_hex[i] = f_sid->decrypt_hex[i];
+    return 0;
 }

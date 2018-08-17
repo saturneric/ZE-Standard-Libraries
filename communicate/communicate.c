@@ -2,7 +2,10 @@
 
 STD_BLOCKS *initStandardDBlocks(SID *p_sid, unsigned int type, unsigned long long data_size){
     STD_BLOCKS *p_stdb = (STD_BLOCKS *)malloc(sizeof(STD_BLOCKS));
-    p_stdb->sid = s_idToASCIIString(p_sid);
+    if(p_sid != NULL){
+        p_stdb->sid = s_idToASCIIString(p_sid);
+    }
+    else p_stdb->sid = NULL;
     p_stdb->if_data = 0;
     unsigned int blocks_num = (unsigned int)(data_size/sizeof(char));
     p_stdb->blocks_num = blocks_num;
@@ -42,14 +45,14 @@ int standardDataAddBlock(STD_DATA *p_std, SID *p_sid ,unsigned int type, void *d
     if (p_std->lock) return -1;
     STD_BLOCKS *p_stdb = initStandardDBlocks(p_sid, type,data_size);
     dataForStandardDBlock(p_stdb, data);
-    insertInTail(p_std->pd_blocklst, nodeWithPointer(p_stdb));
+    insertInTail(p_std->pd_blocklst, nodeWithPointer(p_stdb,0));
     return 0;
 }
 
 int standardDataAddConnection(STD_DATA *p_std, SID *f_sid, SID *s_sid){
     if (p_std->lock) return -1;
     STD_CTN *p_stdb = initStandardDConnection(f_sid, s_sid);
-    insertInTail(p_std->pd_ctnlst, nodeWithPointer(p_stdb));
+    insertInTail(p_std->pd_ctnlst, nodeWithPointer(p_stdb,0));
     return 0;
 }
 
@@ -73,7 +76,7 @@ D_FILE *initDataFileForRead(char *route){
 }
 
 int dataFileAddStandardData(D_FILE *p_dfile, STD_DATA *p_std){
-    insertInTail(p_dfile->pf_stdlst, nodeWithPointer(p_std));
+    insertInTail(p_dfile->pf_stdlst, nodeWithPointer(p_std,0));
     p_dfile->pf_head->data_num = p_dfile->pf_stdlst->length;
     return 0;
 }
@@ -83,7 +86,7 @@ int dataFileWriteIn(D_FILE *p_dfile){
     fwrite(&p_dfile->pf_head->data_num, sizeof(unsigned long long), 1, p_dfile->fp);
     fwrite("HEAD_END", sizeof(char), 9, p_dfile->fp);
     List *er_list = initList(0);
-    insertInTail(er_list, nodeWithPointer(p_dfile->fp));
+    insertInTail(er_list, nodeWithPointer(p_dfile->fp,0));
     /*fwrite("STDINFO", sizeof(char), 8, p_dfile->fp);
     listThrough(p_dfile->pf_stdlst, _doStandardDataInfoWrite, er_list);*/
     /*fwrite("STDLST", sizeof(char), 7, p_dfile->fp);*/
@@ -91,14 +94,23 @@ int dataFileWriteIn(D_FILE *p_dfile){
     releaseList(er_list);
     return 0;
 }
+
 List *_doStandardDataInfoWrite(unsigned int type, void *value, List *er_list){
     List *p_rtnlst = initList(0);
     FILE *fp = getByPointerForNode(findByIndexForNode(er_list, 0));
     STD_DATA *p_std = value;
-    insertInTail(p_rtnlst, nodeWithInt(0));
-    char *string_sid = s_idToASCIIString(p_std->s_id);
-    fwrite(string_sid, sizeof(char), DEEPER_LEN, fp);
-    free(string_sid);
+    insertInTail(p_rtnlst, nodeWithInt(0,0));
+    int if_sid = 0;
+    if(p_std->s_id != NULL){
+        if_sid = 1;
+        char *string_sid = s_idToASCIIString(p_std->s_id);
+        fwrite(&if_sid, sizeof(int), 1, fp);
+        fwrite(string_sid, sizeof(char), SID_LEN, fp);
+        free(string_sid);
+    }
+    else{
+        fwrite(&if_sid, sizeof(int), 1, fp);
+    }
     fwrite(&p_std->type, sizeof(unsigned long), 1, fp);
     fwrite(&p_std->pd_ctnlst->length, sizeof(unsigned long long), 1, fp);
     fwrite(&p_std->pd_blocklst->length, sizeof(unsigned long long), 1, fp);
@@ -108,48 +120,45 @@ List *_doStandardDataInfoWrite(unsigned int type, void *value, List *er_list){
 List *_doStandardDataWrite(unsigned int type, void *value, List *er_list){
     List *p_rtnlst = initList(0);
     FILE *fp = getByPointerForNode(findByIndexForNode(er_list, 0));
-    insertInTail(p_rtnlst, nodeWithInt(0));
+    insertInTail(p_rtnlst, nodeWithInt(0,0));
     STD_DATA *p_std = value;
     List *erc_list = initList(0);
-    insertInTail(erc_list, nodeWithPointer(fp));
+    insertInTail(erc_list, nodeWithPointer(fp,0));
     fwrite("STD", sizeof(char), 4, fp);
-    char *string_sid = s_idToASCIIString(p_std->s_id);
-    unsigned long sid_len = strlen(string_sid) + 1;
-    fwrite(&sid_len, sizeof(unsigned long), 1, fp);
-    char *sid_w = s_idToASCIIString(p_std->s_id);
-    fwrite(sid_w, sizeof(char), sid_len, fp);
     fwrite(&p_std->type, sizeof(unsigned int), 1, fp);
     fwrite(&p_std->pd_ctnlst->length, sizeof(unsigned long long), 1, fp);
     fwrite(&p_std->pd_blocklst->length, sizeof(unsigned long long), 1, fp);
     listThrough(p_std->pd_ctnlst, _doStandardDConnectionWrite, erc_list);
     listThrough(p_std->pd_blocklst, _doStandardDBlockWrite, erc_list);
     releaseList(erc_list);
-    free(sid_w);
-    free(string_sid);
     return p_rtnlst;
 }
 
 List *_doStandardDConnectionWrite(unsigned int type, void *value, List *er_list){
     List *p_rtnlst = initList(0);
-    insertInTail(p_rtnlst, nodeWithInt(0));
+    insertInTail(p_rtnlst, nodeWithInt(0,0));
     FILE *fp = getByPointerForNode(findByIndexForNode(er_list, 0));
     STD_CTN *p_stdc = value;
-    unsigned long fsid_len = strlen(p_stdc->f_sid) + 1, ssid_len = strlen(p_stdc->s_sid)+1;
-    fwrite(&fsid_len, sizeof(unsigned long), 1, fp);
-    fwrite(p_stdc->f_sid, sizeof(char), fsid_len, fp);
-    fwrite(&ssid_len, sizeof(unsigned long), 1, fp);
-    fwrite(p_stdc->s_sid, sizeof(char), ssid_len, fp);
+    fwrite(p_stdc->f_sid, sizeof(char), SID_LEN, fp);
+    fwrite(p_stdc->s_sid, sizeof(char), SID_LEN, fp);
     return p_rtnlst;
 }
 
 List *_doStandardDBlockWrite(unsigned int type, void *value, List *er_list){
     List *p_rtnlst = initList(0);
-    insertInTail(p_rtnlst, nodeWithInt(0));
+    insertInTail(p_rtnlst, nodeWithInt(0,0));
     STD_BLOCKS *p_stdb = value;
     FILE *fp = getByPointerForNode(findByIndexForNode(er_list, 0));
-    unsigned long sid_len = strlen(p_stdb->sid)+1, blocks_num = p_stdb->blocks_num;
-    fwrite(&sid_len, sizeof(unsigned long), 1, fp);
-    fwrite(p_stdb->sid, sizeof(char), sid_len, fp);
+    unsigned long blocks_num = p_stdb->blocks_num;
+    int if_sid = 0;
+    if(p_stdb->sid != NULL){
+        if_sid = 1;
+        fwrite(&if_sid, sizeof(int), 1, fp);
+        fwrite(p_stdb->sid, sizeof(char), SID_LEN, fp);
+    }
+    else{
+        fwrite(&if_sid, sizeof(int), 1, fp);
+    }
     fwrite(&p_stdb->type, sizeof(unsigned int), 1, fp);
     fwrite(&blocks_num, sizeof(unsigned long), 1, fp);
     fwrite(p_stdb->buff, sizeof(char), p_stdb->blocks_num, fp);
@@ -159,8 +168,9 @@ List *_doStandardDBlockWrite(unsigned int type, void *value, List *er_list){
 STD_DATA *listToSTD(List *p_list){
     STD_DATA *p_std = initStandardData(LIST);
     Node *p_node = p_list->head;
-    if (p_list->s_id != NULL) p_std->s_id = p_list->s_id;
+    if (p_list->s_id != NULL) p_std->s_id = copyS_id(p_list->s_id);
     while (p_node != NULL) {
+        if(p_node->type == HOLE) continue;
         unsigned long long data_size = 0;
         if(p_node->type == INT) data_size = sizeof(int);
         else if (p_node->type == DOUBLE) data_size = sizeof(double);
@@ -186,26 +196,28 @@ int dataFileReadOut(D_FILE *p_dfile){
                 char std_test_info[4];
                 fread(std_test_info, sizeof(char), 4, p_dfile->fp);
                 if(!strcmp(std_test_info, "STD")){
-                    unsigned long long sid_len = 0, ctn_num = 0, blk_num = 0;
+                    unsigned long long ctn_num = 0, blk_num = 0;
+                    int if_sid = 0;
                     unsigned int type = 0;
-                    fread(&sid_len, sizeof(unsigned long), 1, p_dfile->fp);
-                    char *string_sid = (char *)malloc(sizeof(char) * sid_len);
-                    fread(string_sid, sizeof(char), sid_len, p_dfile->fp);
+                    fread(&if_sid, sizeof(int), 1, p_dfile->fp);
+                    char *string_sid = NULL;
+                    if(if_sid){
+                        string_sid = (char *)malloc(sizeof(char) * SID_LEN);
+                        fread(string_sid, sizeof(char), SID_LEN, p_dfile->fp);
+                    }
                     fread(&type, sizeof(unsigned int), 1, p_dfile->fp);
                     STD_DATA *p_std = initStandardData(type);
                     freeS_id(p_std->s_id);
                     p_std->s_id = asciiStringToS_id(string_sid);
                     dataFileAddStandardData(p_dfile, p_std);
-                    free(string_sid);
+                    if(string_sid != NULL) free(string_sid);
                     fread(&ctn_num, sizeof(unsigned long long), 1, p_dfile->fp);
                     fread(&blk_num, sizeof(unsigned long long), 1, p_dfile->fp);
                     for(int j = 0; j < ctn_num; j++){
-                        fread(&sid_len, sizeof(unsigned long), 1, p_dfile->fp);
-                        char *fstring_sid = (char *)malloc(sizeof(char) * sid_len);
-                        fread(fstring_sid, sizeof(char), sid_len, p_dfile->fp);
-                        fread(&sid_len, sizeof(unsigned long), 1, p_dfile->fp);
-                        char *sstring_sid = (char *)malloc(sizeof(char) * sid_len);
-                        fread(sstring_sid, sizeof(char), sid_len, p_dfile->fp);
+                        char *fstring_sid = (char *)malloc(sizeof(char) * SID_LEN);
+                        fread(fstring_sid, sizeof(char), SID_LEN, p_dfile->fp);
+                        char *sstring_sid = (char *)malloc(sizeof(char) * SID_LEN);
+                        fread(sstring_sid, sizeof(char), SID_LEN, p_dfile->fp);
                         SID *fs_id = asciiStringToS_id(fstring_sid), *ss_id = asciiStringToS_id(sstring_sid);
                         standardDataAddConnection(p_std, fs_id,ss_id);
                         freeS_id(fs_id);
@@ -214,9 +226,12 @@ int dataFileReadOut(D_FILE *p_dfile){
                         free(sstring_sid);
                     }
                     for(int k = 0; k < blk_num; k++){
-                        fread(&sid_len, sizeof(unsigned long), 1, p_dfile->fp);
-                        char *string_sid = (char *)malloc(sizeof(char) * sid_len);
-                        fread(string_sid, sizeof(char), sid_len, p_dfile->fp);
+                        fread(&if_sid, sizeof(int), 1, p_dfile->fp);
+                        char *string_sid = NULL;
+                        if(if_sid){
+                            string_sid = (char *)malloc(sizeof(char) * SID_LEN);
+                            fread(string_sid, sizeof(char), SID_LEN, p_dfile->fp);
+                        }
                         unsigned long blk_len = 0;
                         fread(&blk_len, sizeof(unsigned long), 1, p_dfile->fp);
                         char *content = (char *)malloc(sizeof(char) * blk_len);
@@ -226,7 +241,7 @@ int dataFileReadOut(D_FILE *p_dfile){
                         fread(&type, sizeof(unsigned int), 1, p_dfile->fp);
                         standardDataAddBlock(p_std, s_id, type, content, blk_len);
                         freeS_id(s_id);
-                        free(string_sid);
+                        if(string_sid != NULL) free(string_sid);
                         free(content);
                     }
                     return  0;
@@ -274,14 +289,14 @@ int releaseDFile(D_FILE *p_dfile){
 List *standardDataToList(STD_DATA *p_std){
     List *p_list = initList(0);
     List *er_list = initList(0);
-    insertInTail(er_list, nodeWithPointer(er_list));
+    insertInTail(er_list, nodeWithPointer(er_list,0));
     listThrough(p_std->pd_blocklst, _doStandardDataToList, er_list);
     return p_list;
 }
 
 List *_doStandardDataToList(unsigned int type, void *value, List *er_list){
     List *rtn_list = initList(0);
-    insertInTail(rtn_list, nodeWithInt(0));
+    insertInTail(rtn_list, nodeWithInt(0,0));
     List *p_list = getByPointerForNode(findByIndexForNode(er_list, 0));
     STD_BLOCKS *p_stdb = value;
     Node *p_node = initNode(0);
@@ -291,6 +306,18 @@ List *_doStandardDataToList(unsigned int type, void *value, List *er_list){
     memcpy(p_node->value, p_stdb->buff, sizeof(p_stdb->blocks_num));
     insertInTail(p_list, p_node);
     return rtn_list;
+}
+
+unsigned long calStandardData(STD_DATA *p_std){
+    unsigned long size = sizeof(unsigned int) + 9;
+    if(p_std->s_id != NULL) size += 32;
+    listThrough(p_std->pd_ctnlst, CALLBACK_CALL(calStandardDataCTN), SEND_ARG("%d", size));
+    return 0;
+}
+
+CALLBACK_DEFINE(calStandardDataCTN){
+    
+    return C_RETURN;
 }
 
 MSG *createMessage(char *title, void *data, unsigned long data_size){

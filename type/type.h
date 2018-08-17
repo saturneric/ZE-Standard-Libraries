@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <inttypes.h>
+#include <stdarg.h>
 
 /*
 #include <sys/types.h>
@@ -31,6 +32,8 @@
 #define STANDARD_DATA 13
 #define DATA_FILE 14
 #define MESSAGE 15
+#define HOLE 16
+#define ULLINT 17
 
 #define  DEEPC 1
 #define  DEEPB 2
@@ -43,13 +46,19 @@
 #define DEEP_LEN 25
 #define DEEPER_LEN 65
 #define DEEPEST_LEN 225
+#define SID_LEN 32
 #define FILE_TSET_LEN 18
 #define HEAD_TEST_LEN 9
-
+#define ENABLE_LIST_QUICK 1500
+#define FN_NODE_SPARE 12
+#define INDEX_CHANGE_MAX 500
+#define INDEX_DISTANCE_MAX 120
 
 #define HIGH 0x3
 #define STANDARD 0x2
 #define LOW 0x1
+
+#define ABS(x) (x>0)?(x):(-x)
 
 typedef struct md5_ctx{
     unsigned int count[2];
@@ -105,12 +114,16 @@ typedef struct List{
     SID *s_id;
 } List;
 
+struct index_change{
+    unsigned long long c_index;
+    int f_count;
+};
+
 struct list_quick{
     Node **fn_node;
-    unsigned long long last_index;
-    Node *p_lindex;
-    unsigned long long head_index;
-    unsigned long long tail_index;
+    _Bool if_sort;
+    unsigned int idxc_count;
+    struct index_change *idxc_lst[INDEX_CHANGE_MAX];
     unsigned long long rlst_len;
     FILE *fp;
     List *stdid_lst;

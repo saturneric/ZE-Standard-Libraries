@@ -29,6 +29,8 @@ int releaseSTDBlocks(STD_BLOCKS *p_stdb);
 int releaseStandardData(STD_DATA *p_std);
 int releaseSTDConnection(STD_CTN *p_stdc);
 int releaseDFile(D_FILE *p_file);
+unsigned long calStandardData(STD_DATA *p_std);
+CALLBACK_STATE(calStandardDataCTN);
 
 List *_doStandardDataInfoWrite(unsigned int type, void *value, List *er_list);
 List *_doStandardDataWrite(unsigned int type, void *value, List *er_list);

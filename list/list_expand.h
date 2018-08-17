@@ -3,11 +3,25 @@
 
 #include "list.h"
 
-Node *nodeWithInt(int);
-Node *nodeWithUInt(unsigned int);
-Node *nodeWithDouble(double);
-Node *nodeWithString(const char *);
-Node *nodeWithPointer(const void *);
+#define RETURN(argc, args...) newReturn(1, -1, argc , args)
+#define C_RETURN newCReturn()
+#define SEND_ARG(argc, args...) newReturn(0, -1, argc , args)
+#define CALLBACK_STATE(name) List *do_##name(unsigned int, void *, List *)
+#define CALLBACK_DEFINE(name) List *do_##name(unsigned int type, void *value, List *args)
+#define VALUE(c_type) (c_type)value
+#define ARGS(x, type)\
+if(#type == "int") lidxi(args, x);\
+else if if(#type == "double") lidxd(args, x);\
+else if(#type == "string") lidxs(args, x);\
+else lidxi(args, x);
+#define CALLBACK_CALL(name) do_##name
+
+Node *nodeWithInt(int, _Bool if_sid);
+Node *nodeWithUInt(unsigned int, _Bool if_sid);
+Node *nodeWithULLInt(unsigned long long, _Bool if_sid);
+Node *nodeWithDouble(double, _Bool if_sid);
+Node *nodeWithString(const char *, _Bool if_sid);
+Node *nodeWithPointer(const void *, _Bool if_sid);
 
 s_Node *s_nodeWithInt(int);
 s_Node *s_nodeWithUInt(unsigned int);
@@ -27,12 +41,6 @@ int updateValueWithDoubleForNode(Node *,double);
 int updateValueWithStringForNode(Node *,char *);
 int updateValueWithPointerForNode(Node *,void *);
 
-Node *findByIndexForNode(List *, unsigned long long);
-Node *findByIntForNode(List *, int);
-Node *findByDoubleForNode(List *, double);
-Node *findByStringForNode(List *, char *);
-Node *findByPointerForNode(List *, void *);
-
 List *mply_findByIntForNode(List*, int);
 List *mply_findByDoubleForNode(List*, double);
 List *mply_findByStringForNode(List*, char *);
@@ -43,13 +51,9 @@ void printNodeInfo(Node *p_node,int priority);
 void printList(List *);
 void printNode(Node *p_node);
 
-int getByIntForNode(Node *);
-unsigned int getByUIntForNode(Node *);
-double getByDoubleForNode(Node *);
-char *getByStringForNode(Node *);
-void *getByPointerForNode(Node *);
-unsigned long long getIndexForNode(List *p_list,Node *p_node);
 List *listThrough(List *p_list, List *(*p_func)(unsigned int type, void *value, List *), List *expand_resources);
+List *newReturn(int if_status ,int status, char *argc, ...);
+List *newCReturn(void);
 unsigned long long calListMemory(List *);
 
 #endif

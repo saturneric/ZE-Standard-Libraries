@@ -145,6 +145,18 @@ int initMallocValueForNode(Node *p_node, unsigned int type, const void *p_value)
 }
 
 int insertInHead(List *p_list, Node *p_node) {
+    if(p_list->p_lq != NULL && p_list->p_lq->if_sort) return -1;
+    if(p_list->p_lq != NULL){
+        if(p_list->head->type == HOLE){
+            Node *t_node = p_list->head;
+            replaceNode(p_list, p_list->head, p_node);
+            p_list->p_lq->fn_node[0] = p_node;
+            releaseNode(t_node);
+            indexChange(p_list, 0, 1);
+            return 0;
+        }
+        indexChange(p_list, 0, 1);
+    }
     if (isListEmpty(p_list)) {
         p_list->head = p_node;
         p_list->tail = p_node;
@@ -172,6 +184,7 @@ inline int s_insertInHead(List *p_list, s_Node *s_p_node){
 }
 
 int insertInTail(List *p_list, Node *p_node) {
+    if(p_list->p_lq != NULL && p_list->p_lq->if_sort) return -1;
     if (isListEmpty(p_list)) {
         p_list->head = p_node;
         p_list->tail = p_node;
@@ -182,6 +195,15 @@ int insertInTail(List *p_list, Node *p_node) {
         p_node->last = p_list->tail;
         p_list->tail = p_node;
     }
+    
+    if(p_list->p_lq != NULL){
+        p_node->f_number = p_list->p_lq->rlst_len;
+        if(p_list->p_lq->rlst_len >= p_list->p_lq->rlst_len + FN_NODE_SPARE)
+            p_list->p_lq->fn_node = realloc(p_list->p_lq->fn_node, sizeof(Node *) * (p_list->p_lq->rlst_len + FN_NODE_SPARE));
+        p_list->p_lq->fn_node[p_list->p_lq->rlst_len] = p_node;
+        p_list->p_lq->rlst_len++;
+    }
+    
     p_list->length += 1;
     return 0;
 }
@@ -213,6 +235,7 @@ int releaseNode(Node *p_node) {
         }
         p_node->value = NULL;
     }
+    p_node->f_number = 0;
     p_node->last = NULL;
     p_node->next = NULL;
     p_node->type = VOID;
@@ -246,6 +269,7 @@ int releaseList(List *p_list) {
     p_list->tail = NULL;
     p_list->length = 0;
     if (p_list->s_id != NULL) freeS_id(p_list->s_id);
+    if(p_list->p_lq != NULL) disableListQuick(p_list);
     free(p_list);
     return 0;
 }
@@ -254,6 +278,7 @@ int releaseListForSingle(List *p_list) {
     p_list->head = NULL;
     p_list->tail = NULL;
     if (p_list->s_id != NULL) freeS_id(p_list->s_id);
+    if(p_list->p_lq != NULL) disableListQuick(p_list);
     p_list->length = 0;
     free(p_list);
     return 0;
@@ -263,7 +288,7 @@ unsigned long long len(List *p_list) {
     return p_list->length;
 }
 
-int removeById(List *p_list, const SID *s_id) {
+int removeById(List *p_list, SID *s_id) {
     Node *tmp = p_list->head;
     if (isListEmpty(p_list))
         return -1;
@@ -294,38 +319,55 @@ int removeById(List *p_list, const SID *s_id) {
 }
 
 int removeByNode(List *p_list, Node *p_node) {
-    Node *tmp = p_list->head;
     if (isListEmpty(p_list))
         return -1;
-    do {
-        if (tmp == p_node) {
-            tmp->last->next = tmp->next;
-            tmp->next->last = tmp->last;
-            p_list->length -= 1;
-            return 1;//found
+    if(p_node == p_list->head){
+        popFromHead(p_list);
+        return 0;
+    }
+    else if(p_node == p_list->tail){
+        popFromTail(p_list);
+        return 0;
+    }
+    if(p_list->p_lq == NULL){
+        p_node->last->next = p_node->next;
+        p_node->next->last = p_node->last;
+    }
+    else{
+        if(p_node != p_list->head){
+            if(p_node->f_number == 0){
+                Node *fn_node = findFnNode(p_list, p_node);
+                indexChange(p_list, fn_node->f_number, -1);
+                p_node->last->next = p_node->next;
+                p_node->next->last = p_node->last;
+            }
+            else{
+                digHole(p_list, p_node);
+            }
         }
-        else {
-            tmp = tmp->next;
-        }
-    } while (tmp != NULL);
-    
+        p_list->length -= 1;
+    }
     return 0;//not find
 }
 
 int popFromHead(List *p_list) {
     if (isListEmpty(p_list))
         return -1;
-    else {
+    if(p_list->p_lq != NULL){
+        if(p_list->p_lq->fn_node[0] == p_list->head){
+            digHole(p_list, p_list->head);
+        }
+    }
+    else{
         //Node *tmp = p_list->head;
         p_list->head->next->last = NULL;
         p_list->head = p_list->head->next;
         //releaseNode(tmp); not necessary
+        if (isListEmpty(p_list)) {
+            p_list->head = NULL;
+            p_list->tail = NULL;
+        }
         p_list->length -= 1;
-    }
-    
-    if (isListEmpty(p_list)) {
-        p_list->head = NULL;
-        p_list->tail = NULL;
     }
     return 0;
 }
@@ -334,21 +376,25 @@ int popFromTail(List *p_list) {
     if (isListEmpty(p_list))
         return -1;
     else {
+        if(p_list->p_lq != NULL){
+            if(p_list->p_lq->fn_node[p_list->p_lq->rlst_len] == p_list->tail)
+                p_list->p_lq->fn_node = realloc(p_list->p_lq->fn_node, sizeof(p_list->p_lq->rlst_len - 1));
+        }
         //Node *tmp = p_list->tail;
         p_list->tail->last->next = NULL;
         p_list->tail = p_list->tail->last;
         //releaseNode(tmp); not necessary
-        p_list->length -= 1;
     }
     
     if (isListEmpty(p_list)) {
         p_list->head = NULL;
         p_list->tail = NULL;
     }
+    p_list->length -= 1;
     return 0;
 }
 
-Node *findByIdForNode(List *p_list, const SID *s_id) {
+Node *findByIdForNode(List *p_list, SID * s_id) {
     Node *ph_node = p_list->head;
     Node *pt_node = p_list->tail;
     int direction = 0;
@@ -460,11 +506,12 @@ Node *copyNode(Node *p_node) {
     Node *t_node = NULL;
     if (p_node->s_id == NULL) t_node = initNode(0);
         else t_node = initNode(p_node->s_id->deep);
-    t_node->s_id = p_node->s_id;
+    t_node->s_id = copyS_id(p_node->s_id);
     t_node->last = p_node->last;
     t_node->next = p_node->next;
     t_node->type = p_node->type;
     t_node->value = p_node->value;
+    t_node->f_number = p_node->f_number;
     return t_node;
 }
 
@@ -477,11 +524,16 @@ List *copyList(List *p_list) {
     t_list->head = p_list->head;
     t_list->tail = p_list->tail;
     t_list->s_id = p_list->s_id;
+    t_list->s_head = p_list->s_head;
+    t_list->length = p_list->length;
+    t_list->s_tail = p_list->s_tail;
+    if(p_list->head != NULL && p_list->tail != NULL){
     p_node = p_list->head;
-    while (p_node != NULL) {
-        t_node = copyNode(p_node);
-        insertInTail(t_list, t_node);
-        p_node = p_node->next;
+        while (p_node != NULL) {
+            t_node = copyNode(p_node);
+            insertInTail(t_list, t_node);
+            p_node = p_node->next;
+        }
     }
     return t_list;
 }
@@ -538,6 +590,7 @@ int releaseListForCustom(List *p_list, int (*func)(void *)){
     p_list->tail = NULL;
     p_list->length = 0;
     if (p_list->s_id != NULL) freeS_id(p_list->s_id);
+    if(p_list->p_lq != NULL) disableListQuick(p_list);
     free(p_list);
     return  0;
 }
@@ -613,23 +666,101 @@ int replaceNode(List *p_list, Node *pt_node, Node *p_node){
         else p_list->head = p_node;
     if(p_list->tail != pt_node) pt_node->next->last = p_node;
     else p_list->tail = p_node;
+    
+    if(p_list->p_lq != NULL){
+        if(pt_node->f_number == 0 && p_list->p_lq->fn_node[0] != pt_node){
+            p_node->f_number = pt_node->f_number;
+        }
+        else{
+            p_list->p_lq->fn_node[pt_node->f_number] = p_node;
+            p_node->f_number = pt_node->f_number;
+        }
+    }
     return 0;
 }
 
-int sortListById(List *p_list){
+int exchangeNode(List *p_list, Node *f_node, Node *s_node){
+    Node *fl_node = f_node->last, *fn_node = f_node->next;
+    if(p_list->head != f_node) f_node->last->next = s_node;
+    else p_list->head = s_node;
+    if(p_list->tail != f_node) f_node->next->last = s_node;
+    else p_list->tail = s_node;
     
+    if(p_list->head != s_node) s_node->last->next = f_node;
+    else p_list->head = f_node;
+    if(p_list->tail != s_node) s_node->next->last = f_node;
+    else p_list->tail = f_node;
+    f_node->next = s_node->next;
+    f_node->last = s_node->last;
+    s_node->next = fn_node;
+    s_node->last = fl_node;
+    if(p_list->p_lq != NULL){
+        p_list->p_lq->fn_node[f_node->f_number] = s_node;
+        p_list->p_lq->fn_node[s_node->f_number] = f_node;
+        unsigned long long temp = f_node->f_number;
+        f_node->f_number = s_node->f_number;
+        s_node->f_number = temp;
+    }
+    return 0;
+}
+
+int sortList(List *p_list, unsigned long long begin, unsigned long long end, int(*func)(Node *f_node, Node *s_node)){
+    unsigned long long target_index = begin;
+    register Node *t_node = findByIndexForNode(p_list, target_index);
+    register Node *i_node = NULL, *j_node = NULL;
+    
+    register unsigned long long i = end,j = begin;
+    for(; i >= begin; i--){
+        if(i <= j) break;
+        i_node = findByIndexForNode(p_list, i);
+        if(func(t_node, i_node) < 0){
+            exchangeNode(p_list, t_node, i_node);
+            for(; j <= end; j++){
+                if(j >= i) break;
+                j_node = findByIndexForNode(p_list, j);
+                if(func(t_node, j_node) > 0){
+                    exchangeNode(p_list, t_node, j_node);
+                    break;
+                }
+            }
+        }
+    }
+    if(end - begin > 3){
+        if(t_node->f_number - begin > 2)
+            sortList(p_list, begin, t_node->f_number, func);
+        if(end - t_node->f_number > 2)
+            sortList(p_list, t_node->f_number, end, func);
+    }
+    return 0;
+}
+
+int sortListByCustom(List *p_list, int(*func)(Node *f_node, Node *s_node)){
+    if(p_list->p_lq != NULL && !p_list->p_lq->if_sort) p_list->p_lq->if_sort = 1;
+    sortList(p_list, 0, p_list->length-1, func);
+    return 0;
 }
 
 int enableListQuick(List *p_list){
-    if(p_list->length > 1500){
+    if(p_list->length > ENABLE_LIST_QUICK){
         p_list->p_lq = malloc(sizeof(struct list_quick));
+        register struct list_quick *p_lq = p_list->p_lq;
+        p_lq->rlst_len = p_list->length;
+        p_lq->fn_node = malloc(sizeof(Node *) * (p_list->length + FN_NODE_SPARE));
+        p_lq->if_sort = 0;
+        refreshFnNode(p_list);
+        //sortListById(p_list, 0, p_list->length);
+        return 0;
+    }
+    return -1;
+}
+
+int refreshFnNode(List *p_list){
+    if(p_list->p_lq != NULL){
+        initIdxcList(p_list);
+        if(p_list->p_lq->fn_node != NULL) free(p_list->p_lq->fn_node);
+        p_list->p_lq->fn_node = malloc(sizeof(Node *) * p_list->length);
         register Node *p_node = p_list->head;
         unsigned long long i = 0;
-        p_list->p_lq->rlst_len = p_list->length;
-        p_list->p_lq->fn_node = malloc(sizeof(Node *) * p_list->length);
-        p_list->p_lq->p_lindex = 0;
-        p_list->p_lq->head_index = 0;
-        p_list->p_lq->tail_index = p_list->length - 1;
         while (p_node != NULL) {
             p_node->f_number = i++;
             p_list->p_lq->fn_node[i] = p_node;
@@ -638,4 +769,170 @@ int enableListQuick(List *p_list){
         return 0;
     }
     return -1;
+}
+
+int indexChange(List *p_list, unsigned long long c_index, int move){
+    if(p_list->p_lq != NULL){
+        struct index_change *t_idxc;
+        struct list_quick *p_lq = p_list->p_lq;
+        if(p_lq->idxc_count >= INDEX_CHANGE_MAX){
+            refreshFnNode(p_list);
+            for(int i = 0; i < INDEX_CHANGE_MAX; i++){
+                free(p_lq->idxc_lst[i]);
+                p_lq->idxc_lst[i] = NULL;
+            }
+            return 0;
+        }
+        for(int i = 0; p_lq->idxc_lst[i] != NULL; i++){
+            if(p_lq->idxc_lst[i]->c_index == c_index){
+                p_lq->idxc_lst[i]->f_count += move;
+                return 0;
+            }
+        }
+        if(p_lq->idxc_count == 0) {
+            p_lq->idxc_lst[0] = malloc(sizeof(struct index_change));
+            t_idxc = p_lq->idxc_lst[0];
+        }
+        else {
+            p_lq->idxc_lst[p_lq->idxc_count] = malloc(sizeof(struct index_change));
+            t_idxc = p_lq->idxc_lst[p_lq->idxc_count];
+        }
+        t_idxc->c_index = c_index;
+        t_idxc->f_count = move;
+        p_lq->idxc_count++;
+    }
+    return 0;
+}
+
+int indexTransfromer(List *p_list, unsigned long long m_index){
+    int total_move = 0;
+    struct list_quick *p_lq = p_list->p_lq;
+    struct index_change **p_idxclst = p_lq->idxc_lst;
+    if(p_lq->idxc_lst[0] != NULL){
+        for (int i = 0; p_idxclst[i] != NULL && i < INDEX_CHANGE_MAX; i++) {
+            if(p_idxclst[i]->c_index <= m_index) total_move += p_idxclst[i]->f_count;
+            if(total_move >= 65535){
+                refreshFnNode(p_list);
+                return 0;
+            }
+        }
+    }
+    return total_move;
+}
+
+Node *getNodeByFnNode(List *p_list, unsigned long long index){
+    if(p_list->p_lq != NULL){
+        struct list_quick *p_lq = p_list->p_lq;
+        Node *p_node = p_lq->fn_node[index];
+        if(p_lq->idxc_count > 0){
+            int total_move = indexTransfromer(p_list, index);
+            if(total_move >=0){
+                for(int i = 0; i < ABS(total_move); i++) p_node = p_node->last;
+            }
+            else{
+                for(int i = 0; i < ABS(total_move); i++) p_node = p_node->next;
+            }
+            return p_node;
+        }
+        else{
+            return p_lq->fn_node[index];
+        }
+        
+    }
+    return NULL;
+}
+
+int insertAfterNode(List *p_list, Node *t_node, Node *p_node){
+    if(t_node == p_list->tail){
+        insertInTail(p_list, p_node);
+        return 0;
+    }
+    if(p_list->p_lq != NULL){
+        if(t_node->next->type == HOLE){
+            Node *temp_node = t_node->next;
+            replaceNode(p_list, t_node->next, p_node);
+            p_node->f_number = temp_node->f_number;
+            releaseNode(temp_node);
+            p_list->p_lq->fn_node[p_node->f_number] = p_node;
+            indexChange(p_list, p_node->f_number, 1);
+        }
+    }
+    p_node->next = t_node->next;
+    p_node->last = t_node;
+    if(p_list->tail != t_node)
+        t_node->next->last = p_node;
+    else
+        p_list->tail = p_node;
+    
+    t_node->next = p_node;
+    
+    if(p_list->p_lq != NULL){
+        Node *fn_node = findFnNode(p_list, p_node);
+        while(fn_node->f_number != 0) fn_node = fn_node->next;
+        indexChange(p_list, fn_node->f_number, 1);
+    }
+    p_list->length += 1;
+    return 0;
+}
+
+int insertBeforeNode(List *p_list, Node*t_node, Node *p_node){
+    if(t_node == p_list->head){
+        insertInHead(p_list, p_node);
+        return 0;
+    }
+    if(p_list->p_lq != NULL){
+        if(t_node->last->type == HOLE){
+            Node *temp_node = t_node->last;
+            replaceNode(p_list, t_node->last, p_node);
+            p_node->f_number = temp_node->f_number;
+            releaseNode(temp_node);
+            p_list->p_lq->fn_node[p_node->f_number] = p_node;
+            indexChange(p_list, p_node->f_number, 1);
+            return 0;
+        }
+    }
+    p_node->last = t_node->last;
+    p_node->next = t_node;
+    if(p_list->head != t_node)
+        t_node->last->next = p_node;
+    else
+        p_list->head = p_node;
+    t_node->last = p_node;
+    if(p_list->p_lq != NULL){
+        Node *fn_node = findFnNode(p_list, p_node);
+        indexChange(p_list, fn_node->f_number, 1);
+    }
+    p_list->length += 1;
+    return 0;
+}
+
+Node *findFnNode(List *p_list, Node *p_node){
+    Node *fn_node = p_node;
+    while(fn_node->f_number != 0) fn_node = fn_node->next;
+    return fn_node;
+}
+
+void initIdxcList(List *p_list){
+    struct list_quick *p_lq = p_list->p_lq;
+    for(int i = 0; i < INDEX_CHANGE_MAX; i++){
+        if(p_lq->idxc_lst[i] != NULL) free(p_lq->idxc_lst[i]);
+        p_lq->idxc_lst[i] = NULL;
+    }
+    p_lq->idxc_count = 0;
+}
+                
+void digHole(List *p_list, Node *p_node){
+    Node *c_node = copyNode(p_node);
+    freeS_id(c_node->s_id);
+    replaceNode(p_list, p_node, c_node);
+    c_node->value = NULL;
+    c_node->type = HOLE;
+    indexChange(p_list, p_node->f_number, -1);
+}
+
+int disableListQuick(List *p_list){
+    free(p_list->p_lq->fn_node);
+    initIdxcList(p_list);
+    free(p_list->p_lq);
+    return 0;
 }
