@@ -19,7 +19,6 @@ SNode *initSNode(void) {
         return NULL;
     }
     p_snode->s_id = getS_id(STACK_NODE, 1);
-    p_snode->if_malloc = 0;
     p_snode->next = NULL;
     p_snode->value = NULL;
     return p_snode;
@@ -61,7 +60,6 @@ int releaseStack(Stack *p_stack) {
 int releaseSNode(SNode *p_snode) {
     freeS_id(p_snode->s_id);
     free(p_snode->value);
-    p_snode->if_malloc = 0;
     p_snode->value = NULL;
     p_snode->type = VOID;
     free(p_snode);
@@ -69,7 +67,6 @@ int releaseSNode(SNode *p_snode) {
 }
 
 int initMallocValueForSNode(SNode *p_snode, unsigned int type, void *value) {
-    p_snode->if_malloc = 1;
     p_snode->type = type;
     p_snode->value = value;
     return  0;

@@ -4,6 +4,8 @@
 #include "../id/id.h"
 
 #define lni(x) nodeWithInt(x,0)
+#define lnu(x) nodeWithUInt(x,0)
+#define lnull(x) nodeWithULLInt(x,0)
 #define lnd(x) nodeWithDouble(x,0)
 #define lns(x) nodeWithString(x,0)
 #define lnp(x) nodeWithPointer(x,0)
@@ -15,6 +17,8 @@
 
 #define lisrti(list, x) insertInTail(list, lni(x));
 #define lisrtd(list, x) insertInTail(list, lnd(x));
+#define lisrtu(list, x) insertInTail(list, lnu(x));
+#define lisrtull(list, x) insertInTail(list, lnull(x));
 #define lisrtp(list, x) insertInTail(list, lnp(x));
 #define lisrts(list, x) insertInTail(list, lns(x));
 
@@ -22,6 +26,8 @@
 #define lidxi(list, x) getByIntForNode(findByIndexForNode(list, x))
 #define lidxd(list, x) getByDoubleForNode(findByIndexForNode(list, x))
 #define lidxs(list, x) getByStringForNode(findByIndexForNode(list, x))
+
+#define lupdull(list,x,value) updateValueWithULLIntForNode(findByIndexForNode(list, x),value)
 
 int safeModeForNode(int ifon);
 int releaseSingleListForsafeModeForNode(List *p_list);
@@ -48,12 +54,13 @@ Node *copyNode(Node *);
 
 int removeById(List *p_list, SID *s_id);
 int removeByNode(List *p_list, Node *p_node);
-int popFromHead(List *p_list);
-int popFromTail(List *p_list);
+Node *popFromHead(List *p_list);
+Node *popFromTail(List *p_list);
 
 unsigned long long len(List *p_list);
 
 Node *findByIdForNode(List *p_list, SID * s_id);
+void *findByIdForCustom(List *p_list, SID *s_id, int func(SID *));
 Node *findByValue(List *p_list, unsigned int type, const void *value);
 List *mply_findByValue(List *p_list, unsigned int type, const void *value);
 
@@ -89,7 +96,7 @@ int showWarning(Notice *);
 int enableListQuick(List *p_list);
 int refreshFnNode(List *p_list);
 int sortList(List *p_list, unsigned long long begin, unsigned long long end, int(*func)(Node *f_node, Node *s_node));
-int sortListByCustom(List *p_list, int(*func)(Node *f_node, Node *s_node));
+int sortListForCustom(List *p_list, int(*func)(Node *f_node, Node *s_node));
 int indexTransfromer(List *p_list, unsigned long long m_index);
 int indexChange(List *p_list, unsigned long long c_index, int move);
 Node *getNodeByFnNode(List *p_list, unsigned long long index);

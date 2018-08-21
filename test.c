@@ -2,48 +2,29 @@
 
 
 int list(void) {
-	List *t_list, *m_list;;
-	safeModeForNode(1);
-	t_list = initList();
-
-	/*for(int i = 0; i < 9; i++){
-	Node *t_node = initNode();
-	int *t_i = (int *)malloc(sizeof(int));
-	*t_i = i;
-	initMallocValue(t_node,"int",(void *)t_i);
-	insertInTail(t_list,t_node);
-	}*/
-
-	/*Node *t_node = initNode();
-	insertInTail(t_list,t_node);
-	initMalllocValue(t_node,(void *)"there");*/
-
-	for (int i = 0; i < 12; i++) {
-		insertInHead(t_list, nodeWithInt(i));
-		insertInTail(t_list, nodeWithInt(i));
-	}
-
-
-
-	printListInfo(t_list, 0);
-	printList(t_list);
-	
-	m_list = m_findByIntForNode(t_list, 5);
-	printList(m_list);
-	printf("\n");
-
-	releaseAllForNode();
+    List *p_list = initList(1);
+    for(int i = 0; i < 12; i++){
+        insertInTail(p_list, nodeWithInt(i, 0));
+    }
+    D_FILE *pd_file = initDataFileForWrite("data.db");
+    STD_DATA *p_std = listToSTD(p_list);
+    STD_DATA *pa_std = listToSTD(p_list);
+    dataFileAddStandardData(pd_file, p_std);
+    dataFileAddStandardData(pd_file, pa_std);
+    dataFileWriteIn(pd_file);
+    releaseList(p_list);
+    releaseDFile(pd_file);
 
 	return 0;
 }
 
-int _useTreeThroughDown(TNode *p_tnode, unsigned long long height) {
+/*int _useTreeThroughDown(TNode *p_tnode, unsigned long long height) {
 	printTNode(p_tnode,0);
 	return  0;
-}
+}*/
 
 
-int tree(void) {
+/*int tree(void) {
 	TNode *t_tnode, *cr_tnode, *cl_tnode;
 	Tree *t_tree;
 	TNode *gs_tnode;
@@ -65,7 +46,7 @@ int tree(void) {
 	//printTNodeWithFamily(t_tnode, 0);
 	releaseAllForTree();
 	return 0;
-}
+}*/
 
 int stack(void) {
 	int i;
@@ -82,9 +63,20 @@ int stack(void) {
 
 
 int main(int argc, char **argv) {
-    SID *p_sid = getS_id(VOID, 2);
-    s_idToASCIIString(p_sid);
-    printf("%s",p_sid->decrypt_str);
-    freeS_id(p_sid);
+    
+    for (int i = 0; i < 65535; i++){
+        list();
+        /*D_FILE *p_dfile = initDataFileForRead("data.db");
+        readDataFileInfo(p_dfile);
+        SID *temp_sid =  setS_idWithString("f7dd8f0a75a0c20e4dca1b78347083cf");
+        readStandardDataBySid(p_dfile, temp_sid);
+        freeS_id(temp_sid);
+        printListForCustom(p_dfile->pf_stdlst, printStandardData);
+        List *t_list = standardDataToList(p_dfile->pf_stdlst->head->value);
+        printList(t_list);
+        releaseList(t_list);
+        releaseDFile(p_dfile);*/
+        usleep(500);
+    }
 	return 0;
 }

@@ -17,10 +17,12 @@ int fitS_id(SID * const fs_id, SID * const ss_id);
 int simFitS_id(SID * fs_id, SID * ss_id);
 
 char *s_idToASCIIString(SID * const s_id);
-SID *asciiStringToS_id(char * const string);
+void setSidToASCIIString(SID * const s_id);
+SID *asciiRawStringToS_id(char * const string);
+SID *setS_idWithString(char *);
 
 void s_idToMD5(SID *s_id);
-char hexToChar(unsigned char);
+char hexToChar(unsigned int);
 SID *copyS_id(SID *f_sid);
 void getRawS_id(SID *s_id, unsigned int type, unsigned int deep_level);
 

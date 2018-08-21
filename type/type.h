@@ -46,13 +46,15 @@
 #define DEEP_LEN 25
 #define DEEPER_LEN 65
 #define DEEPEST_LEN 225
-#define SID_LEN 32
+#define SID_LEN 33
 #define FILE_TSET_LEN 18
 #define HEAD_TEST_LEN 9
+#define INFO_TEST_LEN 8
 #define ENABLE_LIST_QUICK 1500
 #define FN_NODE_SPARE 12
 #define INDEX_CHANGE_MAX 500
 #define INDEX_DISTANCE_MAX 120
+#define STD_TEXT_LEN 4
 
 #define HIGH 0x3
 #define STANDARD 0x2
@@ -77,7 +79,7 @@ typedef struct s_id{
     struct sid_raw *sr;
     unsigned int deep;
     MD5_CTX *md5;
-    unsigned char decrypt_hex[16];
+    unsigned char *decrypt_hex;
     char *decrypt_str;
     
 }SID;
@@ -202,6 +204,7 @@ typedef struct data_file{
 
 typedef struct standard_data_blocks{
     unsigned int type;
+    unsigned long long location;
     char *sid;
     _Bool if_data;
     unsigned int blocks_num;
@@ -209,6 +212,7 @@ typedef struct standard_data_blocks{
 }STD_BLOCKS;
 
 typedef struct standard_data_connection{
+    unsigned long long location;
     char *f_sid;
     char *s_sid;
 }STD_CTN;
@@ -221,6 +225,8 @@ typedef struct standard_data_head{
 typedef struct standard_data{
     SID *s_id;
     unsigned int type;
+    unsigned long long size;
+    unsigned long long location;
     _Bool lock;
     List *pd_blocklst;
     List *pd_ctnlst;

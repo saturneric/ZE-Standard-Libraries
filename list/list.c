@@ -230,7 +230,7 @@ int releaseNode(Node *p_node) {
                 releaseList((List *)p_node->value);
             }
             else {
-                //free(p_node->value);
+                free(p_node->value);
             }
         }
         p_node->value = NULL;
@@ -268,6 +268,8 @@ int releaseList(List *p_list) {
     p_list->head = NULL;
     p_list->tail = NULL;
     p_list->length = 0;
+    p_list->s_head = NULL;
+    p_list->s_tail = NULL;
     if (p_list->s_id != NULL) freeS_id(p_list->s_id);
     if(p_list->p_lq != NULL) disableListQuick(p_list);
     free(p_list);
@@ -275,12 +277,7 @@ int releaseList(List *p_list) {
 }
 
 int releaseListForSingle(List *p_list) {
-    p_list->head = NULL;
-    p_list->tail = NULL;
-    if (p_list->s_id != NULL) freeS_id(p_list->s_id);
-    if(p_list->p_lq != NULL) disableListQuick(p_list);
-    p_list->length = 0;
-    free(p_list);
+    releaseList(p_list);
     return 0;
 }
 
@@ -350,9 +347,10 @@ int removeByNode(List *p_list, Node *p_node) {
     return 0;//not find
 }
 
-int popFromHead(List *p_list) {
+Node *popFromHead(List *p_list) {
     if (isListEmpty(p_list))
-        return -1;
+        return NULL;
+    Node *p_node = p_list->head;
     if(p_list->p_lq != NULL){
         if(p_list->p_lq->fn_node[0] == p_list->head){
             digHole(p_list, p_list->head);
@@ -369,12 +367,13 @@ int popFromHead(List *p_list) {
         }
         p_list->length -= 1;
     }
-    return 0;
+    return p_node;
 }
 
-int popFromTail(List *p_list) {
+Node *popFromTail(List *p_list) {
+    Node *p_node = p_list->tail;
     if (isListEmpty(p_list))
-        return -1;
+        return NULL;
     else {
         if(p_list->p_lq != NULL){
             if(p_list->p_lq->fn_node[p_list->p_lq->rlst_len] == p_list->tail)
@@ -391,7 +390,7 @@ int popFromTail(List *p_list) {
         p_list->tail = NULL;
     }
     p_list->length -= 1;
-    return 0;
+    return p_node;
 }
 
 Node *findByIdForNode(List *p_list, SID * s_id) {
@@ -419,7 +418,6 @@ Node *findByIdForNode(List *p_list, SID * s_id) {
     }
     return NULL;
 }
-
 
 Node *findByValue(List *p_list, unsigned int type, const void *value) {
     Node *p_node = p_list->head;
@@ -734,7 +732,7 @@ int sortList(List *p_list, unsigned long long begin, unsigned long long end, int
     return 0;
 }
 
-int sortListByCustom(List *p_list, int(*func)(Node *f_node, Node *s_node)){
+int sortListForCustom(List *p_list, int(*func)(Node *f_node, Node *s_node)){
     if(p_list->p_lq != NULL && !p_list->p_lq->if_sort) p_list->p_lq->if_sort = 1;
     sortList(p_list, 0, p_list->length-1, func);
     return 0;

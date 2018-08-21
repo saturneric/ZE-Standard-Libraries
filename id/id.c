@@ -18,7 +18,10 @@ unsigned long long getId(void) {
 }
 
 SID *initS_id(unsigned int deep_level){
-    if (!if_rand) init_rand();
+    if (!if_rand){
+        init_rand();
+        if_rand = 1;
+    }
     SID *p_sid = (SID *) malloc(sizeof(SID));
     if(p_sid == NULL){
         printf("\ninitS_id(): Error in getting the memory of sid.\n");
@@ -30,6 +33,8 @@ SID *initS_id(unsigned int deep_level){
     p_sid->sr->value_deeper = NULL;
     p_sid->sr->value_deepest = NULL;
     p_sid->md5 = NULL;
+    p_sid->decrypt_str = NULL;
+    p_sid->decrypt_hex = NULL;
     return p_sid;
 }
 
@@ -64,13 +69,31 @@ SID *getS_id(unsigned int type, unsigned int deep_level){
     SID *p_sid = initS_id(deep_level);
     getRawS_id(p_sid, type, deep_level);
     s_idToMD5(p_sid);
+    setSidToASCIIString(p_sid);
     return p_sid;
 }
 
 int fitS_id(SID * const fs_id, SID * const ss_id){
-    if(fs_id->decrypt_str == NULL) s_idToASCIIString(fs_id);
-    if(ss_id->decrypt_str == NULL) s_idToASCIIString(ss_id);
+    if(fs_id->decrypt_str == NULL) setSidToASCIIString(fs_id);
+    if(ss_id->decrypt_str == NULL) setSidToASCIIString(ss_id);
     return strcmp(fs_id->decrypt_str, ss_id->decrypt_str);
+}
+
+void setSidToASCIIString(SID * const s_id){
+    if(s_id->decrypt_str == NULL){
+        s_id->decrypt_str = malloc(sizeof(char) * 33);
+        s_id->decrypt_str[32] = '\0';
+        for(register int i = 0; i < 16; i++){
+            unsigned int temp_dyt = s_id->decrypt_hex[i];
+            //printf("%d\n",(unsigned int)temp_dyt);
+            unsigned int k = 0;
+            for (k = 0; (temp_dyt - (k * 16)) >= 16; k++);
+            s_id->decrypt_str[i * 2] = hexToChar(k);
+            //printf("HEX:%c",hexToChar(k));
+            s_id->decrypt_str[i * 2 + 1] = hexToChar(temp_dyt - k * 16);
+            //printf("HEX:%c",hexToChar(temp_dyt - k * 16));
+        }
+    }
 }
 
 int simFitS_id(SID * fs_id, SID * ss_id){
@@ -79,20 +102,15 @@ int simFitS_id(SID * fs_id, SID * ss_id){
 
 char *s_idToASCIIString(SID * const s_id){
     if(s_id->decrypt_str == NULL){
-        s_id->decrypt_str = malloc(sizeof(char) * 33);
-        s_id->decrypt_str[32] = '\0';
-        for(register int i = 0; i < 16; i++){
-            unsigned char temp_dyt = s_id->decrypt_hex[i];
-            unsigned char k = 0;
-            for (k = 0; temp_dyt - k * 0x10 > 0; k++);
-            s_id->decrypt_str[i * 2] = hexToChar(k);
-            s_id->decrypt_str[i * 2 + 1] = hexToChar(temp_dyt - k * 0x10);
-        }
-        free(s_id->md5);
-        s_id->md5 = NULL;
+        setSidToASCIIString(s_id);
     }
+    free(s_id->md5);
+    s_id->md5 = NULL;
+    //printf("s_id->decrypt_str: %s",s_id->decrypt_str);
     char *rtn_str = malloc(sizeof(char) * 33);
     strcpy(rtn_str, s_id->decrypt_str);
+    free(s_id->decrypt_hex);
+    s_id->decrypt_hex = NULL;
     return rtn_str;
 }
 
@@ -179,7 +197,7 @@ char *s_idToASCIIRawString(SID * const s_id){
     }
     
 }
-SID *asciiStringToS_id(char * const string){
+SID *asciiRawStringToS_id(char * const string){
     SID *s_id = NULL;
     unsigned long long string_len = strlen(string);
     
@@ -236,14 +254,17 @@ SID *asciiStringToS_id(char * const string){
 }
 
 int freeS_id(SID *s_id){
+    if(s_id == NULL) return 0;
+    if(s_id->decrypt_hex != NULL) free(s_id->decrypt_hex);
     freeSidRaw(s_id);
     if (s_id->md5 != NULL) free(s_id->md5);
+    free(s_id->decrypt_str);
     free(s_id);
     return 0;
 }
 
 int freeSidRaw(SID *s_id){
-    if (s_id->sr != NULL){
+    if (s_id != NULL && s_id->sr != NULL){
         if(s_id->sr->value != NULL){
             free(s_id->sr->value);
             s_id->sr->value = NULL;
@@ -256,22 +277,25 @@ int freeSidRaw(SID *s_id){
             free(s_id->sr->value_deepest);
             s_id->sr->value_deepest = NULL;
         }
+        free(s_id->sr);
+        s_id->sr = NULL;
     }
-    free(s_id->sr);
     return 0;
 }
 
 void s_idToMD5(SID *s_id){
     if(s_id->md5 == NULL) s_id->md5 = malloc(sizeof(MD5_CTX));
     char *sid_string = s_idToASCIIRawString(s_id);
+    s_id->decrypt_hex = malloc(sizeof(unsigned char) * 16);
+    //printf("%s\n",sid_string);
     MD5Init(s_id->md5);
     MD5Update(s_id->md5, (unsigned char *) sid_string, strlen(sid_string));
     MD5Final(s_id->md5, s_id->decrypt_hex);
     freeSidRaw(s_id);
-    s_id->sr = NULL;
+    free(sid_string);
 }
 
-char hexToChar(unsigned char n){
+char hexToChar(unsigned int n){
     switch (n) {
         case 1:return '1';
         case 2:return '2';
@@ -296,7 +320,19 @@ char hexToChar(unsigned char n){
 
 SID *copyS_id(SID *f_sid){
     SID *s_sid = initS_id(f_sid->deep);
-    for(int i = 0; i < 16; i++)
-        s_sid->decrypt_hex[i] = f_sid->decrypt_hex[i];
-    return 0;
+    if(s_sid->decrypt_str == NULL) s_sid->decrypt_str = malloc(sizeof(char) * SID_LEN);
+    if (f_sid->decrypt_str != NULL) strcpy(s_sid->decrypt_str, f_sid->decrypt_str);
+    else{
+        freeS_id(s_sid);
+        return NULL;
+    };
+    return s_sid;
+}
+
+SID *setS_idWithString(char *p_string){
+    if(p_string == NULL) return NULL;
+    SID *p_sid = initS_id(0);
+    if(p_sid->decrypt_str == NULL) p_sid->decrypt_str = malloc(sizeof(char) * SID_LEN);
+    strcpy(p_sid->decrypt_str, p_string);
+    return p_sid;
 }

@@ -79,6 +79,7 @@ Node *nodeWithComplex(void) {
 }
 
 Node *findByIndexForNode(List *p_list, unsigned long long m_index) {
+    if(p_list == NULL) return NULL;
     if(p_list->p_lq != NULL){
         register struct list_quick *p_lq = p_list->p_lq;
         if(p_lq->fn_node != NULL) return getNodeByFnNode(p_list, m_index);
@@ -103,11 +104,12 @@ s_Node *s_findByIndexForNode(List *p_list, unsigned long long m_index) {
 List *listThrough(List *p_list, List *(*p_func)(unsigned int, void *, List *), List *expand_resources) {
 	Node *p_node = p_list->head;
     List *m_rtnlst = NULL;
-    unsigned long long count = 0;
-    insertInTail(expand_resources, nodeWithULLInt(count, 0));
+    unsigned long long index = 0;
+    insertInTail(expand_resources, nodeWithULLInt(index, 0));
+    insertInTail(expand_resources, nodeWithULLInt(p_list->length, 0));
 	while (p_node != NULL) {
 		if (p_node->value != NULL) {
-			List *m_rtnlst = (*p_func)(p_node->type, p_node->value, expand_resources);
+			m_rtnlst = (*p_func)(p_node->type, p_node->value, expand_resources);
             int status = getByIntForNode(findByIndexForNode(m_rtnlst, 0));
 			if (status == -1) break;
 			else if (status == 1) {
@@ -121,9 +123,22 @@ List *listThrough(List *p_list, List *(*p_func)(unsigned int, void *, List *), L
                 m_rtnlst = NULL;
 			}
 		}
+        lupdull(expand_resources,expand_resources->length-2,++index);
 		p_node = p_node->next;
 	}
+    releaseList(expand_resources);
+    if(m_rtnlst != NULL) releaseNode(popFromHead(m_rtnlst));
 	return m_rtnlst;
+}
+
+unsigned long long getInfoForListThrough(List *expand_resources, int type){
+    Node *p_node = NULL;
+    if (type == 0) {
+        p_node = findByIndexForNode(expand_resources, expand_resources->length-1);
+    }else{
+        p_node = findByIndexForNode(expand_resources, expand_resources->length-2);
+    }
+    return *((unsigned long long *)p_node->value);
 }
 
 int getByIntForNode(Node *p_node) {
@@ -147,8 +162,7 @@ double getByDoubleForNode(Node *p_node) {
 }
 
 void *getByPointerForNode(Node *p_node) {
-	if (p_node->type == POINTER) return (void *)(p_node->value);
-	else return NULL;
+	return (void *)(p_node->value);
 }
 
 void printListInfo(List *p_list, int priority) {
@@ -359,7 +373,7 @@ int addPointerForComplex(Node *p_node, void *temp) {
 	return -1;
 }
 
-List *m_findByInt(List* p_list, int temp) {
+List *mply_findByInt(List* p_list, int temp) {
 	int *p_temp = (int *)malloc(sizeof(int));
     if(p_temp == NULL){
         showError(pushError(INT, STANDARD, initInfo("m_findByInt()", "Error in getting the memory of int.")));
@@ -372,7 +386,7 @@ List *m_findByInt(List* p_list, int temp) {
 	return t_list;
 }
 
-List *m_findByDouble(List* p_list, double temp) {
+List *mply_findByDouble(List* p_list, double temp) {
 	List *t_list;
 	double *p_temp = (double *)malloc(sizeof(double));
     if(p_temp == NULL){
@@ -385,7 +399,7 @@ List *m_findByDouble(List* p_list, double temp) {
 	return t_list;
 }
 
-List *m_findByString(List* p_list, char *temp) {
+List *mply_findByString(List* p_list, char *temp) {
 	List *t_list;
 	char *p_temp = (char *)malloc(sizeof(char)*(strlen(temp) + 1));
     if(p_temp == NULL){
@@ -398,7 +412,7 @@ List *m_findByString(List* p_list, char *temp) {
 	return t_list;
 }
 
-List *m_findByPointer(List* p_list, void *temp) {
+List *mply_findByPointer(List* p_list, void *temp) {
 	List *t_list = mply_findByValue(p_list, DOUBLE, (void *)temp);
 	return t_list;
 }
@@ -421,7 +435,7 @@ unsigned long long getIndexByNode(List *p_list, Node *p_node) {
 	return 0;
 }
 
-List *plym_findByIntForNode(List* p_list, int temp) {
+List *mply_findByIntForNode(List* p_list, int temp) {
     int *p_temp = (int *)malloc(sizeof(int));
     if(p_temp == NULL){
         showError(pushError(INT, STANDARD, initInfo("m_findByIntForNode()", "Error in getting the memory of int.")));
@@ -466,7 +480,7 @@ unsigned long long calListMemory(List * p_list){
     return  list_size + nodes_size;
 }
 
-int updateValueWithInt(Node *p_node,int value){
+int updateValueWithIntForNode(Node *p_node,int value){
     int *p_value = (int *)malloc(sizeof(int));
     if(p_value == NULL){
         showError(pushError(INT, STANDARD, initInfo("updateValueWithInt()", "Error in getting the memory of int.")));
@@ -478,7 +492,19 @@ int updateValueWithInt(Node *p_node,int value){
     return 0;
 }
 
-int updateValueWithDouble(Node *p_node, double value){
+int updateValueWithULLIntForNode(Node *p_node, unsigned long long value){
+    unsigned long long *p_value = (unsigned long long *)malloc(sizeof(unsigned long long));
+    if(p_value == NULL){
+        showError(pushError(INT, STANDARD, initInfo(__FUNCTION__, "Error in getting the memory of int.")));
+        return -1;
+    }
+    *p_value = value;
+    free(p_node->value);
+    p_node->value = p_value;
+    return 0;
+}
+
+int updateValueWithDoubleForNode(Node *p_node, double value){
     double *p_value = (double *)malloc(sizeof(double));
     if(p_value == NULL){
         showError(pushError(DOUBLE, STANDARD, initInfo("updateValueWithDouble()", "Error in getting the memory of double.")));
@@ -490,7 +516,7 @@ int updateValueWithDouble(Node *p_node, double value){
     return 0;
 }
 
-int updateValueWithString(Node *p_node, char *string){
+int updateValueWithStringForNode(Node *p_node, char *string){
     char *p_value = (char *)malloc(sizeof(strlen(string)) + 1);
     if(p_value == NULL){
         showError(pushError(STRING, STANDARD, initInfo("updateValueWithString()", "Error in getting the memory of string.")));
@@ -502,7 +528,7 @@ int updateValueWithString(Node *p_node, char *string){
     return 0;
 }
 
-int updateValueWithPointer(Node *p_node, void *pointer){
+int updateValueWithPointerForNode(Node *p_node, void *pointer){
     free(p_node->value);
     p_node->value = pointer;
     return 0;
@@ -577,6 +603,20 @@ List *newReturn(int if_status ,int status, char *argc, ...){
                     case 'p':
                         lisrtp(p_list, va_arg(args, void *));
                         break;
+                    case 'u':
+                        if(argc[count + 2] == 'l'){
+                            if(argc[count + 3] == 'l'){
+                                lisrtull(p_list, va_arg(args, unsigned long long));
+                                count += 2;
+                            }
+                            else{
+                                count++;
+                            }
+                        }
+                        else{
+                            lisrtu(p_list, va_arg(args, unsigned int));
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -591,4 +631,20 @@ List *newReturn(int if_status ,int status, char *argc, ...){
 
 List *newCReturn(void){
     return newReturn(1, 0, NULL);
+}
+
+void printListForCustom(List *p_list,void (*func)(void *value)){
+    printf("###LIST (LEN:%llu ",p_list->length);
+    if(p_list->s_id != NULL) printf("SID:%s",p_list->s_id->decrypt_str);
+    printf(")\n");
+    listThrough(p_list, __CALLBACK_CALL(printListForCustom), __SEND_ARG("%p", func));
+}
+
+__CALLBACK_DEFINE(printListForCustom){
+    void (*func)(void *) = __ARGS_P(0, void);
+    printf("NODE (IDX:%llu ",__NOW_INDEX);
+    printf(")\n");
+    func(__VALUE(void *));
+    printf("\n");
+    return __CRETURN__;
 }

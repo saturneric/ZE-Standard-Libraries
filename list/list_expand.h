@@ -3,18 +3,19 @@
 
 #include "list.h"
 
-#define RETURN(argc, args...) newReturn(1, -1, argc , args)
-#define C_RETURN newCReturn()
-#define SEND_ARG(argc, args...) newReturn(0, -1, argc , args)
-#define CALLBACK_STATE(name) List *do_##name(unsigned int, void *, List *)
-#define CALLBACK_DEFINE(name) List *do_##name(unsigned int type, void *value, List *args)
-#define VALUE(c_type) (c_type)value
-#define ARGS(x, type)\
-if(#type == "int") lidxi(args, x);\
-else if if(#type == "double") lidxd(args, x);\
-else if(#type == "string") lidxs(args, x);\
-else lidxi(args, x);
-#define CALLBACK_CALL(name) do_##name
+#define __RETURN(argc, args...) newReturn(1, -1, argc , args)
+#define __CRETURN__ newCReturn()
+#define __SEND_ARG(argc, args...) newReturn(0, -1, argc , args)
+#define __CALLBACK_STATE(name) List *_do##name(unsigned int, void *, List *)
+#define __CALLBACK_DEFINE(name) List *_do##name(unsigned int type, void *value, List *expand_resources)
+#define __VALUE(c_type) (c_type)value
+#define __ARGS(x, type) *((type *) lidxp(expand_resources, x));
+#define __ARGS_P(x, type) (type *) lidxp(expand_resources, x);
+#define __CALLBACK_CALL(name) _do##name
+#define __LIST_LEN getInfoForListThrough(expand_resources,0)
+#define __NOW_INDEX getInfoForListThrough(expand_resources,1)
+#define __RTN_ARGS_P(list,x,type) (type *) lidxp(list, x);
+#define __RTN_ARGS(list,x,type) *((type *) lidxp(list, x));
 
 Node *nodeWithInt(int, _Bool if_sid);
 Node *nodeWithUInt(unsigned int, _Bool if_sid);
@@ -37,6 +38,7 @@ int addStringForComplex(Node *, char *);
 int addPointerForComplex(Node *, void *);
 
 int updateValueWithIntForNode(Node *,int);
+int updateValueWithULLIntForNode(Node *, unsigned long long);
 int updateValueWithDoubleForNode(Node *,double);
 int updateValueWithStringForNode(Node *,char *);
 int updateValueWithPointerForNode(Node *,void *);
@@ -49,11 +51,15 @@ List *mply_findByPointerForNode(List*, void *);
 void printListInfo(List *p_list,int priority);
 void printNodeInfo(Node *p_node,int priority);
 void printList(List *);
+void printListForCustom(List *p_list,void (*func)(void *value));
 void printNode(Node *p_node);
+
+__CALLBACK_STATE(printListForCustom);
 
 List *listThrough(List *p_list, List *(*p_func)(unsigned int type, void *value, List *), List *expand_resources);
 List *newReturn(int if_status ,int status, char *argc, ...);
 List *newCReturn(void);
+unsigned long long getInfoForListThrough(List *expand_resources, int type);
 unsigned long long calListMemory(List *);
 
 #endif
