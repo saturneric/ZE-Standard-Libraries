@@ -28,8 +28,8 @@ int TreeThroughDown(Tree *p_tree, int(*func)(TNode *, unsigned long long height)
 int TreeThroughUp(Tree *p_tree, int(*func)(TNode *, unsigned long long height));
 int TreeTravel(Tree *p_tree, int(*func)(TNode *, unsigned long long height));
 
-int _dogetChildById(unsigned int type, void *value);
-int _dogetChildByValue(unsigned int type, void *value);
+List *_dogetChildById(unsigned int type, void *value, List *er_list);
+List *_dogetChildByValue(unsigned int type, void *value, List *er_list);
 int _doreleaseTree(TNode *p_tnode, unsigned long long height);
 int _doTreeThroughDown(TNode *p_tnode, int height, int(*func)(TNode *, unsigned long long height));
 int _doTreeThroughUp(TNode *p_tnode, int height, int(*func)(TNode *, unsigned long long height));

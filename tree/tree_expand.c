@@ -3,6 +3,10 @@
 TNode *tnodeWithInt(int temp) {
 	TNode *p_tnode = initTNode();
 	int *p_temp = (int *)malloc(sizeof(int));
+    if(p_temp == NULL){
+        showError(pushError(INT, STANDARD, initInfo("tnodeWithInt()", "Error in getting the memory of int.")));
+        return NULL;
+    }
 	*p_temp = temp;
 	initMallocValueForTNode(p_tnode, INT, p_temp);
 	return p_tnode;
@@ -11,6 +15,10 @@ TNode *tnodeWithInt(int temp) {
 TNode *tnodeWithDouble(double temp) {
 	TNode *p_tnode = initTNode();
 	double *p_temp = (double *)malloc(sizeof(double));
+    if(p_temp == NULL){
+        showError(pushError(DOUBLE, STANDARD, initInfo("tnodeWithDouble()", "Error in getting the memory of double.")));
+        return NULL;
+    }
 	*p_temp = temp;
 	initMallocValueForTNode(p_tnode, DOUBLE, p_temp);
 	return p_tnode;
@@ -18,6 +26,10 @@ TNode *tnodeWithDouble(double temp) {
 TNode *tnodeWithString(char *temp) {
 	TNode *p_tnode = initTNode();
 	char *p_temp = (char *)malloc(sizeof(temp));
+    if(p_temp == NULL){
+        showError(pushError(STRING, STANDARD, initInfo("tnodeWithString()", "Error in getting the memory of string.")));
+        return NULL;
+    }
 	strcpy(p_temp, temp);
 	initMallocValueForTNode(p_tnode, STRING, p_temp);
 	return p_tnode;

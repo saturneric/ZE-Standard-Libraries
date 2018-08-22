@@ -2,48 +2,29 @@
 
 
 int list(void) {
-	List *t_list, *m_list;;
-	safeModeForNode(1);
-	t_list = initList();
-
-	/*for(int i = 0; i < 9; i++){
-	Node *t_node = initNode();
-	int *t_i = (int *)malloc(sizeof(int));
-	*t_i = i;
-	initMallocValue(t_node,"int",(void *)t_i);
-	insertInTail(t_list,t_node);
-	}*/
-
-	/*Node *t_node = initNode();
-	insertInTail(t_list,t_node);
-	initMalllocValue(t_node,(void *)"there");*/
-
-	for (int i = 0; i < 12; i++) {
-		insertInHead(t_list, nodeWithInt(i));
-		insertInTail(t_list, nodeWithInt(i));
-	}
-
-
-
-	printListInfo(t_list, 0);
-	printList(t_list);
-	
-	m_list = m_findByIntForNode(t_list, 5);
-	printList(m_list);
-	printf("\n");
-
-	releaseAllForNode();
+    List *p_list = initList(1);
+    for(int i = 0; i < 12; i++){
+        insertInTail(p_list, nodeWithInt(i, 0));
+    }
+    D_FILE *pd_file = initDataFileForWrite("data.db");
+    STD_DATA *p_std = listToSTD(p_list);
+    STD_DATA *pa_std = listToSTD(p_list);
+    dataFileAddStandardData(pd_file, p_std);
+    dataFileAddStandardData(pd_file, pa_std);
+    dataFileWriteIn(pd_file);
+    releaseList(p_list);
+    releaseDFile(pd_file);
 
 	return 0;
 }
 
-int _useTreeThroughDown(TNode *p_tnode, unsigned long long height) {
+/*int _useTreeThroughDown(TNode *p_tnode, unsigned long long height) {
 	printTNode(p_tnode,0);
 	return  0;
-}
+}*/
 
 
-int tree(void) {
+/*int tree(void) {
 	TNode *t_tnode, *cr_tnode, *cl_tnode;
 	Tree *t_tree;
 	TNode *gs_tnode;
@@ -65,7 +46,7 @@ int tree(void) {
 	//printTNodeWithFamily(t_tnode, 0);
 	releaseAllForTree();
 	return 0;
-}
+}*/
 
 int stack(void) {
 	int i;
@@ -80,9 +61,43 @@ int stack(void) {
 	return 0;
 }
 
+int time_avg(void){
+    List *t_list = initList(0);
+    int64_t time_all = 0;
+    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
+    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
+    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
+    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
+    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
+    enableListQuick(t_list);
+    for (int i = 0; i < 100; i++){
+     struct timeval start,stop;
+     gettimeofday(&start,0);
+     findByIndexForNode(t_list, 200000);
+     gettimeofday(&stop,0);
+     time_all += (int64_t)(stop.tv_usec-start.tv_usec);
+     
+     }
+     double avg_time = (double) (time_all/(int64_t)100);
+     printf("TIME: %fus\n",avg_time);
+    releaseList(t_list);
+    return 0;
+}
 
 int main(int argc, char **argv) {
-	//tree();
-    init_rand();
+    //time_avg();
+    List *t_list = initList(0);
+    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
+    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
+    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
+    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
+    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
+    enableListQuick(t_list);
+    findByIndexForNode(t_list, 300000);
+    lisrhi(t_list, -1);
+    insertBeforeNode(t_list, findByIndexForNode(t_list, 5), lni(6));
+    popFromHead(t_list);
+    Node *p_node = findByIndexForNode(t_list, 7);
+    releaseList(t_list);
 	return 0;
 }

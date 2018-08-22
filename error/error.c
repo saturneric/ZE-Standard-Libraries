@@ -1,8 +1,8 @@
 #include "error.h"
 
 int initErrorSystem(void) {
-	error_list = initList();
-	notice_list = initList();
+	error_list = initList(0);
+	notice_list = initList(0);
 	if_error = 1;
 	return 1;
 }
