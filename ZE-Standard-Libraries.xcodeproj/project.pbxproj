@@ -33,8 +33,8 @@
 /* Begin PBXFileReference section */
 		9233C30E212292B000FB2485 /* md5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = md5.h; path = id/md5.h; sourceTree = "<group>"; };
 		9233C30F212292B000FB2485 /* md5.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = md5.c; path = id/md5.c; sourceTree = "<group>"; };
-		9246994F20CD000300B4E894 /* list.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = list.c; sourceTree = "<group>"; };
-		9246995020CD000300B4E894 /* list_expand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = list_expand.h; sourceTree = "<group>"; };
+		9246994F20CD000300B4E894 /* list.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = list.c; sourceTree = "<group>"; };
+		9246995020CD000300B4E894 /* list_expand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = list_expand.h; sourceTree = "<group>"; };
 		9246995120CD000300B4E894 /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = list.h; sourceTree = "<group>"; };
 		9246995820CE52A700B4E894 /* stack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stack.h; sourceTree = "<group>"; };
 		9246995920CE52A700B4E894 /* stack.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stack.c; sourceTree = "<group>"; };
@@ -42,10 +42,10 @@
 		9246995D20CE655900B4E894 /* tree.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = tree.h; sourceTree = "<group>"; };
 		9246995E20CE655900B4E894 /* tree.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = tree.c; sourceTree = "<group>"; };
 		9269D4E7210F1B3D00161557 /* stack_expand.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = stack_expand.c; sourceTree = "<group>"; };
-		9269D4E9210F1B4B00161557 /* list_expand.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = list_expand.c; sourceTree = "<group>"; };
-		9269D4EB210F1B5E00161557 /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = test.c; sourceTree = "<group>"; };
-		9269D4EC210F1B5E00161557 /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = test.h; sourceTree = "<group>"; };
-		9269D4F0210F1B8000161557 /* type.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = type.h; path = type/type.h; sourceTree = "<group>"; };
+		9269D4E9210F1B4B00161557 /* list_expand.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = list_expand.c; sourceTree = "<group>"; };
+		9269D4EB210F1B5E00161557 /* test.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; path = test.c; sourceTree = "<group>"; };
+		9269D4EC210F1B5E00161557 /* test.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = test.h; sourceTree = "<group>"; };
+		9269D4F0210F1B8000161557 /* type.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = type.h; path = type/type.h; sourceTree = "<group>"; };
 		9269D4F2210F1BB000161557 /* id.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = id.c; path = id/id.c; sourceTree = "<group>"; };
 		9269D4F3210F1BB000161557 /* id.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = id.h; path = id/id.h; sourceTree = "<group>"; };
 		9269D4F7210F1D0B00161557 /* tree_expand.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = tree_expand.c; sourceTree = "<group>"; };
@@ -54,7 +54,7 @@
 		9286EB79211400C900752977 /* error.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = error.c; path = error/error.c; sourceTree = "<group>"; };
 		9286EB7B211400D000752977 /* error.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = error.h; path = error/error.h; sourceTree = "<group>"; };
 		9286EB7D2114022A00752977 /* communicate.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; lineEnding = 0; name = communicate.c; path = communicate/communicate.c; sourceTree = "<group>"; };
-		9286EB7F2114022F00752977 /* communicate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = communicate.h; path = communicate/communicate.h; sourceTree = "<group>"; };
+		9286EB7F2114022F00752977 /* communicate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = communicate.h; path = communicate/communicate.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

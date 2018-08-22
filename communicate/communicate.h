@@ -4,14 +4,6 @@
 #include "../type/type.h"
 #include "../list/list_expand.h"
 
-typedef struct message{
-    SID *p_sid;
-    time_t time;
-    char titile[16];
-    unsigned long size;
-    char content[0];
-}MSG;
-
 D_FILE *initDataFileForWrite(char *route);
 D_FILE *initDataFileForRead(char *route);
 STD_BLOCKS *initStandardDBlocks(SID *p_sid, unsigned int type, unsigned long long data_size);

@@ -89,7 +89,7 @@
 
 
 /************************************************
- *库相关结构的定义
+ *库相关结构体的定义
  ************************************************/
 
 /*
@@ -336,5 +336,16 @@ typedef struct standard_data{
     List *pd_blocklst;//数据块储存链表
     List *pd_ctnlst;//数据块连接关系结构的储存链表
 }STD_DATA;
+
+/*
+ *消息的管理及操作的结构
+ */
+typedef struct message{
+    SID *p_sid;//消息的ID
+    time_t time;//消息的产生时间
+    char titile[16];//消息标题
+    unsigned long size;//消息的大小
+    char content[0];//消息的正文
+}MSG;
 
 #endif /* type_h */
