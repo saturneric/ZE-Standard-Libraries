@@ -3,32 +3,52 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "init_node:list.h">
+         contextName = "_doStandardDataToList:communicate.c">
+      </ContextState>
+      <ContextState
+         contextName = "s_idToASCIIString:id.c">
          <PersistentStrings>
             <PersistentString
-               value = "list_list">
+               value = "sizeof(char)">
+            </PersistentString>
+            <PersistentString
+               value = "buff[buff_count]">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "listToSTD:communicate.c">
+         contextName = "standardDataAddBlock:communicate.c">
          <PersistentStrings>
             <PersistentString
-               value = "(int *)p_node-&gt;value">
+               value = "(int *)data">
+            </PersistentString>
+            <PersistentString
+               value = "(int *)p_stdb-&gt;buff">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "releaseMalloc:list.h">
+         contextName = "setS_idWithString:id.c">
       </ContextState>
       <ContextState
-         contextName = "initS_id:id.c">
+         contextName = "initStandardDBlocks:communicate.c">
       </ContextState>
       <ContextState
-         contextName = "printStandardData:communicate.c">
+         contextName = "readStandardData:communicate.c">
       </ContextState>
       <ContextState
-         contextName = "initStandardData:communicate.c">
+         contextName = "dataForStandardDBlock:communicate.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "(int *)p_stdb-&gt;buff">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "releaseNULLList:list.h">
+      </ContextState>
+      <ContextState
+         contextName = "findByIndexForNode:list_expand.c">
       </ContextState>
       <ContextState
          contextName = "getByIntForNode:list_expand.c">
@@ -39,21 +59,35 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "listThrough:list_expand.c">
+         contextName = "freeS_id:id.c">
       </ContextState>
       <ContextState
-         contextName = "readStandardData:communicate.c">
-      </ContextState>
-      <ContextState
-         contextName = "initStandardDBlocks:communicate.c">
-      </ContextState>
-      <ContextState
-         contextName = "dataForStandardDBlock:communicate.c">
+         contextName = "dataFileReadOut:communicate.c">
          <PersistentStrings>
             <PersistentString
-               value = "(int *)p_stdb-&gt;buff">
+               value = "strlen(string_sid)">
+            </PersistentString>
+            <PersistentString
+               value = "(int *)content">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "main:test.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "(int *)p_node-&gt;value">
+            </PersistentString>
+            <PersistentString
+               value = "strlen(string)">
+            </PersistentString>
+            <PersistentString
+               value = "((STD_DATA *)(p_dfiler-&gt;pf_stdlst-&gt;head-&gt;value))-&gt;pd_blocklst">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "insertInHead:list.c">
       </ContextState>
       <ContextState
          contextName = "insertInTail:list.h">
@@ -67,7 +101,52 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "releaseNULLList:list.h">
+         contextName = "releaseMalloc:list.h">
+      </ContextState>
+      <ContextState
+         contextName = "listToSTD:communicate.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "(int *)p_node-&gt;value">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "initStandardData:communicate.c">
+      </ContextState>
+      <ContextState
+         contextName = "printListForCustom:list_expand.c">
+      </ContextState>
+      <ContextState
+         contextName = "init_node:list.h">
+         <PersistentStrings>
+            <PersistentString
+               value = "list_list">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "printStandardData:communicate.c">
+      </ContextState>
+      <ContextState
+         contextName = "indexTransfromer:list.c">
+      </ContextState>
+      <ContextState
+         contextName = "listThrough:list_expand.c">
+      </ContextState>
+      <ContextState
+         contextName = "initS_id:id.c">
+      </ContextState>
+      <ContextState
+         contextName = "standardDataToList:communicate.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "(STD_BLOCKS *)p_std-&gt;pd_blocklst-&gt;head-&gt;value">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "readDataFileInfo:communicate.c">
       </ContextState>
       <ContextState
          contextName = "asciiStringToS_id:id.c">
@@ -87,46 +166,16 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "_doStandardDBlockWrite:communicate.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "&amp;p_stdb-&gt;blocks_num">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "dataFileReadOut:communicate.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "strlen(string_sid)">
-            </PersistentString>
-            <PersistentString
-               value = "(int *)content">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "printListForCustom:list_expand.c">
-      </ContextState>
-      <ContextState
-         contextName = "standardDataToList:communicate.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "(STD_BLOCKS *)p_std-&gt;pd_blocklst-&gt;head-&gt;value">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "_doStandardDataInfoWrite:communicate.c">
       </ContextState>
       <ContextState
-         contextName = "standardDataAddBlock:communicate.c">
+         contextName = "dataFileWriteIn:communicate.c">
+      </ContextState>
+      <ContextState
+         contextName = "getNodeByFnNode:list.c">
          <PersistentStrings>
             <PersistentString
-               value = "(int *)data">
-            </PersistentString>
-            <PersistentString
-               value = "(int *)p_stdb-&gt;buff">
+               value = "ABS(total_move)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -134,47 +183,15 @@
          contextName = "copyS_id:id.c">
       </ContextState>
       <ContextState
-         contextName = "dataFileWriteIn:communicate.c">
-      </ContextState>
-      <ContextState
-         contextName = "freeS_id:id.c">
-      </ContextState>
-      <ContextState
-         contextName = "setS_idWithString:id.c">
-      </ContextState>
-      <ContextState
-         contextName = "s_idToASCIIString:id.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "sizeof(char)">
-            </PersistentString>
-            <PersistentString
-               value = "buff[buff_count]">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "main:test.c">
-         <PersistentStrings>
-            <PersistentString
-               value = "strlen(string)">
-            </PersistentString>
-            <PersistentString
-               value = "((STD_DATA *)(p_dfiler-&gt;pf_stdlst-&gt;head-&gt;value))-&gt;pd_blocklst">
-            </PersistentString>
-            <PersistentString
-               value = "(int *)p_node-&gt;value">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "readDataFileInfo:communicate.c">
-      </ContextState>
-      <ContextState
-         contextName = "_doStandardDataToList:communicate.c">
-      </ContextState>
-      <ContextState
          contextName = "init_list:list.h">
+      </ContextState>
+      <ContextState
+         contextName = "_doStandardDBlockWrite:communicate.c">
+         <PersistentStrings>
+            <PersistentString
+               value = "&amp;p_stdb-&gt;blocks_num">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
    </ContextStates>
 </VariablesViewState>

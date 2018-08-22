@@ -41,6 +41,7 @@ STD_DATA *initStandardData(unsigned int type, SID *s_id){
     p_std->type = type;
     p_std->size = 0;
     p_std->location = 0;
+    p_std->read_data = 0;
     
     if(s_id == NULL) p_std->s_id = getS_id(STANDARD_DATA, 2);
     else p_std->s_id = copyS_id(s_id);
@@ -89,6 +90,7 @@ int dataFileAddStandardData(D_FILE *p_dfile, STD_DATA *p_std){
 }
 
 int dataFileWriteIn(D_FILE *p_dfile){
+    
     fwrite(p_dfile->pf_head->head_test, sizeof(char), 18, p_dfile->fp);
     fwrite(&p_dfile->pf_head->data_num, sizeof(unsigned long long), 1, p_dfile->fp);
     fwrite("STDINFO", sizeof(char), 8, p_dfile->fp);
@@ -385,6 +387,7 @@ int readStandardData(D_FILE *p_dfile,STD_DATA *p_std){
             freeS_id(sb_sid);
         }
     }
+    p_std->read_data = 1;
     return 0;
 }
 

@@ -50,8 +50,8 @@
 #define FILE_TSET_LEN 18
 #define HEAD_TEST_LEN 9
 #define INFO_TEST_LEN 8
-#define ENABLE_LIST_QUICK 1500
-#define FN_NODE_SPARE 12
+#define ENABLE_LIST_QUICK 65535
+#define FN_NODE_SPARE 500
 #define INDEX_CHANGE_MAX 500
 #define INDEX_DISTANCE_MAX 120
 #define STD_TEXT_LEN 4
@@ -60,7 +60,7 @@
 #define STANDARD 0x2
 #define LOW 0x1
 
-#define ABS(x) (x>0)?(x):(-x)
+#define ABS(x) ((x>0)?(x):(-x))
 
 typedef struct md5_ctx{
     unsigned int count[2];
@@ -125,6 +125,7 @@ struct list_quick{
     Node **fn_node;
     _Bool if_sort;
     unsigned int idxc_count;
+    unsigned long long fn_len;
     struct index_change *idxc_lst[INDEX_CHANGE_MAX];
     unsigned long long rlst_len;
     FILE *fp;
@@ -224,6 +225,7 @@ typedef struct standard_data_head{
 
 typedef struct standard_data{
     SID *s_id;
+    int read_data;
     unsigned int type;
     unsigned long long size;
     unsigned long long location;

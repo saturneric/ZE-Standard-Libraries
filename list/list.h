@@ -22,6 +22,13 @@
 #define lisrtp(list, x) insertInTail(list, lnp(x));
 #define lisrts(list, x) insertInTail(list, lns(x));
 
+#define lisrhi(list, x) insertInHead(list, lni(x));
+#define lisrhd(list, x) insertInHead(list, lnd(x));
+#define lisrhu(list, x) insertInHead(list, lnu(x));
+#define lisrhull(list, x) insertInHead(list, lnull(x));
+#define lisrhp(list, x) insertInHead(list, lnp(x));
+#define lisrhs(list, x) insertInHead(list, lns(x));
+
 #define lidxp(list, x) getByPointerForNode(findByIndexForNode(list, x))
 #define lidxi(list, x) getByIntForNode(findByIndexForNode(list, x))
 #define lidxd(list, x) getByDoubleForNode(findByIndexForNode(list, x))

@@ -138,7 +138,7 @@ List *initList(_Bool if_sid) {
     return p_list;
 }
 
-int initMallocValueForNode(Node *p_node, unsigned int type, const void *p_value) {
+inline int initMallocValueForNode(Node *p_node, unsigned int type, const void *p_value) {
     p_node->type = type;
     p_node->value = (void *)p_value;
     return 0;
@@ -149,10 +149,11 @@ int insertInHead(List *p_list, Node *p_node) {
     if(p_list->p_lq != NULL){
         if(p_list->head->type == HOLE){
             Node *t_node = p_list->head;
-            replaceNode(p_list, p_list->head, p_node);
-            p_list->p_lq->fn_node[0] = p_node;
-            releaseNode(t_node);
-            indexChange(p_list, 0, 1);
+            while(t_node->type == HOLE) t_node = t_node->next;
+            replaceNode(p_list, t_node->last, p_node);
+            p_list->p_lq->fn_node[t_node->last->f_number] = p_node;
+            indexChange(p_list, t_node->last->f_number, 1);
+            releaseNode(t_node->last);
             return 0;
         }
         indexChange(p_list, 0, 1);
@@ -198,8 +199,10 @@ int insertInTail(List *p_list, Node *p_node) {
     
     if(p_list->p_lq != NULL){
         p_node->f_number = p_list->p_lq->rlst_len;
-        if(p_list->p_lq->rlst_len >= p_list->p_lq->rlst_len + FN_NODE_SPARE)
-            p_list->p_lq->fn_node = realloc(p_list->p_lq->fn_node, sizeof(Node *) * (p_list->p_lq->rlst_len + FN_NODE_SPARE));
+        if(p_list->p_lq->rlst_len >= p_list->p_lq->fn_len){
+            p_list->p_lq->fn_node = realloc(p_list->p_lq->fn_node, sizeof(Node *) * (p_list->p_lq->fn_len + FN_NODE_SPARE));
+            p_list->p_lq->fn_len += FN_NODE_SPARE;
+        }
         p_list->p_lq->fn_node[p_list->p_lq->rlst_len] = p_node;
         p_list->p_lq->rlst_len++;
     }
@@ -225,7 +228,7 @@ int releaseNode(Node *p_node) {
         removeByNode(node_list, p_node);
     }
     if (p_node->value != NULL) {
-        if (p_node->type != POINTER) {
+        if (p_node->type != POINTER && p_node->type != HOLE) {
             if (p_node->type == LIST) {
                 releaseList((List *)p_node->value);
             }
@@ -331,16 +334,14 @@ int removeByNode(List *p_list, Node *p_node) {
         p_node->next->last = p_node->last;
     }
     else{
-        if(p_node != p_list->head){
-            if(p_node->f_number == 0){
-                Node *fn_node = findFnNode(p_list, p_node);
-                indexChange(p_list, fn_node->f_number, -1);
-                p_node->last->next = p_node->next;
-                p_node->next->last = p_node->last;
-            }
-            else{
-                digHole(p_list, p_node);
-            }
+        if(p_node->f_number == 0){
+            Node *fn_node = findFnNode(p_list, p_node);
+            indexChange(p_list, fn_node->f_number, -1);
+            p_node->last->next = p_node->next;
+            p_node->next->last = p_node->last;
+        }
+        else{
+            digHole(p_list, p_node);
         }
         p_list->length -= 1;
     }
@@ -352,8 +353,22 @@ Node *popFromHead(List *p_list) {
         return NULL;
     Node *p_node = p_list->head;
     if(p_list->p_lq != NULL){
-        if(p_list->p_lq->fn_node[0] == p_list->head){
-            digHole(p_list, p_list->head);
+        if(p_list->head->type == HOLE){
+            Node *t_node = p_list->head;
+            while(t_node->type == HOLE) t_node = t_node->next;
+            if(t_node->f_number != 0){
+                Node *r_node = t_node;
+                digHole(p_list, t_node);
+                return r_node;
+            }
+            p_node = t_node;
+        }
+        else{
+            if(p_list->p_lq->fn_node[0] == p_list->head){
+                Node *r_node = p_list->head;
+                digHole(p_list, p_list->head);
+                return r_node;
+            }
         }
     }
     else{
@@ -376,8 +391,14 @@ Node *popFromTail(List *p_list) {
         return NULL;
     else {
         if(p_list->p_lq != NULL){
-            if(p_list->p_lq->fn_node[p_list->p_lq->rlst_len] == p_list->tail)
-                p_list->p_lq->fn_node = realloc(p_list->p_lq->fn_node, sizeof(p_list->p_lq->rlst_len - 1));
+            if(p_list->p_lq->fn_node[p_list->p_lq->rlst_len - 1] == p_list->tail){
+                p_list->p_lq->fn_node[p_list->p_lq->rlst_len - 1] = NULL;
+                p_list->p_lq->rlst_len--;
+                if(p_list->p_lq->fn_len - p_list->p_lq->rlst_len > FN_NODE_SPARE * 2){
+                    p_list->p_lq->fn_node = realloc(p_list->p_lq->fn_node, sizeof(p_list->p_lq->fn_len - FN_NODE_SPARE));
+                    p_list->p_lq->fn_len -= FN_NODE_SPARE;
+                }
+            }
         }
         //Node *tmp = p_list->tail;
         p_list->tail->last->next = NULL;
@@ -743,27 +764,41 @@ int enableListQuick(List *p_list){
         p_list->p_lq = malloc(sizeof(struct list_quick));
         register struct list_quick *p_lq = p_list->p_lq;
         p_lq->rlst_len = p_list->length;
-        p_lq->fn_node = malloc(sizeof(Node *) * (p_list->length + FN_NODE_SPARE));
+        p_lq->fn_node = NULL;
         p_lq->if_sort = 0;
+        p_lq->idxc_count = 0;
+        p_lq->stdid_lst = initList(0);
+        for(int i = 0; i < INDEX_CHANGE_MAX; i++) p_lq->idxc_lst[i] = NULL;
         refreshFnNode(p_list);
         //sortListById(p_list, 0, p_list->length);
-        return 0;
     }
-    return -1;
+    return 0;
 }
 
 int refreshFnNode(List *p_list){
     if(p_list->p_lq != NULL){
+        struct list_quick *blk_plq = p_list->p_lq;
         initIdxcList(p_list);
         if(p_list->p_lq->fn_node != NULL) free(p_list->p_lq->fn_node);
-        p_list->p_lq->fn_node = malloc(sizeof(Node *) * p_list->length);
+        p_list->p_lq->fn_node = malloc(sizeof(Node *) * (p_list->length + FN_NODE_SPARE));
+        p_list->p_lq->fn_len = p_list->length + FN_NODE_SPARE;
+        p_list->p_lq->rlst_len = p_list->length;
         register Node *p_node = p_list->head;
         unsigned long long i = 0;
+        p_list->p_lq = NULL;
         while (p_node != NULL) {
-            p_node->f_number = i++;
+            if(p_node->type == HOLE){
+                removeByNode(p_list, p_node);
+                releaseNode(p_node);
+                p_node = p_node->next;
+                continue;
+            }
+            p_node->f_number = i;
             p_list->p_lq->fn_node[i] = p_node;
             p_node = p_node->next;
+            i++;
         }
+        p_list->p_lq = blk_plq;
         return 0;
     }
     return -1;
@@ -821,14 +856,29 @@ int indexTransfromer(List *p_list, unsigned long long m_index){
 Node *getNodeByFnNode(List *p_list, unsigned long long index){
     if(p_list->p_lq != NULL){
         struct list_quick *p_lq = p_list->p_lq;
-        Node *p_node = p_lq->fn_node[index];
+        Node *p_node = NULL;
+        if(p_lq->rlst_len > index) p_node = p_lq->fn_node[index];
+        else p_node = p_lq->fn_node[p_lq->rlst_len - 1];
         if(p_lq->idxc_count > 0){
             int total_move = indexTransfromer(p_list, index);
-            if(total_move >=0){
-                for(int i = 0; i < ABS(total_move); i++) p_node = p_node->last;
+            int temp = ABS(total_move);
+            if(p_lq->rlst_len > index){
+                if(total_move >=0){
+                    for(int i = 0; i < temp; ){
+                        p_node = p_node->last;
+                        if(p_node->type != HOLE) i++;
+                    }
+                }
+                else{
+                    for(int i = 0; i < temp; ){
+                        p_node = p_node->next;
+                        if(p_node->type != HOLE) i--;
+                    }
+                }
             }
             else{
-                for(int i = 0; i < ABS(total_move); i++) p_node = p_node->next;
+                unsigned long long jump = index - temp;
+                for(int i = 0; i < jump; i++) p_node = p_node->next;
             }
             return p_node;
         }
@@ -866,7 +916,6 @@ int insertAfterNode(List *p_list, Node *t_node, Node *p_node){
     
     if(p_list->p_lq != NULL){
         Node *fn_node = findFnNode(p_list, p_node);
-        while(fn_node->f_number != 0) fn_node = fn_node->next;
         indexChange(p_list, fn_node->f_number, 1);
     }
     p_list->length += 1;
@@ -906,7 +955,7 @@ int insertBeforeNode(List *p_list, Node*t_node, Node *p_node){
 
 Node *findFnNode(List *p_list, Node *p_node){
     Node *fn_node = p_node;
-    while(fn_node->f_number != 0) fn_node = fn_node->next;
+    while(fn_node->f_number == 0) fn_node = fn_node->next;
     return fn_node;
 }
 

@@ -61,22 +61,43 @@ int stack(void) {
 	return 0;
 }
 
+int time_avg(void){
+    List *t_list = initList(0);
+    int64_t time_all = 0;
+    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
+    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
+    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
+    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
+    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
+    enableListQuick(t_list);
+    for (int i = 0; i < 100; i++){
+     struct timeval start,stop;
+     gettimeofday(&start,0);
+     findByIndexForNode(t_list, 200000);
+     gettimeofday(&stop,0);
+     time_all += (int64_t)(stop.tv_usec-start.tv_usec);
+     
+     }
+     double avg_time = (double) (time_all/(int64_t)100);
+     printf("TIME: %fus\n",avg_time);
+    releaseList(t_list);
+    return 0;
+}
 
 int main(int argc, char **argv) {
-    
-    for (int i = 0; i < 65535; i++){
-        list();
-        /*D_FILE *p_dfile = initDataFileForRead("data.db");
-        readDataFileInfo(p_dfile);
-        SID *temp_sid =  setS_idWithString("f7dd8f0a75a0c20e4dca1b78347083cf");
-        readStandardDataBySid(p_dfile, temp_sid);
-        freeS_id(temp_sid);
-        printListForCustom(p_dfile->pf_stdlst, printStandardData);
-        List *t_list = standardDataToList(p_dfile->pf_stdlst->head->value);
-        printList(t_list);
-        releaseList(t_list);
-        releaseDFile(p_dfile);*/
-        usleep(500);
-    }
+    //time_avg();
+    List *t_list = initList(0);
+    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
+    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
+    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
+    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
+    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
+    enableListQuick(t_list);
+    findByIndexForNode(t_list, 300000);
+    lisrhi(t_list, -1);
+    insertBeforeNode(t_list, findByIndexForNode(t_list, 5), lni(6));
+    popFromHead(t_list);
+    Node *p_node = findByIndexForNode(t_list, 7);
+    releaseList(t_list);
 	return 0;
 }
