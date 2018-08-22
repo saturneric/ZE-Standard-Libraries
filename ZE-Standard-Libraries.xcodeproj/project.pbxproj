@@ -35,7 +35,7 @@
 		9233C30F212292B000FB2485 /* md5.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; name = md5.c; path = id/md5.c; sourceTree = "<group>"; };
 		9246994F20CD000300B4E894 /* list.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = list.c; sourceTree = "<group>"; };
 		9246995020CD000300B4E894 /* list_expand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = list_expand.h; sourceTree = "<group>"; };
-		9246995120CD000300B4E894 /* list.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = list.h; sourceTree = "<group>"; };
+		9246995120CD000300B4E894 /* list.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = list.h; sourceTree = "<group>"; };
 		9246995820CE52A700B4E894 /* stack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stack.h; sourceTree = "<group>"; };
 		9246995920CE52A700B4E894 /* stack.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = stack.c; sourceTree = "<group>"; };
 		9246995B20CE5C8900B4E894 /* stack_expand.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stack_expand.h; sourceTree = "<group>"; };
