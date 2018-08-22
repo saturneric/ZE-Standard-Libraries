@@ -794,7 +794,7 @@ int refreshFnNode(List *p_list){
                 continue;
             }
             p_node->f_number = i;
-            p_list->p_lq->fn_node[i] = p_node;
+            blk_plq->fn_node[i] = p_node;
             p_node = p_node->next;
             i++;
         }

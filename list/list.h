@@ -36,6 +36,14 @@
 
 #define lupdull(list,x,value) updateValueWithULLIntForNode(findByIndexForNode(list, x),value)
 
+#define lidxvle(list,x) (findByIndexForNode(list, x)->value) 
+#define lrmvidx(list,x) removeByNode(list, findByIndexForNode(list, x)
+#define lpoph(list) popFromHead(list)
+#define lpopt(list) popFromTail(list)
+#define lfndsid(list,sid) (findByIdForNode(list,sid)->value)
+#define lstns() initList(0);
+#define lstn() initList(0);
+
 int safeModeForNode(int ifon);
 int releaseSingleListForsafeModeForNode(List *p_list);
 int releaseSingleNodeForsafeModeForNode(List *p_list);
