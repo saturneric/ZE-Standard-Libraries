@@ -309,42 +309,42 @@ extern unsigned long long len(List *p_list);
 /*
  *查询链表是否为空
  *返回: 如果链表为空返回1,如果链表不为空则返回0.*/
-int isListEmpty(List *p_list);
+extern int isListEmpty(List *p_list);
 
 /*
  *直接获得节点中的整型值
  *返回: 返回该节点储存的整型值*/
-int getByIntForNode(Node *);
+extern int getByIntForNode(Node *);
 
 /*
  *直接获得节点中的无符号整型值
  *返回: 返回该节点储存的无符号整型值*/
-unsigned int getByUIntForNode(Node *);
+extern unsigned int getByUIntForNode(Node *);
 
 /*
  *直接获得节点中的浮点值
  *返回: 返回该节点储存的浮点值*/
-double getByDoubleForNode(Node *);
+extern double getByDoubleForNode(Node *);
 
 /*
  *直接获得节点中的字符串值
  *返回: 返回该节点储存的字符串值*/
-char *getByStringForNode(Node *);
+extern char *getByStringForNode(Node *);
 
 /*
  *直接获得节点中的指针值
  *返回: 返回该节点储存的指针值*/
-void *getByPointerForNode(Node *);
+extern void *getByPointerForNode(Node *);
 
 /*
  *直接获得节点的序号
  *返回: 返回该节点在链表中的序号*/
-unsigned long long getIndexForNode(List *p_list,Node *p_node);
+extern unsigned long long getIndexForNode(List *p_list,Node *p_node);
 
 /*
  *通过节点的序号找到节点中相关的值,并更新其中的储存的值的指针.
  *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL*/
-Node *updateNodeByIndex(List *p_list, void *new_value, unsigned long long index);
+extern Node *updateNodeByIndex(List *p_list, void *new_value, unsigned long long index);
 
 
 

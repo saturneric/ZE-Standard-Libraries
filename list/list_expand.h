@@ -22,12 +22,12 @@
 /*
  *若快速声明回调函数则使用该宏
  *参数: name为回调函数名.*/
-#define __CALLBACK_STATE(name) List *_do##name(unsigned int, void *, List *)
+#define __CALLBACK_STATE(name) static List *_do##name(unsigned int, void *, List *)
 
 /*
  *若快速定义回调函数则使用该宏
  *参数: name为回调函数名.*/
-#define __CALLBACK_DEFINE(name) List *_do##name(unsigned int type, void *value, List *expand_resources)
+#define __CALLBACK_DEFINE(name) static List *_do##name(unsigned int type, void *value, List *expand_resources)
 
 /*
  *若传递回调函数指针则使用该宏

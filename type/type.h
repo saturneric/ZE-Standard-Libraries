@@ -173,7 +173,7 @@ typedef struct List{
  */
 struct index_change{
     unsigned long long c_index;//偏移量,有正负之分
-    int f_count;//偏移量所对应的数组对的节点
+    int f_count;//偏移量所对应的数组的节点
 };
 
 /*
