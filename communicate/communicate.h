@@ -217,32 +217,32 @@ __CALLBACK_STATE(StandardDataToList);
  *说明: 该函数只会在数据文件管理结构中建立一个框架,不会读入实际的数据块以及数据块链接关系.
  *返回: 处理成功则返回0,不成功则返回-1.
  */
-int readDataFileInfo(D_FILE *p_dfile);
+extern int readDataFileInfo(D_FILE *p_dfile);
 
 /*
  *读取数据文件中的特定标准数据结构
  *参数: p_std为指向框架中的相关标准数据所在内存空间的指针
  *返回: 处理成功则返回0,不成功则返回-1.
  */
-int readStandardData(D_FILE *p_dfile, STD_DATA *p_std);
+extern int readStandardData(D_FILE *p_dfile, STD_DATA *p_std);
 
 /*
  *读取数据文件中的特定标准数据结构中的数据块
  *返回: 处理成功则返回0,不成功则返回-1.
  */
-int readSTDBlocks(STD_BLOCKS *p_stdb);
+extern int readSTDBlocks(STD_BLOCKS *p_stdb);
 
 /*
  *读取文件头,检验文件是否为数据文件
  *返回: 处理成功则返回0,不成功则返回-1.
  */
-int checkIfDataFile(D_FILE *p_dfile);
+extern int checkIfDataFile(D_FILE *p_dfile);
 
 /*
  *通过标准数据结构的ID,在数据文件中读入特定的标准数据结构
  *返回: 处理成功则返回0,不成功则返回-1.
  */
-int readStandardDataBySid(D_FILE *p_dfile, SID *p_sid);
+extern int readStandardDataBySid(D_FILE *p_dfile, SID *p_sid);
 
 /*
  *通过标准数据结构的ID,在数据文件中读入特定的标准数据结构函数的回调函数
@@ -260,7 +260,7 @@ __CALLBACK_STATE(findStandardDataBySid);
 /*
  *打印标准数据结构信息
  */
-void printStandardData(void *value);
+extern void printStandardData(void *value);
 
 
 
@@ -274,13 +274,13 @@ void printStandardData(void *value);
  *创建消息
  *返回: 处理成功则返回指向相关结构体所在内存空间的指针,不成功则返回NULL.
  */
-MSG *createMessage(char *title, void *data, unsigned long data_size);
+extern MSG *createMessage(char *title, void *data, unsigned long data_size);
 
 /*
  *通过ipv4地址发送消息
  *返回: 处理成功则返回0,不成功则返回-1.
  */
-int sendMessageIPv4(MSG *p_msg, char *ip, unsigned int port);
+extern int sendMessageIPv4(MSG *p_msg, char *ip, unsigned int port);
 
 
 
