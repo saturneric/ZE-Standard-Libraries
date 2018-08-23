@@ -1,9 +1,76 @@
 #ifndef communicate_h
 #define communicate_h
 
-#include "../type/type.h"
-#include "../list/list_expand.h"
+/*
+ *文件头信息的管理及操作的结构
+ */
+typedef struct file_head{
+    char head_test[18];//数据文件头部的验证信息
+    unsigned long long data_num;//数据文件中的标准数据结构的数目
+}F_HEAD;
 
+/*
+ *数据文件的管理及操作的结构
+ */
+typedef struct data_file{
+    FILE *fp;//数据文件
+    F_HEAD *pf_head;//数据文件头
+    List *pf_stdlst;//数据文件的标志数据结构的储存链表
+}D_FILE;
+
+/*
+ *标准数据结构的管理及操作的结构
+ */
+typedef struct standard_data_blocks{
+    unsigned int type;//数据块的类型
+    unsigned long long location;//数据块在数据文件中的定位
+    char *sid;//数据块的ID
+    _Bool if_data;//数据块是否赋值
+    unsigned int blocks_num;//数据块字节大小
+    char *buff;//指向数据块储存值内存空间的指针
+}STD_BLOCKS;
+
+/*
+ *标准数据结构中数据块的连接关系的管理及操作的结构
+ */
+typedef struct standard_data_connection{
+    unsigned long long location;//数据块链接关系结构在文件中的定位
+    char *f_sid;//前一个数据块的ID
+    char *s_sid;//后一个数据块的ID
+}STD_CTN;
+
+/*
+ *标准数据结构头的管理及操作的结构
+ */
+typedef struct standard_data_head{
+    unsigned long long data_blk_num;//数据块的数目
+    unsigned long long data_ctn_num;//数据块链接关系结构的数目
+}STD_HEAD;
+
+/*
+ *标准数据结构的管理及操作的结构
+ */
+typedef struct standard_data{
+    SID *s_id;//标准数据结构的ID
+    int read_data;//标准数据结构是否已经读取完整
+    unsigned int type;//标准数据结构所对应的类型
+    unsigned long long size;//标准数据结构在数据文件中的大小
+    unsigned long long location;//标准数据结构的头在数据文件中的定位
+    _Bool lock;//标准数据文件是否被锁住
+    List *pd_blocklst;//数据块储存链表
+    List *pd_ctnlst;//数据块连接关系结构的储存链表
+}STD_DATA;
+
+/*
+ *消息的管理及操作的结构
+ */
+typedef struct message{
+    SID *p_sid;//消息的ID
+    time_t time;//消息的产生时间
+    char titile[16];//消息标题
+    unsigned long size;//消息的大小
+    char content[0];//消息的正文
+}MSG;
 
 
 
@@ -98,35 +165,12 @@ extern int standardDataAddConnection(STD_DATA *p_std, SID *f_sid, SID *s_sid);
 extern int dataFileWriteIn(D_FILE *p_dfile);
 
 /*
- *数据文件管理结构中标准数据结构管理结构的简略信息的写入函数
- */
-__CALLBACK_STATE(StandardDataInfoWrite);
-
-/*
- *数据文件管理结构中标准数据结构管理结构的内容的写入函数
- */
-__CALLBACK_STATE(StandardDataWrite);
-
-/*
- *标准数据结构管理结构中的数据块链接关系管理结构的写入函数
- */
-__CALLBACK_STATE(StandardDConnectionWrite);
-
-/*
- *标准数据结构管理结构中的数据块管理结构的写入函数
- */
-__CALLBACK_STATE(StandardDBlockWrite);
-
-/*
  *将相关数据文件中的内容,读出到数据文件管理结构中,等待操作.
  *返回: 处理成功则返回0,不成功则返回-1.
  */
 extern int dataFileReadOut(D_FILE *p_dfile);
 
-/*
- *数据文件管理结构的读出函数的回调函数声明
- */
-__CALLBACK_STATE(dataFileReadOut);
+
 
 
 
@@ -160,21 +204,6 @@ extern int releaseSTDConnection(STD_CTN *p_stdc);
  */
 extern int releaseDFile(D_FILE *p_file);
 
-/*
- *计算标准数据结构在文件中占用的空间,以字节为单位.
- */
-static unsigned long long calStandardData(STD_DATA *p_std);
-
-/*
- *计算数据块链接关系在文件中的大小
- */
-__CALLBACK_STATE(calStandardDataCTN);
-
-/*
- *计算数据块在文件中的大小
- */
-__CALLBACK_STATE(calStandardDataBLK);
-
 
 
 
@@ -194,11 +223,6 @@ extern STD_DATA *listToSTD(List *);
  *返回: 处理成功则返回指向相关结构体所在内存空间的指针,不成功则返回NULL.
  */
 extern List *standardDataToList(STD_DATA *);
-
-/*
- *将标准数据结构转换成链表的回调函数
- */
-__CALLBACK_STATE(StandardDataToList);
 
 //STD_DATA *stackToSTD(Stack *);
 
@@ -243,11 +267,6 @@ extern int checkIfDataFile(D_FILE *p_dfile);
  *返回: 处理成功则返回0,不成功则返回-1.
  */
 extern int readStandardDataBySid(D_FILE *p_dfile, SID *p_sid);
-
-/*
- *通过标准数据结构的ID,在数据文件中读入特定的标准数据结构函数的回调函数
- */
-__CALLBACK_STATE(findStandardDataBySid);
 
 
 

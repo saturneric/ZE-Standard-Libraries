@@ -1,4 +1,62 @@
-#include "communicate.h"
+#include <type.h>
+#include <id/id.h>
+#include <list/list_type.h>
+#include <list/list.h>
+#include <list/list_expand.h>
+#include <list/list_expand_1.h>
+#include <communicate/communicate.h>
+
+/*
+ *计算标准数据结构在文件中占用的空间,以字节为单位.
+ */
+static unsigned long long calStandardData(STD_DATA *p_std);
+
+/*
+ *数据文件管理结构中标准数据结构管理结构的简略信息的写入函数
+ */
+__CALLBACK_STATE(StandardDataInfoWrite);
+
+/*
+ *数据文件管理结构中标准数据结构管理结构的内容的写入函数
+ */
+__CALLBACK_STATE(StandardDataWrite);
+
+/*
+ *标准数据结构管理结构中的数据块链接关系管理结构的写入函数
+ */
+__CALLBACK_STATE(StandardDConnectionWrite);
+
+/*
+ *标准数据结构管理结构中的数据块管理结构的写入函数
+ */
+__CALLBACK_STATE(StandardDBlockWrite);
+
+/*
+ *数据文件管理结构的读出函数的回调函数声明
+ */
+__CALLBACK_STATE(dataFileReadOut);
+
+/*
+ *计算数据块链接关系在文件中的大小
+ */
+__CALLBACK_STATE(calStandardDataCTN);
+
+/*
+ *计算数据块在文件中的大小
+ */
+__CALLBACK_STATE(calStandardDataBLK);
+
+/*
+ *将标准数据结构转换成链表的回调函数
+ */
+__CALLBACK_STATE(StandardDataToList);
+
+/*
+ *通过标准数据结构的ID,在数据文件中读入特定的标准数据结构函数的回调函数
+ */
+__CALLBACK_STATE(findStandardDataBySid);
+
+
 
 STD_BLOCKS *initStandardDBlocks(SID *p_sid, unsigned int type, unsigned long long data_size){
     STD_BLOCKS *p_stdb = (STD_BLOCKS *)malloc(sizeof(STD_BLOCKS));
@@ -175,7 +233,6 @@ int dataFileReadOut(D_FILE *p_dfile){
         listThrough(p_dfile->pf_stdlst, __CALLBACK_CALL(dataFileReadOut), __SEND_ARG("%p", p_dfile));
         
     }
-    showError(pushError(DATA_FILE, STANDARD, initInfo("dataFileReadOut()", "Datafile not complete.")));
     return -1;
 }
 

@@ -1,89 +1,7 @@
-#ifndef LIST_EXPAND_H
-#define LIST_EXPAND_H
+#ifndef list_expand_h
+#define list_expand_h
 
-#include "list.h"
-
-
-
-
-/************************************************
- *回调函数的便捷操作相关宏
- ************************************************/
-
-/****
- *母函数相关
- */
-
-/*
- *若需要母函数需要向毁掉函数传递相关参数则使用该宏
- *参数: argc指示传递参数的类型格式;args为需要返回的参数.*/
-#define __SEND_ARG(argc, args...) newReturn(0, -1, argc , args)
-
-/*
- *若快速声明回调函数则使用该宏
- *参数: name为回调函数名.*/
-#define __CALLBACK_STATE(name) static List *_do##name(unsigned int, void *, List *)
-
-/*
- *若快速定义回调函数则使用该宏
- *参数: name为回调函数名.*/
-#define __CALLBACK_DEFINE(name) static List *_do##name(unsigned int type, void *value, List *expand_resources)
-
-/*
- *若传递回调函数指针则使用该宏
- *参数: name为回调函数名.*/
-#define __CALLBACK_CALL(name) _do##name
-
-/*
- *若母函数获取回调函数返回的指针则使用该宏
- *参数: x为该值的顺序号, type为获取的指针值的类型.*/
-#define __RTN_ARGS_P(list,x,type) (type *) lidxp(list, x);
-
-/*
- *若母函数获取回调函数返回的值则使用该宏
- *参数: x为该值的顺序号, type为获取的值的类型.*/
-#define __RTN_ARGS(list,x,type) *((type *) lidxp(list, x));
-
-/****
- *回调函数相关
- */
-
-/*
- *若回调函数获取遍历链表中的当前节点的值则使用该宏
- *参数: c_type为获取值的类型.*/
-#define __VALUE(c_type) (c_type)value
-
-/*
- *若回调函数获取母函数传递的参数则使用该宏
- *参数: x为该值的顺序号, type为获取值的类型.*/
-#define __ARGS(x, type) *((type *) lidxp(expand_resources, x));
-
-/*
- *若回调函数获取母函数传递的指针参数则使用该宏
- *参数: x为该值的顺序号, type为获取的指针值的类型.*/
-#define __ARGS_P(x, type) (type *) lidxp(expand_resources, x);
-
-/*
- *若回调函数获取遍历链表的长度则使用该宏
- */
-#define __LIST_LEN getInfoForListThrough(expand_resources,0)
-
-/*
- *若回调函数获取遍历链表中当前节点的序号则使用该宏
- */
-#define __NOW_INDEX getInfoForListThrough(expand_resources,1)
-
-/*
- *若需要终止遍历或终止遍历并向母函数返回相关参数则使用该宏
- *参数: argc指示返回参数的个数;args为需要返回的参数.*/
-#define __RETURN(argc, args...) newReturn(1, -1, argc , args)
-
-/*
- *若继续遍历则使用该宏
- */
-#define __CRETURN__ newCReturn()
-
-
+#include <list/list_type.h>
 
 
 /************************************************
@@ -126,41 +44,6 @@ extern Node *nodeWithString(const char *, _Bool if_sid);
  *参数if_sid指示函数是否为节点获取ID
  *返回: 若成功则返回指向新节点的指针,若失败函数返回NULL.*/
 extern Node *nodeWithPointer(const void *, _Bool if_sid);
-
-
-
-
-
-/************************************************
- *单向节点的快速初始化: 为新节点分配内存空间,
- *                  并使用输入值对其进行初始化.
- ************************************************/
-
-/*
- *为新单向节点获取内存空间, 并使用整型值初始化新单向节点
- *返回: 若成功则返回指向新单向节点的指针,若失败函数返回NULL.*/
-extern s_Node *s_nodeWithInt(int);
-
-/*
- *为新单向节点获取内存空间, 并使用无符号整型值初始化新单向节点
- *返回: 若成功则返回指向新单向节点的指针,若失败函数返回NULL.*/
-extern s_Node *s_nodeWithUInt(unsigned int);
-
-/*
- *为新单向节点获取内存空间, 并使用浮点值初始化新单向节点
- *返回: 若成功则返回指向新单向节点的指针,若失败函数返回NULL.*/
-extern s_Node *s_nodeWithDouble(double);
-
-/*
- *为新单向节点获取内存空间, 并使用字符串值初始化新单向节点
- *返回: 若成功则返回指向新单向节点的指针,若失败函数返回NULL.*/
-extern s_Node *s_nodeWithString(const char *);
-
-/*
- *为新单向节点获取内存空间, 并使用指针值初始化新单向节点
- *返回: 若成功则返回指向新单向节点的指针,若失败函数返回NULL.*/
-extern s_Node *s_nodeWithPointer(const void *);
-
 
 
 
@@ -264,43 +147,6 @@ List *mply_findByPointerForNode(List*, void *);
 
 
 
-/************************************************
- *链表或节点的输出: 格式化输出链表或节点的属性
- ************************************************/
-
-/*
- *输出链表及其中节点的相关信息
- *参数: priority为每行输出信息前的空格数除以4*/
-void printListInfo(List *p_list,int priority);
-
-/*
- *输出节点中的相关信息
- *参数: priority为每行输出信息前的空格数乘以4*/
-void printNodeInfo(Node *p_node,int priority);
-
-/*
- *输出链表及其中节点的相关信息
- */
-void printList(List *);
-
-/*
- *自定义输出链表及其中节点的相关信息
- *参数: func为一个函数指针, 指向函数的职能在于输出节点中的用户自定义结构的相关信息*/
-void printListForCustom(List *p_list,void (*func)(void *value));
-
-/*
- *printListForCustom函数的回调函数
- */
-__CALLBACK_STATE(printListForCustom);
-
-/*
- *输出节点中的相关信息
- */
-void printNode(Node *p_node);
-
-
-
-
 
 /************************************************
  *链表的遍历: 遍历链表相关函数
@@ -345,5 +191,97 @@ unsigned long long calListMemory(List *);
 
 
 
+/***********************************************
+ *链表或节点的属性:获取或更新链表或节点属性有关的函数
+ ***********************************************/
+
+/*
+ *返回链表长度*/
+extern unsigned long long len(List *p_list);
+
+/*
+ *查询链表是否为空
+ *返回: 如果链表为空返回1,如果链表不为空则返回0.*/
+extern int isListEmpty(List *p_list);
+
+/*
+ *直接获得节点中的整型值
+ *返回: 返回该节点储存的整型值*/
+extern int getByIntForNode(Node *);
+
+/*
+ *直接获得节点中的无符号整型值
+ *返回: 返回该节点储存的无符号整型值*/
+extern unsigned int getByUIntForNode(Node *);
+
+/*
+ *直接获得节点中的浮点值
+ *返回: 返回该节点储存的浮点值*/
+extern double getByDoubleForNode(Node *);
+
+/*
+ *直接获得节点中的字符串值
+ *返回: 返回该节点储存的字符串值*/
+extern char *getByStringForNode(Node *);
+
+/*
+ *直接获得节点中的指针值
+ *返回: 返回该节点储存的指针值*/
+extern void *getByPointerForNode(Node *);
+
+/*
+ *直接获得节点的序号
+ *返回: 返回该节点在链表中的序号*/
+extern unsigned long long getIndexForNode(List *p_list,Node *p_node);
+
+/*
+ *通过节点的序号找到节点中相关的值,并更新其中的储存的值的指针.
+ *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL*/
+extern Node *updateNodeByIndex(List *p_list, void *new_value, unsigned long long index);
+
+
+
+
+/**********************************************
+ *链表或节点的复制: 链表与节点复制相关函数
+ *********************************************/
+
+/*
+ *节点的复制,复制将会为新节点重新分配内存,并将源节点的所有值拷贝入新节点.
+ *注意: 源节点与新节点ID相同.
+ *返回: 若成功函数返回指向新节点的指针,若失败则返回NULL*/
+extern Node *copyNode(Node *);
+
+/*
+ *链表的复制,复制将会为新链表重新分配内存,并将源链表的所有节点复制.
+ *注意: 源链表与新链表ID相同.
+ *返回: 若成功函数返回指向新链表的指针,若失败则返回NULL*/
+List *copyList(List *p_list);
+
+
+/*
+ *通过序号查找相关的单个节点
+ *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL.*/
+extern Node *findByIndexForNode(List *, unsigned long long);
+
+/*
+ *通过整型值查找储存该值的单个节点
+ *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL.*/
+extern Node *findByIntForNode(List *, int);
+
+/*
+ *通过浮点值查找储存该值的单个节点
+ *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL.*/
+extern Node *findByDoubleForNode(List *, double);
+
+/*
+ *通过字符串中查找储存该值的单个节点.
+ *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL.*/
+extern Node *findByStringForNode(List *, char *);
+
+/*
+ *通过指针值查找储存该值的单个节点.
+ *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL.*/
+extern Node *findByPointerForNode(List *, void *);
 
 #endif

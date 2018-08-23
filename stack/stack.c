@@ -1,12 +1,11 @@
-#include "stack.h"
+#include <type.h>
+#include <stack/stack.h>
 
 Stack *initStack(void) {
     Stack *p_stack = (Stack *)malloc(sizeof(Stack));
-    if(p_stack == NULL){
-        showError(pushError(STACK, STANDARD, initInfo("initStack()", "Error in getting the memory of stack.")));
-        return NULL;
-    }
+#ifdef id_enable
     p_stack->s_id = getS_id(STACK, 1);
+#endif
     p_stack->length = 0;
     p_stack->top = NULL;
     return p_stack;
@@ -14,11 +13,9 @@ Stack *initStack(void) {
 
 SNode *initSNode(void) {
     SNode *p_snode = (SNode *)malloc(sizeof(SNode));
-    if(p_snode == NULL){
-        showError(pushError(STACK_NODE, STANDARD, initInfo("initSNode()", "Error in getting the memory of snode.")));
-        return NULL;
-    }
+#ifdef id_enable
     p_snode->s_id = getS_id(STACK_NODE, 1);
+#endif
     p_snode->next = NULL;
     p_snode->value = NULL;
     return p_snode;
@@ -50,7 +47,9 @@ int releaseStack(Stack *p_stack) {
         p_sndoe = p_sndoe->next;
         releaseSNode(pl_snode);
     }
+#ifdef id_enable
     freeS_id(p_stack->s_id);
+#endif
     p_stack->top = NULL;
     p_stack->length = 0;
     free(p_stack);
@@ -58,7 +57,9 @@ int releaseStack(Stack *p_stack) {
 }
 
 int releaseSNode(SNode *p_snode) {
+#ifdef id_enable
     freeS_id(p_snode->s_id);
+#endif
     free(p_snode->value);
     p_snode->value = NULL;
     p_snode->type = VOID;

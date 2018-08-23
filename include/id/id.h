@@ -1,26 +1,31 @@
 #ifndef id_h
 #define id_h
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "../type/type.h"
-#include "md5.h"
+#include <type.h>
+#include <id/md5.h>
 
-
-
-
-
-/************************************************
- 伪随机数初始化: 伪随机数初始化有关函数
- ************************************************/
 
 /*
- *用当前时间初始化伪随机数发生器
+ *SID的初始值管理及操作的结构
  */
-static void init_rand(void);
+struct sid_raw{
+    unsigned int type;
+    unsigned int *value;//4
+    unsigned int *value_deeper;//8
+    unsigned int *value_deepest;//32
+};
 
+/*
+ *SID的管理及操作的结构
+ */
+typedef struct s_id{
+    struct sid_raw *sr;//指向SID初始值
+    unsigned int deep;//SID初始值的复杂度
+    MD5_CTX *md5;//指向MD5结构
+    unsigned char *decrypt_hex;//指向MD5的Hex信息
+    char *decrypt_str;//指向MD5的Hex信息转化成的字符串
+    
+}SID;
 
 
 
@@ -28,13 +33,6 @@ static void init_rand(void);
 /************************************************
  初始化: 初始化有关函数
  ************************************************/
-
-/*
- *为一个新的SID管理结构分配内存空间
- *参数: deep_level指示原始ID的复杂度
- *返回: 处理成功则返回指向相关结构体所在内存空间的指针,不成功则返回NULL.
- */
-static SID *initS_id(unsigned int deep_level);
 
 /*
  *获得一个新的SID
@@ -48,11 +46,6 @@ extern SID *getS_id(unsigned int type, unsigned int deep_level);
  *返回: 处理成功则返回指向相关结构体所在内存空间的指针,不成功则返回NULL.
  */
 extern SID *setS_idWithString(char *);
-
-/*
- *获得一个新的SID原始数据
- */
-static void getRawS_id(SID *s_id, unsigned int type, unsigned int deep_level);
 
 /*
  *获得一个新的ID
@@ -88,33 +81,11 @@ extern int simFitS_id(SID * fs_id, SID * ss_id);
  ************************************************/
 
 /*
- *将原始SID数据转化成字符串
- *返回: 执行成功相关字符串,不成功则返回NULL
- */
-static char *s_idToASCIIRawString(SID * const s_id);
-
-/*
  *将SID中的Hex形式的MD5数据转化成字符串形式的MD5
  */
 extern void setSidToASCIIString(SID * const s_id);
 
-/*
- *将原始SID数据转换成的SID转化回原始SID数据
- *返回: 执行成功相关指向数据结构内存空间的指针,不成功则返回NULL
- */
-static SID *asciiRawStringToS_id(char * const string);
-
-/*
- *将原始SID数据转化成MD5的Hex形式的数据
- */
-static void s_idToMD5(SID *s_id);
-
-/*
- *将10进制数字,转化成字符型的16位进制数字
- */
-static char hexToChar(unsigned int);
-
-
+char *s_idToASCIIString(SID * const s_id);
 
 
 
@@ -145,15 +116,6 @@ extern int freeSidRaw(SID *s_id);
  */
 extern int freeS_id(SID *s_id);
 
-
-
-
-
-/************************************************
- 相关全局变量
- ************************************************/
-
-static _Bool if_rand;
 
 
 

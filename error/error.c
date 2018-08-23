@@ -1,81 +1,53 @@
-#include "error.h"
+#include <type.h>
+#include <error/error.h>
 
-int initErrorSystem(void) {
-	error_list = initList(0);
-	notice_list = initList(0);
-	if_error = 1;
-	return 1;
-}
-
-int setLogDirectory(const char *path) {
-	logfile.id = getId();
-	unsigned long memory_space = strlen(path) + 256;
-	char *file_path = (char *)malloc(sizeof(char)*memory_space);
-
-	strcat(file_path, path);
-	strcat(file_path, "log");
-	sprintf(file_path, "%lu", logfile.id);
-
-	if ((logfile.fp = fopen(file_path, "w")) == NULL) {
-		printf("Cannot set logfile!");
-		return 0;
-	}
-	logfile.if_enable = 1;
-
-	free(file_path);
-	return 1;
-}
-
-int closeLogDirectory(void) {
-	Node *p = error_list->head;
-		while (p != NULL) {
-			saveError(p->value);
-			p = p->next;
-		}
-
-	p = notice_list->head;
-	while (p != NULL) {
-		saveNotice(p->value);
-		p = p->next;
-	}
-
-	releaseList(error_list);
-	releaseList(notice_list);
-	if_error = 0;
-	fclose(logfile.fp);
-	logfile.if_enable = 0;
+int pushInfo(Info *p_info, const char *head, const char *body) {
+    strcpy(p_info->head, head);
+    strcpy(p_info->body, body);
     return 0;
 }
 
-int loadFromFile(FILE *fp,char* number) {
-	
-	return 1;
+Error *pushError(unsigned int type, int pri, Info *p_info) {
+    Error *p_error  = (Error *)malloc(sizeof(Error));
+    p_error->type = type;
+    p_error->priority = pri;
+    p_error->info = *p_info;
+    p_error->time = time(NULL);
+    free(p_info);
+    return p_error;
 }
 
-int saveError(Error *p_error) {
-	fprintf(logfile.fp,
-		"--------------------\n\
-		ERROR\n\
-		Type : %ud\n\
-		Priority : %d\n\
-		Time : %s\n\
-		Info : \n\
-		%s\n\
-		%s\n\
-		---------------------\n",
-		p_error->type, p_error->priority, ctime( &(p_error->time) ), p_error->info.head, p_error->info.body);
+Notice *pushNotice(unsigned int type, Info *p_info) {
+    Notice *p_notice = (Notice *)malloc(sizeof(Notice));
+    p_notice->type = type;
+    p_notice->info = *p_info;
+    p_notice->time = time(NULL);
+    free(p_info);
+    return p_notice;
+}
+
+Info *initInfo(const char *head, const char *body){
+    Info *p_info = (Info *)malloc(sizeof(Info));
+    pushInfo(p_info, head, body);
+    return p_info;
+}
+
+int showError(Error *p_error){
+    printf("\n");
+    for (int i = 0; i < p_error->priority; i++) {
+        printf("!");
+    }
+    
+    printf("(Error) %s\n",asctime(localtime(&p_error->time)));
+    printf("%s: %s.\n",p_error->info.head,p_error->info.body);
+    free(p_error);
     return 0;
 }
-int saveNotice(Notice *p_notice) {
-	fprintf(logfile.fp,
-		"--------------------\n\
-		NOTICE\n\
-		Type : %ud\n\
-		Time : %s\n\
-		Info : \n\
-		%s\n\
-		%s\n\
-		----------------------\n",
-		p_notice->type, ctime( &(p_notice->time) ), p_notice->info.head, p_notice->info.body);
+
+int showWarning(Notice *p_notice){
+    printf("\n@");
+    printf("(Warning) %s\n",asctime(localtime(&p_notice->time)));
+    printf("%s: %s.\n",p_notice->info.head,p_notice->info.body);
+    free(p_notice);
     return 0;
 }

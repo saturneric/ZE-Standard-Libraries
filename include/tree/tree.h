@@ -1,8 +1,39 @@
 #ifndef TREE_H
 #define TREE_H
 
-#include <stdio.h>
-#include "../list/list_expand.h"
+#include <list/list_type.h>
+
+/*
+ *超级树节点的管理及操作的结构
+ */
+typedef struct tree_node
+{
+    SID *s_id;//超级树节点的ID
+    List *home;//超级树节点的子节点列表
+    struct tree_node *father;//超级树节点的父节点
+    Node *room;//超级树节点的父节点的子节点列表
+    unsigned long long child_num;//超级树节点的子节点数量
+    unsigned int type;//超级树节点的类型
+    void *value;//值指针
+}TNode;
+
+/*
+ *二叉树节点的管理及操作的结构
+ */
+typedef  struct simple_tree_node{
+    void *value;//值指针
+    struct simple_tree_node *childs[2];//子节点
+}s_TNode;
+
+/*
+ *树的管理及操作的结构
+ */
+typedef struct tree
+{
+    SID *s_id;//超级树的SID
+    TNode *root;//超级树根节点
+    s_TNode *s_root;//二叉树的根节点
+}Tree;
 
 int safeModeForTree(int ifon);
 int releaseAllForTree(void);

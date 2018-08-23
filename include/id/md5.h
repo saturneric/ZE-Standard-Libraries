@@ -1,7 +1,7 @@
 #ifndef md5_h
 #define md5_h
 
-#include "../type/type.h"
+#include <type.h>
 
 #define F(x,y,z) ((x & y) | (~x & z))
 #define G(x,y,z) ((x & z) | (y & ~z))
@@ -31,6 +31,15 @@ a += I(b, c, d) + x + ac; \
 a = ROTATE_LEFT(a, s); \
 a += b; \
 }
+
+/*
+ *MD5的管理及操作的结构
+ */
+typedef struct md5_ctx{
+    unsigned int count[2];
+    unsigned int state[4];
+    unsigned char buffer[64];
+}MD5_CTX;
 
 
 void MD5Init(MD5_CTX *context);

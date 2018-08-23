@@ -3,9 +3,14 @@
 
 #include <sys/time.h>
 
-#include "type/type.h"
-#include "list/list_expand.h"
-#include "stack/stack_expand.h"
+#include <type.h>
+#include <id/id.h>
+#include <list/list.h>
+#include <list/list_expand.h>
+#include <list/list_expand_1.h>
+#include <list/list_quick.h>
+#include <stack/stack.h>
+#include <stack/stack_expand.h>
 //#include "tree/tree_expand.h"
 #include "communicate/communicate.h"
 

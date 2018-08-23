@@ -1,8 +1,50 @@
-#include "id.h"
+#include <type.h>
+#include <id/id.h>
 
 static _Bool if_rand = 0;
 
-void init_rand(void) {
+/*
+ *用当前时间初始化伪随机数发生器
+ */
+static void init_rand(void);
+
+/*
+ *为一个新的SID管理结构分配内存空间
+ *参数: deep_level指示原始ID的复杂度
+ *返回: 处理成功则返回指向相关结构体所在内存空间的指针,不成功则返回NULL.
+ */
+static SID *initS_id(unsigned int deep_level);
+
+/*
+ *将原始SID数据转化成MD5的Hex形式的数据
+ */
+static void s_idToMD5(SID *s_id);
+
+
+/*
+ *将原始SID数据转化成字符串
+ *返回: 执行成功相关字符串,不成功则返回NULL
+ */
+static char *s_idToASCIIRawString(SID * const s_id);
+
+
+/*
+ *将10进制数字,转化成字符型的16位进制数字
+ */
+static char hexToChar(unsigned int);
+
+/*
+ *将原始SID数据转换成的SID转化回原始SID数据
+ *返回: 执行成功相关指向数据结构内存空间的指针,不成功则返回NULL
+ */
+static SID *asciiRawStringToS_id(char * const string);
+
+/*
+ *获得一个新的SID原始数据
+ */
+static void getRawS_id(SID *s_id, unsigned int type, unsigned int deep_level);
+
+static void init_rand(void) {
     srand((unsigned)time(NULL));
 }
 
@@ -17,7 +59,7 @@ unsigned long long getId(void) {
     return id;
 }
 
-SID *initS_id(unsigned int deep_level){
+static SID *initS_id(unsigned int deep_level){
     if (!if_rand){
         init_rand();
         if_rand = 1;
@@ -197,7 +239,8 @@ char *s_idToASCIIRawString(SID * const s_id){
     }
     
 }
-SID *asciiRawStringToS_id(char * const string){
+
+static SID *asciiRawStringToS_id(char * const string){
     SID *s_id = NULL;
     unsigned long long string_len = strlen(string);
     
