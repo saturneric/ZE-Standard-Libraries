@@ -23,7 +23,6 @@ int list(void) {
 	return  0;
 }*/
 
-
 /*int tree(void) {
 	TNode *t_tnode, *cr_tnode, *cl_tnode;
 	Tree *t_tree;
@@ -86,7 +85,7 @@ int time_avg(void){
 
 int main(int argc, char **argv) {
     //time_avg();
-    List *t_list = initList(0);
+    /*List *t_list = initList(0);
     for(int i = 0; i < 65535; i++) lisrti(t_list, i);
     for(int i = 0; i < 65535; i++) lisrti(t_list, i);
     for(int i = 0; i < 65535; i++) lisrti(t_list, i);
@@ -98,6 +97,13 @@ int main(int argc, char **argv) {
     insertBeforeNode(t_list, findByIndexForNode(t_list, 5), lni(6));
     popFromHead(t_list);
     Node *p_node = findByIndexForNode(t_list, 7);
-    releaseList(t_list);
+    releaseList(t_list);*/
+    while(1){
+        List *p_list = initList(0);
+        for(int i = 0; i < 65535; i++){
+            insertInTail(p_list, nodeWithInt(i, 1));
+        }
+        releaseList(p_list);
+    }
 	return 0;
 }

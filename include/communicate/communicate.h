@@ -6,7 +6,7 @@
  */
 typedef struct file_head{
     char head_test[18];//数据文件头部的验证信息
-    unsigned long long data_num;//数据文件中的标准数据结构的数目
+    uint32_t data_num;//数据文件中的标准数据结构的数目
 }F_HEAD;
 
 /*
@@ -22,8 +22,8 @@ typedef struct data_file{
  *标准数据结构的管理及操作的结构
  */
 typedef struct standard_data_blocks{
-    unsigned int type;//数据块的类型
-    unsigned long long location;//数据块在数据文件中的定位
+    uint16_t type;//数据块的类型
+    uint32_t location;//数据块在数据文件中的定位
     char *sid;//数据块的ID
     _Bool if_data;//数据块是否赋值
     unsigned int blocks_num;//数据块字节大小
@@ -34,7 +34,7 @@ typedef struct standard_data_blocks{
  *标准数据结构中数据块的连接关系的管理及操作的结构
  */
 typedef struct standard_data_connection{
-    unsigned long long location;//数据块链接关系结构在文件中的定位
+    uint32_t location;//数据块链接关系结构在文件中的定位
     char *f_sid;//前一个数据块的ID
     char *s_sid;//后一个数据块的ID
 }STD_CTN;
@@ -43,8 +43,8 @@ typedef struct standard_data_connection{
  *标准数据结构头的管理及操作的结构
  */
 typedef struct standard_data_head{
-    unsigned long long data_blk_num;//数据块的数目
-    unsigned long long data_ctn_num;//数据块链接关系结构的数目
+    uint32_t data_blk_num;//数据块的数目
+    uint32_t data_ctn_num;//数据块链接关系结构的数目
 }STD_HEAD;
 
 /*
@@ -53,9 +53,9 @@ typedef struct standard_data_head{
 typedef struct standard_data{
     SID *s_id;//标准数据结构的ID
     int read_data;//标准数据结构是否已经读取完整
-    unsigned int type;//标准数据结构所对应的类型
-    unsigned long long size;//标准数据结构在数据文件中的大小
-    unsigned long long location;//标准数据结构的头在数据文件中的定位
+    uint16_t type;//标准数据结构所对应的类型
+    uint32_t size;//标准数据结构在数据文件中的大小
+    uint32_t location;//标准数据结构的头在数据文件中的定位
     _Bool lock;//标准数据文件是否被锁住
     List *pd_blocklst;//数据块储存链表
     List *pd_ctnlst;//数据块连接关系结构的储存链表
@@ -98,7 +98,7 @@ extern D_FILE *initDataFileForRead(char *route);
  *参数: type指示数据块储存数据的数据类型,data_size指示数据块储存数据的大小
  *返回: 处理成功则返回指向相关结构体所在内存空间的指针,不成功则返回NULL.
  */
-extern STD_BLOCKS *initStandardDBlocks(SID *p_sid, unsigned int type, unsigned long long data_size);
+extern STD_BLOCKS *initStandardDBlocks(SID *p_sid, uint16_t type, uint32_t data_size);
 
 /*
  *初始化数据块链接关系管理结构
@@ -113,7 +113,7 @@ extern STD_CTN *initStandardDConnection(SID *f_sid, SID *s_sid);
         若s_id为NULL,则另外分配一个ID.为了方便管理,标准数据结构必须有ID.
  *返回: 处理成功则返回指向相关结构体所在内存空间的指针,不成功则返回NULL.
  */
-extern STD_DATA *initStandardData(unsigned int type, SID *s_id);
+extern STD_DATA *initStandardData(uint16_t type, SID *s_id);
 
 
 
@@ -141,7 +141,7 @@ extern int dataFileAddStandardData(D_FILE *p_dfile, STD_DATA *p_std);
  *参数: type指示所添加数据的数据类型, data为指向所添加数据所在内存空间的指针, data_size指示所添加数据的大小
  *返回: 处理成功则返回0,不成功则返回-1.
  */
-extern int standardDataAddBlock(STD_DATA *p_std, SID *p_sid ,unsigned int type, void *data, unsigned long long data_size);
+extern int standardDataAddBlock(STD_DATA *p_std, SID *p_sid ,uint16_t type, void *data, uint32_t data_size);
 
 /*
  *为标准数据结构添加数据块链接关系结构体

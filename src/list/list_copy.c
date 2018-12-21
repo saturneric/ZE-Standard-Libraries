@@ -1,8 +1,16 @@
 #include <type.h>
 #include <list/list.h>
 
+
+/**
+ 以一个已存在的节点为模板创建一个新的节点
+
+ @param p_node 指向作为模板的节点的指针
+ @return 返回指向新的节点的指针
+ */
 Node *copyNode(Node *p_node) {
     Node *t_node = NULL;
+//当开启ID模块的时候编译
 #ifdef id_enable
     if (p_node->s_id == NULL) t_node = initNode(0);
     else t_node = initNode(p_node->s_id->deep);
@@ -12,7 +20,9 @@ Node *copyNode(Node *p_node) {
     t_node->next = p_node->next;
     t_node->type = p_node->type;
     t_node->value = p_node->value;
+#ifdef list_quick_enable
     t_node->f_number = p_node->f_number;
+#endif
     return t_node;
 }
 

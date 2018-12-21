@@ -9,7 +9,9 @@
  *节点的管理及操作的结构
  */
 typedef struct Node{
+#ifdef list_quick_enable
     unsigned long long f_number;//长链表模式下,分派的数组节点编号
+#endif
     unsigned int type;//类型
     void *value;//值指针
     struct Node *next;//指向下一个节点

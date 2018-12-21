@@ -11,13 +11,14 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include <stdarg.h>
+#include <stdint.h>
 
-/*
+#ifdef UNIX
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
-*/
+#endif
 
 
 
