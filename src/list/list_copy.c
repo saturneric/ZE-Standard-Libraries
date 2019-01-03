@@ -3,7 +3,7 @@
 
 
 /**
- 以一个已存在的节点为模板创建一个新的节点
+ 以一个已存在的节点为模板创建一个相同的新的节点
 
  @param p_node 指向作为模板的节点的指针
  @return 返回指向新的节点的指针
@@ -26,6 +26,13 @@ Node *copyNode(Node *p_node) {
     return t_node;
 }
 
+
+/**
+ 根据已存在的链表创建一个相同的新的链表
+
+ @param p_list 指向作为模板的链表的指针
+ @return 返回指向新链表的指针
+ */
 List *copyList(List *p_list) {
     Node *p_node;
     Node *t_node;

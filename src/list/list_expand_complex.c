@@ -2,6 +2,11 @@
 #include <list/list.h>
 #include <list/list_expand.h>
 
+/**
+ 创建一个新的且内容为链表的节点
+
+ @return 返回指向新节点的指针
+ */
 Node *nodeWithComplex(void) {
     Node *p_node = initNode(0);
     p_node->type = LIST;
@@ -9,6 +14,15 @@ Node *nodeWithComplex(void) {
     return p_node;
 }
 
+
+/**
+ 为一个内容为链表的节点中的链表中添加节点并指定内容
+
+ @param p_node 指向该节点的指针
+ @param type 内容的类型
+ @param value 指向该内容所在内存的指针
+ @return 操作成功则返回一个非负整数
+ */
 int addValueForComplex(Node * p_node, int type, void *value) {
     List *c_list;
     Node *c_node;
@@ -22,6 +36,14 @@ int addValueForComplex(Node * p_node, int type, void *value) {
     return  -1;
 }
 
+
+/**
+ 为一个内容为链表的节点中的链表中添加整型类型的节点并初始化为相应的值
+
+ @param p_node 指向该节点的指针
+ @param temp 相应的整型值
+ @return 操作成功则返回非负整数
+ */
 int addIntForComplex(Node *p_node, int temp) {
     if (p_node->type == LIST) {
         int *p_temp = (int *)malloc(sizeof(int));
@@ -35,6 +57,14 @@ int addIntForComplex(Node *p_node, int temp) {
     return -1;
 }
 
+
+/**
+ 为一个内容为链表的节点中的链表中添加双精度浮点类型的节点并初始化为相应的值
+
+ @param p_node 指向该节点的指针
+ @param temp 相应的双精度浮点值
+ @return 操作成功则返回非负整数
+ */
 int addDoubleForComplex(Node *p_node, double temp) {
     if (p_node->type == LIST) {
         double *p_temp = (double *)malloc(sizeof(double));
@@ -48,6 +78,14 @@ int addDoubleForComplex(Node *p_node, double temp) {
     return -1;
 }
 
+
+/**
+ 为一个内容为链表的节点中的链表中添加字符串类型的节点并初始化为相应的值
+
+ @param p_node 指向该节点的指针
+ @param temp 相应的字符数组
+ @return 操作成功则返回非负整数
+ */
 int addStringForComplex(Node *p_node, char *temp) {
     if (p_node->type == LIST) {
         char *p_temp = (char *)malloc(sizeof(strlen(temp) + 1));
@@ -61,6 +99,14 @@ int addStringForComplex(Node *p_node, char *temp) {
     return -1;
 }
 
+
+/**
+ 为一个内容为链表的节点中的链表中添加指针类型的节点并初始化为相应的值
+
+ @param p_node 指向该节点的指针
+ @param temp 相应的指针
+ @return 操作成功则返回非负整数
+ */
 int addPointerForComplex(Node *p_node, void *temp) {
     if (p_node->type == LIST) {
         addValueForComplex(p_node, POINTER, temp);
