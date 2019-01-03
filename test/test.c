@@ -47,19 +47,6 @@ int list(void) {
 	return 0;
 }*/
 
-int stack(void) {
-	int i;
-	Stack *t_stack = initStack();
-	for (i = 0; i < 10; i++) {
-		pushStack(t_stack, snodeWithInt(i));
-	}
-	for (i = 0; i < 10; i++) {
-		printf("%d", getValueByIntForSNode(popStack(t_stack)));
-	}
-	releaseStack(t_stack);
-	return 0;
-}
-
 int time_avg(void){
     List *t_list = initList(0);
     int64_t time_all = 0;

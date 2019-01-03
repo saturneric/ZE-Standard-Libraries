@@ -9,10 +9,7 @@
 #include <list/list_expand.h>
 #include <list/list_expand_1.h>
 #include <list/list_quick.h>
-#include <stack/stack.h>
-#include <stack/stack_expand.h>
-//#include "tree/tree_expand.h"
-#include "communicate/communicate.h"
+#include <communicate/communicate.h>
 
 int stack(void);
 int list(void);

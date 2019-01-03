@@ -11,6 +11,15 @@
  *返回: 如果成功返回0,如果失败则返回-1.*/
 static int sortList(List *p_list, unsigned long long begin, unsigned long long end, int(*func)(Node *f_node, Node *s_node));
 
+/**
+ 链表排序函数，该函数不直接对用户开放
+
+ @param p_list 指向需要操作的链表的指针
+ @param begin 开始的节点的序号
+ @param end 结束的节点的序号
+ @param func 指向判断条件的函数的函数指针，接受两个指向相关节点的指针，比较他们的大小并返回正负值。
+ @return 成功进行操作则返回0
+ */
 static int sortList(List *p_list, unsigned long long begin, unsigned long long end, int(*func)(Node *f_node, Node *s_node)){
     unsigned long long target_index = begin;
     register Node *t_node = findByIndexForNode(p_list, target_index);
@@ -41,6 +50,15 @@ static int sortList(List *p_list, unsigned long long begin, unsigned long long e
     return 0;
 }
 
+
+
+/**
+ 向用户开放的链表排序函数
+
+ @param p_list 指向需要操作的链表
+ @param func 指向判断条件的函数的函数指针，接受两个指向相关节点的指针，比较他们的大小并返回正负值。
+ @return 成功进行操作则返回0
+ */
 int sortListForCustom(List *p_list, int(*func)(Node *f_node, Node *s_node)){
 #ifdef list_quick_enable
     if(p_list->p_lq != NULL && !p_list->p_lq->if_sort) p_list->p_lq->if_sort = 1;
