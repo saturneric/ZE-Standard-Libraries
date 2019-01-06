@@ -99,7 +99,7 @@ extern int updateValueWithIntForNode(Node *,int);
 /*
  *用输入的无符号长整型值更新节点中的值
  *返回: 若成功则返回0,若失败函数返回-1.*/
-extern int updateValueWithULLIntForNode(Node *, unsigned long long);
+extern int updateValueWithULLIntForNode(Node *, uint64_t);
 
 /*
  *用输入的浮点值更新节点中的值
@@ -186,7 +186,7 @@ unsigned long long getInfoForListThrough(List *expand_resources, int type);
 /*
  *以字节为单位计算链表的大小
  */
-unsigned long long calListMemory(List *);
+uint64_t calListMemory(List *);
 
 
 
@@ -197,7 +197,7 @@ unsigned long long calListMemory(List *);
 
 /*
  *返回链表长度*/
-extern unsigned long long len(List *p_list);
+extern uint64_t len(List *p_list);
 
 /*
  *查询链表是否为空

@@ -11,12 +11,20 @@
 /*
  *初始化链表,并返回指向新链表的指针,参数if_sid指示是否为新链表分配ID号
  *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL.*/
+#ifdef id_enable
 extern List *initList(_Bool if_sid);
+#else
+extern List *initList(void);
+#endif
 
 /*
  *初始化节点,并返回指向新链表的指针,参数if_sid指示是否为新节点分配ID号
  *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL.*/
+#ifdef id_enable
 extern Node *initNode(_Bool if_sid);
+#else
+extern Node *initNode(void);
+#endif
 
 /*库中内部调用函数,旨在为新节点的储存值获取内存,并将相应的储存值储存在获取到的内存中,并指明储存值的类型.*/
 extern int initMallocValueForNode(Node *,unsigned int,const void *);

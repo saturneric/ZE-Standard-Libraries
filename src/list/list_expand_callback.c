@@ -3,10 +3,18 @@
 #include <list/list_expand.h>
 #include <list/list_expand_1.h>
 
-List *listThrough(List *p_list, List *(*p_func)(unsigned int, void *, List *), List *expand_resources) {
+
+/**
+ 顺序遍历链表的操作函数，不对用户开放。回调函数返回-1退出遍历，返回1继续向后遍历，返回其他值则暂停向下遍历。
+ 回调函数接受一个整数、一个指向节点内容的指针、一个而外的参数链表，且回调函数需要返回一个链表，链表的第一个值作为函数的实际返回值。
+ @param p_list 指向目标链表的指针
+ @param p_func 指向回调函数的指针
+ @return 返回参数链表
+ */
+List *listThrough(List *p_list, List *(*p_func)(uint32_t, void *, List *), List *expand_resources) {
     Node *p_node = p_list->head;
     List *m_rtnlst = NULL;
-    unsigned long long index = 0;
+    uint64_t index = 0;
     insertInTail(expand_resources, nodeWithULLInt(index, 0));
     insertInTail(expand_resources, nodeWithULLInt(p_list->length, 0));
     while (p_node != NULL) {

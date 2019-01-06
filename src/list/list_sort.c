@@ -9,10 +9,10 @@
  *内部函数: 通过节点中的值查找相关多个节点.
  *参数: type指明相关值的类型;value为指向储存相关值的内存的指针.
  *返回: 如果成功返回0,如果失败则返回-1.*/
-static int sortList(List *p_list, unsigned long long begin, unsigned long long end, int(*func)(Node *f_node, Node *s_node));
+static int sortList(List *p_list, uint64_t begin, uint64_t end, int(*func)(Node *f_node, Node *s_node));
 
 /**
- 链表排序函数，该函数不直接对用户开放
+ 链表排序函数，该函数不直接对用户开放。采用快速排序的算法。
 
  @param p_list 指向需要操作的链表的指针
  @param begin 开始的节点的序号
@@ -20,7 +20,7 @@ static int sortList(List *p_list, unsigned long long begin, unsigned long long e
  @param func 指向判断条件的函数的函数指针，接受两个指向相关节点的指针，比较他们的大小并返回正负值。
  @return 成功进行操作则返回0
  */
-static int sortList(List *p_list, unsigned long long begin, unsigned long long end, int(*func)(Node *f_node, Node *s_node)){
+static int sortList(List *p_list, uint64_t begin, uint64_t end, int(*func)(Node *f_node, Node *s_node)){
     unsigned long long target_index = begin;
     register Node *t_node = findByIndexForNode(p_list, target_index);
     register Node *i_node = NULL, *j_node = NULL;
