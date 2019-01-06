@@ -173,7 +173,7 @@ List *newCReturn(void);
 /*
  *回调函数相关宏操作的辅助函数,用于给回调函数获取母函数传入的参数返提供便利
  */
-unsigned long long getInfoForListThrough(List *expand_resources, int type);
+uint64_t getInfoForListThrough(List *expand_resources, int type);
 
 
 

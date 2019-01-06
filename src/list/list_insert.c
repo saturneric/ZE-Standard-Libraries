@@ -4,7 +4,16 @@
 #include <list/list_quick.h>
 #endif
 
+
+/**
+ 在链表的头部插入节点
+
+ @param p_list 指向目标链表的指针
+ @param p_node 指向目标节点的指针
+ @return 函数执行成功返回0
+ */
 int insertInHead(List *p_list, Node *p_node) {
+//    如果可能需要使用长链表模块则编译以下代码
 #ifdef list_quick_enable
     if(p_list->p_lq != NULL && p_list->p_lq->if_sort) return -1;
     if(p_list->p_lq != NULL){
@@ -34,7 +43,15 @@ int insertInHead(List *p_list, Node *p_node) {
     return 0;
 }
 
+/**
+ 在链表的尾部插入节点
+
+ @param p_list 指向目标链表的指针
+ @param p_node 指向目标节点的指针
+ @return 函数执行成功返回0
+ */
 int insertInTail(List *p_list, Node *p_node) {
+//    如果可能需要使用长链表模块则编译以下代码
 #ifdef list_quick_enable
     if(p_list->p_lq != NULL && p_list->p_lq->if_sort) return -1;
 #endif
@@ -48,7 +65,7 @@ int insertInTail(List *p_list, Node *p_node) {
         p_node->last = p_list->tail;
         p_list->tail = p_node;
     }
-    
+//    如果可能需要使用长链表模块则编译以下代码
 #ifdef list_quick_enable
     if(p_list->p_lq != NULL){
         p_node->f_number = p_list->p_lq->rlst_len;

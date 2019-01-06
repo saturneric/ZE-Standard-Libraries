@@ -5,8 +5,9 @@
 
 
 /**
- 顺序遍历链表的操作函数，不对用户开放。回调函数返回-1退出遍历，返回1继续向后遍历，返回其他值则暂停向下遍历。
+ 顺序遍历链表的操作函数。回调函数返回-1退出遍历，返回1继续向后遍历，返回其他值则暂停向下遍历。
  回调函数接受一个整数、一个指向节点内容的指针、一个而外的参数链表，且回调函数需要返回一个链表，链表的第一个值作为函数的实际返回值。
+ 一般配合宏使用
  @param p_list 指向目标链表的指针
  @param p_func 指向回调函数的指针
  @return 返回参数链表
@@ -41,26 +42,34 @@ List *listThrough(List *p_list, List *(*p_func)(uint32_t, void *, List *), List 
     return m_rtnlst;
 }
 
-unsigned long long getInfoForListThrough(List *expand_resources, int type){
+
+/**
+ 回调宏相关函数，type为1时用于回调函数获取当前参数列表的参数个数。
+ type为2时用于获取当前节点在链表中的序号
+
+ @param expand_resources 指向参数列表的指针
+ @param type 模式
+ @return 返回需要获取的数据
+ */
+uint64_t getInfoForListThrough(List *expand_resources, int type){
     Node *p_node = NULL;
     if (type == 0) {
         p_node = findByIndexForNode(expand_resources, expand_resources->length-1);
     }else{
         p_node = findByIndexForNode(expand_resources, expand_resources->length-2);
     }
-    return *((unsigned long long *)p_node->value);
+    return *((uint64_t *)p_node->value);
 }
 
-int getByIntForNode(Node *p_node) {
-    if (p_node->type == INT) return *(int *)(p_node->value);
-    else return -1;
-}
+/**
+ 回调宏相关函数，构造回调函数的返回参数列表
 
-unsigned int getByUIntForNode(Node *p_node){
-    if (p_node->type == UINT) return *(unsigned int *)(p_node->value);
-    else return -1;
-}
-
+ @param if_status 模式参数
+ @param status 模式参数
+ @param argc 参数说明
+ @param ... 参数
+ @return 指向构造的参数列表的指针
+ */
 List *newReturn(int if_status ,int status, char *argc, ...){
     List *p_list = initList(0);
     if(if_status){
@@ -116,6 +125,11 @@ List *newReturn(int if_status ,int status, char *argc, ...){
     return p_list;
 }
 
+/**
+ 回调宏相关函数，用于回调函数不带而外参数的返回
+
+ @return 指向构造的参数列表的指针
+ */
 List *newCReturn(void){
     return newReturn(1, 0, NULL);
 }

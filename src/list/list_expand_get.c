@@ -7,6 +7,29 @@
 #endif
 
 /**
+ 直接获取储存整型数据的节点的值
+ 
+ @param p_node 指向目标节点的指针
+ @return 成功则返回对应整型值，失败返回0
+ */
+int getByIntForNode(Node *p_node) {
+    if (p_node->type == INT) return *(int *)(p_node->value);
+    else return 0;
+}
+
+
+/**
+ 直接获取储存无符号整型数据的节点的值
+ 
+ @param p_node 指向目标节点的指针
+ @return 成功则返回对应无符号整型值，失败返回0
+ */
+unsigned int getByUIntForNode(Node *p_node){
+    if (p_node->type == UINT) return *(unsigned int *)(p_node->value);
+    else return 0;
+}
+
+/**
  直接获得节点中储存的字符串
 
  @param p_node 指向目标节点的指针

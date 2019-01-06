@@ -8,11 +8,18 @@
 #include <id/id.h>
 #endif
 
+/**
+ 打印链表及链表中节点的相关数据
+
+ @param p_list 指向目标链表的指针
+ @param priority 行缩进次数
+ */
 void printListInfo(List *p_list, int priority) {
     int i = 0;
     Node *p_node;
     for (i = 0; i < priority; i++) printf("   ");
     printf("###LIST(location:%p",p_list);
+//    如果可能使用到ID模块则编译以下代码
 #ifdef id_enable
     printf(",id:%s",s_idToASCIIString(p_list->s_id));
 #endif
@@ -32,6 +39,12 @@ void printListInfo(List *p_list, int priority) {
     
 }
 
+
+/**
+ 打印链表及其节点写详细信息
+
+ @param p_list 指向目标链表的指针
+ */
 void printList(List *p_list) {
     int if_nearLast = 0;
     Node *p_node = p_list->head;
@@ -61,6 +74,13 @@ void printList(List *p_list) {
     printf("]");
 }
 
+
+/**
+ 打印节点的信息
+
+ @param p_node 指向目标节点的指针
+ @param priority 行缩进次数
+ */
 void printNodeInfo(Node *p_node, int priority) {
     int i;
     for (i = 0; i < priority; i++) printf("   ");
@@ -96,6 +116,11 @@ void printNodeInfo(Node *p_node, int priority) {
     printf("}\n");
 }
 
+/**
+ 打印节点的详细信息
+
+ @param p_node 指向目标节点的指针
+ */
 void printNode(Node *p_node) {
     int i;
     printf("#NODE(location:%p",p_node);
@@ -132,6 +157,13 @@ void printNode(Node *p_node) {
     printf("}\n");
 }
 
+
+/**
+ 遍历链表并自定义打印节点信息
+
+ @param p_list 指向目标链表的指针
+ @param func 指向自定义打印函数的指针，函数接受指向目标节点的指针
+ */
 void printListForCustom(List *p_list,void (*func)(void *value)){
     printf("###LIST (LEN:%llu ",p_list->length);
 #ifdef id_enable
@@ -140,6 +172,7 @@ void printListForCustom(List *p_list,void (*func)(void *value)){
     printf(")\n");
     listThrough(p_list, __CALLBACK_CALL(printListForCustom), __SEND_ARG("%p", func));
 }
+
 
 __CALLBACK_DEFINE(printListForCustom){
     void (*func)(void *) = __ARGS_P(0, void);
