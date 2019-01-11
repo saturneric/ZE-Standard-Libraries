@@ -60,6 +60,7 @@ uint64_t getInfoForListThrough(Chain *expand_resources, int type){
     return *((uint64_t *)p_node->value);
 }
 
+
 /**
  回调宏相关函数，构造回调函数的返回参数列表
 
