@@ -11,12 +11,13 @@
  */
 typedef struct block{
     uint64_t size;
+    uint64_t m_size;
     uint32_t carve;
     void *data;
 #ifdef id_enable
     SID *s_id;//栈节点的ID
 #endif
-} SNode;
+} Block;
 
 
 #endif /* block_type_h */

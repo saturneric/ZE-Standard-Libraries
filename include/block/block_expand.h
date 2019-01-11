@@ -1,5 +1,5 @@
-#ifndef BLOCK_EXPAND_H
-#define BLOCK_EXPAND_H
+#ifndef block_expand_h
+#define block_expand_h
 
 
 #endif /* block_expand_h */
