@@ -17,7 +17,7 @@ typedef struct file_head{
 typedef struct data_file{
     FILE *fp;//数据文件
     F_HEAD *pf_head;//数据文件头
-    List *pf_stdlst;//数据文件的标志数据结构的储存链表
+    Chain *pf_stdlst;//数据文件的标志数据结构的储存链表
 }D_FILE;
 
 /*
@@ -59,8 +59,8 @@ typedef struct standard_data{
     uint32_t size;//标准数据结构在数据文件中的大小
     uint32_t location;//标准数据结构的头在数据文件中的定位
     _Bool lock;//标准数据文件是否被锁住
-    List *pd_blocklst;//数据块储存链表
-    List *pd_ctnlst;//数据块连接关系结构的储存链表
+    Chain *pd_blocklst;//数据块储存链表
+    Chain *pd_ctnlst;//数据块连接关系结构的储存链表
 }STD_DATA;
 
 /*

@@ -1,8 +1,5 @@
 #include <type.h>
 #include <list/list.h>
-#ifdef list_quick_enable
-#include <list/list_quick.h>
-#endif
 
 int releaseNode(Node *p_node) {
     if (if_safeModeForNode == 1) {
@@ -19,7 +16,6 @@ int releaseNode(Node *p_node) {
         }
         p_node->value = NULL;
     }
-    p_node->f_number = 0;
     p_node->last = NULL;
     p_node->next = NULL;
     p_node->type = VOID;
@@ -60,12 +56,6 @@ int releaseList(List *p_list) {
     p_list->head = NULL;
     p_list->tail = NULL;
     p_list->length = 0;
-#ifdef list_simple_h
-    p_list->s_head = NULL;
-    p_list->s_tail = NULL;
-    if (p_list->s_id != NULL) freeS_id(p_list->s_id);
-    if(p_list->p_lq != NULL) disableListQuick(p_list);
-#endif
     free(p_list);
     return 0;
 }
@@ -113,9 +103,6 @@ int releaseListForCustom(List *p_list, int (*func)(void *)){
     p_list->length = 0;
 #ifdef id_enable
     if (p_list->s_id != NULL) freeS_id(p_list->s_id);
-#endif
-#ifdef list_quick_enable
-    if(p_list->p_lq != NULL) disableListQuick(p_list);
 #endif
     free(p_list);
     return  0;

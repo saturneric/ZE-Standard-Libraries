@@ -20,9 +20,6 @@ Node *copyNode(Node *p_node) {
     t_node->next = p_node->next;
     t_node->type = p_node->type;
     t_node->value = p_node->value;
-#ifdef list_quick_enable
-    t_node->f_number = p_node->f_number;
-#endif
     return t_node;
 }
 
@@ -43,11 +40,6 @@ List *copyList(List *p_list) {
 #endif
     t_list->head = p_list->head;
     t_list->tail = p_list->tail;
-#ifdef list_simple_h
-    t_list->s_id = p_list->s_id;
-    t_list->s_head = p_list->s_head;
-    t_list->s_tail = p_list->s_tail;
-#endif
     t_list->length = p_list->length;
     if(p_list->head != NULL && p_list->tail != NULL){
         p_node = p_list->head;

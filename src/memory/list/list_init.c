@@ -27,7 +27,6 @@ Node *initNode(void)
     p_node->next = NULL;
     p_node->last = NULL;
     p_node->type = VOID;
-    p_node->f_number = 0;
 //    链表内存安全模式相关操作
     if (if_safeModeForNode) {
         if_safeModeForNode = 0;
@@ -63,12 +62,6 @@ List *initList(void)
 #endif
     p_list->head = NULL;
     p_list->tail = NULL;
-    p_list->length = 0;
-    p_list->p_lq = NULL;
-//    如果简单链表模式启用则编译以下代码
-#ifdef list_simple_h
-    p_list->s_head = NULL;
-#endif
     if (if_safeModeForNode) {
         if_safeModeForNode = 0;
         p_node = initNode(0);

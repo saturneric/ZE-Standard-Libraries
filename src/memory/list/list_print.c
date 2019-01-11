@@ -1,8 +1,6 @@
 #include <type.h>
 #include <list/list.h>
-#include <list/list_expand.h>
 #include <list/list_print.h>
-#include <list/list_expand_1.h>
 
 #ifdef id_enable
 #include <id/id.h>

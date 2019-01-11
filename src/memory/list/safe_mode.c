@@ -1,6 +1,6 @@
 #include <type.h>
 #include <list/list.h>
-#include <list/list_quick.h>
+#include <chain/chain_quick.h>
 
 static int if_safeModeForNode = 0;
 static List *node_list = NULL;

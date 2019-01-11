@@ -1,6 +1,5 @@
 #include <type.h>
-#include <list/list.h>
-#include <list/list_expand.h>
+#include <chain/chain.h>
 
 
 /**
@@ -10,7 +9,7 @@
  @param value 整型值
  @return 操作成功则返回0
  */
-int updateValueWithIntForNode(Node *p_node,int value){
+int updateValueWithIntForNode(CNode *p_node,int value){
     int *p_value = (int *)malloc(sizeof(int));
     if(p_value == NULL){
         return -1;
@@ -29,7 +28,7 @@ int updateValueWithIntForNode(Node *p_node,int value){
  @param value 无符号长整型值
  @return 操作成功则返回0
  */
-int updateValueWithULLIntForNode(Node *p_node, uint64_t value){
+int updateValueWithULLIntForNode(CNode *p_node, uint64_t value){
     uint64_t *p_value = (uint64_t *)malloc(sizeof(uint64_t));
     if(p_value == NULL){
         return -1;
@@ -48,7 +47,7 @@ int updateValueWithULLIntForNode(Node *p_node, uint64_t value){
  @param value 双精度浮点值
  @return 操作成功则返回0
  */
-int updateValueWithDoubleForNode(Node *p_node, double value){
+int updateValueWithDoubleForNode(CNode *p_node, double value){
     double *p_value = (double *)malloc(sizeof(double));
     if(p_value == NULL){
         return -1;
@@ -67,7 +66,7 @@ int updateValueWithDoubleForNode(Node *p_node, double value){
  @param string 字符串值
  @return 操作成功则返回0
  */
-int updateValueWithStringForNode(Node *p_node, char *string){
+int updateValueWithStringForNode(CNode *p_node, char *string){
     char *p_value = (char *)malloc(sizeof(strlen(string)) + 1);
     if(p_value == NULL){
         return -1;
@@ -86,7 +85,7 @@ int updateValueWithStringForNode(Node *p_node, char *string){
  @param pointer 指针值
  @return 操作成功则返回0
  */
-int updateValueWithPointerForNode(Node *p_node, void *pointer){
+int updateValueWithPointerForNode(CNode *p_node, void *pointer){
     free(p_node->value);
     p_node->value = pointer;
     return 0;

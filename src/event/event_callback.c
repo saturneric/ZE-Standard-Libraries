@@ -1,7 +1,6 @@
 #include <type.h>
-#include <list/list.h>
-#include <list/list_expand.h>
-#include <list/list_expand_1.h>
+#include <chain/chain.h>
+#include <event/event.h>
 
 
 /**
@@ -12,7 +11,7 @@
  @param p_func 指向回调函数的指针
  @return 返回参数链表
  */
-List *listThrough(List *p_list, List *(*p_func)(uint32_t, void *, List *), List *expand_resources) {
+Chain *listThrough(Chain *p_list, Chain *(*p_func)(uint32_t, void *, Chain *), Chain *expand_resources) {
     Node *p_node = p_list->head;
     List *m_rtnlst = NULL;
     uint64_t index = 0;
@@ -51,7 +50,7 @@ List *listThrough(List *p_list, List *(*p_func)(uint32_t, void *, List *), List 
  @param type 模式
  @return 返回需要获取的数据
  */
-uint64_t getInfoForListThrough(List *expand_resources, int type){
+uint64_t getInfoForListThrough(Chain *expand_resources, int type){
     Node *p_node = NULL;
     if (type == 0) {
         p_node = findByIndexForNode(expand_resources, expand_resources->length-1);
@@ -70,7 +69,7 @@ uint64_t getInfoForListThrough(List *expand_resources, int type){
  @param ... 参数
  @return 指向构造的参数列表的指针
  */
-List *newReturn(int if_status ,int status, char *argc, ...){
+Chain *newReturn(int if_status ,int status, char *argc, ...){
     List *p_list = initList(0);
     if(if_status){
         lisrti(p_list, status);
@@ -130,6 +129,6 @@ List *newReturn(int if_status ,int status, char *argc, ...){
 
  @return 指向构造的参数列表的指针
  */
-List *newCReturn(void){
+Chain *newCReturn(void){
     return newReturn(1, 0, NULL);
 }

@@ -1,15 +1,11 @@
 #include <type.h>
-#include <list/list.h>
-#include <list/list_expand.h>
-#ifdef list_quick_enable
-#include <list/list_quick.h>
-#endif
+#include <chain/chain.h>
 
 /*
  *内部函数: 通过节点中的值查找相关多个节点.
  *参数: type指明相关值的类型;value为指向储存相关值的内存的指针.
  *返回: 如果成功返回0,如果失败则返回-1.*/
-static int sortList(List *p_list, uint64_t begin, uint64_t end, int(*func)(Node *f_node, Node *s_node));
+static int sortList(Chain *p_list, uint64_t begin, uint64_t end, int(*func)(CNode *f_node, CNode *s_node));
 
 /**
  链表排序函数，该函数不直接对用户开放。采用快速排序的算法。
@@ -20,10 +16,10 @@ static int sortList(List *p_list, uint64_t begin, uint64_t end, int(*func)(Node 
  @param func 指向判断条件的函数的函数指针，接受两个指向相关节点的指针，比较他们的大小并返回正负值。
  @return 成功进行操作则返回0
  */
-static int sortList(List *p_list, uint64_t begin, uint64_t end, int(*func)(Node *f_node, Node *s_node)){
+static int sortList(Chain *p_list, uint64_t begin, uint64_t end, int(*func)(CNode *f_node, CNode *s_node)){
     unsigned long long target_index = begin;
-    register Node *t_node = findByIndexForNode(p_list, target_index);
-    register Node *i_node = NULL, *j_node = NULL;
+    register CNode *t_node = findByIndexForNode(p_list, target_index);
+    register CNode *i_node = NULL, *j_node = NULL;
     
     register unsigned long long i = end,j = begin;
     for(; i >= begin; i--){
@@ -42,10 +38,10 @@ static int sortList(List *p_list, uint64_t begin, uint64_t end, int(*func)(Node 
         }
     }
     if(end - begin > 3){
-        if(t_node->f_number - begin > 2)
-            sortList(p_list, begin, t_node->f_number, func);
-        if(end - t_node->f_number > 2)
-            sortList(p_list, t_node->f_number, end, func);
+        if(getIndexForNode(p_list, t_node) - begin > 2)
+            sortList(p_list, begin, getIndexForNode(p_list, t_node), func);
+        if(end - getIndexForNode(p_list, t_node) > 2)
+            sortList(p_list, getIndexForNode(p_list, t_node), end, func);
     }
     return 0;
 }
@@ -59,10 +55,7 @@ static int sortList(List *p_list, uint64_t begin, uint64_t end, int(*func)(Node 
  @param func 指向判断条件的函数的函数指针，接受两个指向相关节点的指针，比较他们的大小并返回正负值。
  @return 成功进行操作则返回0
  */
-int sortListForCustom(List *p_list, int(*func)(Node *f_node, Node *s_node)){
-#ifdef list_quick_enable
-    if(p_list->p_lq != NULL && !p_list->p_lq->if_sort) p_list->p_lq->if_sort = 1;
-#endif
+int sortListForCustom(Chain *p_list, int(*func)(CNode *f_node, CNode *s_node)){
     sortList(p_list, 0, p_list->length-1, func);
     return 0;
 }

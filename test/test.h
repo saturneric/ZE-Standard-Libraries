@@ -5,15 +5,12 @@
 
 #include <type.h>
 #include <id/id.h>
-#include <list/list.h>
-#include <list/list_expand.h>
-#include <list/list_expand_1.h>
-#include <list/list_quick.h>
-#include <communicate/communicate.h>
+#include <chain/chain.h>
+#include <event/event.h>
+#include <communicate/communicate_file.h>
 
 int stack(void);
 int list(void);
 int tree(void);
-int time_avg(void);
 
 #endif // TEST_H

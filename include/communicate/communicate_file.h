@@ -144,13 +144,13 @@ extern int releaseDFile(D_FILE *p_file);
  *将链表转化为标准数据结构
  *返回: 处理成功则返回指向相关结构体所在内存空间的指针,不成功则返回NULL.
  */
-extern STD_DATA *listToSTD(List *);
+extern STD_DATA *listToSTD(Chain *);
 
 /*
  *将标准数据结构转换成链表
  *返回: 处理成功则返回指向相关结构体所在内存空间的指针,不成功则返回NULL.
  */
-extern List *standardDataToList(STD_DATA *);
+extern Chain *standardDataToList(STD_DATA *);
 
 //STD_DATA *stackToSTD(Stack *);
 

@@ -47,44 +47,8 @@ int list(void) {
 	return 0;
 }*/
 
-int time_avg(void){
-    List *t_list = initList(0);
-    int64_t time_all = 0;
-    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
-    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
-    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
-    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
-    for(int i = 0; i < 65535; i++) insertInTail(t_list,nodeWithInt(i, 0));
-    enableListQuick(t_list);
-    for (int i = 0; i < 100; i++){
-     struct timeval start,stop;
-     gettimeofday(&start,0);
-     findByIndexForNode(t_list, 200000);
-     gettimeofday(&stop,0);
-     time_all += (int64_t)(stop.tv_usec-start.tv_usec);
-     
-     }
-     double avg_time = (double) (time_all/(int64_t)100);
-     printf("TIME: %fus\n",avg_time);
-    releaseList(t_list);
-    return 0;
-}
 
 int main(int argc, char **argv) {
-    //time_avg();
-    /*List *t_list = initList(0);
-    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
-    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
-    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
-    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
-    for(int i = 0; i < 65535; i++) lisrti(t_list, i);
-    enableListQuick(t_list);
-    findByIndexForNode(t_list, 300000);
-    lisrhi(t_list, -1);
-    insertBeforeNode(t_list, findByIndexForNode(t_list, 5), lni(6));
-    popFromHead(t_list);
-    Node *p_node = findByIndexForNode(t_list, 7);
-    releaseList(t_list);*/
     while(1){
         List *p_list = initList(0);
         for(int i = 0; i < 65535; i++){

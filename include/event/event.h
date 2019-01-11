@@ -1,7 +1,7 @@
 #ifndef list_expand_1_h
 #define list_expand_1_h
 
-#include <list/list_expand.h>
+#include <chain/chain.h>
 
 /************************************************
  *节点快速初始化相关宏,提供函数名较为简单的调用方式

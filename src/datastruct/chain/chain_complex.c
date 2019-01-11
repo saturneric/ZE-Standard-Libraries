@@ -1,14 +1,14 @@
 #include <type.h>
-#include <list/list.h>
-#include <list/list_expand.h>
+#include <chain/chain.h>
+
 
 /**
  创建一个新的且内容为链表的节点
 
  @return 返回指向新节点的指针
  */
-Node *nodeWithComplex(void) {
-    Node *p_node = initNode(0);
+CNode *nodeWithComplex(void) {
+    CNode *p_node = initNode(0);
     p_node->type = LIST;
     p_node->value = initList(0);
     return p_node;
@@ -23,9 +23,9 @@ Node *nodeWithComplex(void) {
  @param value 指向该内容所在内存的指针
  @return 操作成功则返回一个非负整数
  */
-int addValueForComplex(Node * p_node, int type, void *value) {
+int addValueForComplex(CNode * p_node, int type, void *value) {
     List *c_list;
-    Node *c_node;
+    CNode *c_node;
     if (p_node->type == LIST) {
         c_list = (List *)p_node->value;
         c_node = initNode(0);
@@ -44,7 +44,7 @@ int addValueForComplex(Node * p_node, int type, void *value) {
  @param temp 相应的整型值
  @return 操作成功则返回非负整数
  */
-int addIntForComplex(Node *p_node, int temp) {
+int addIntForComplex(CNode *p_node, int temp) {
     if (p_node->type == LIST) {
         int *p_temp = (int *)malloc(sizeof(int));
         if(p_temp == NULL){
@@ -65,7 +65,7 @@ int addIntForComplex(Node *p_node, int temp) {
  @param temp 相应的双精度浮点值
  @return 操作成功则返回非负整数
  */
-int addDoubleForComplex(Node *p_node, double temp) {
+int addDoubleForComplex(CNode *p_node, double temp) {
     if (p_node->type == LIST) {
         double *p_temp = (double *)malloc(sizeof(double));
         if(p_temp == NULL){
@@ -86,7 +86,7 @@ int addDoubleForComplex(Node *p_node, double temp) {
  @param temp 相应的字符数组
  @return 操作成功则返回非负整数
  */
-int addStringForComplex(Node *p_node, char *temp) {
+int addStringForComplex(CNode *p_node, char *temp) {
     if (p_node->type == LIST) {
         char *p_temp = (char *)malloc(sizeof(strlen(temp) + 1));
         if(p_temp == NULL){
@@ -107,7 +107,7 @@ int addStringForComplex(Node *p_node, char *temp) {
  @param temp 相应的指针
  @return 操作成功则返回非负整数
  */
-int addPointerForComplex(Node *p_node, void *temp) {
+int addPointerForComplex(CNode *p_node, void *temp) {
     if (p_node->type == LIST) {
         addValueForComplex(p_node, POINTER, temp);
         return 0;

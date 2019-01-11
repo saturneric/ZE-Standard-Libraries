@@ -1,10 +1,6 @@
 #include <type.h>
-#include <list/list.h>
-#include <list/list_expand.h>
-//长链表模式可能启用则包含以下头文件
-#ifdef list_quick_enable
-#include <list/list_quick.h>
-#endif
+#include <chain/chain.h>
+
 
 /**
  直接获取储存整型数据的节点的值
@@ -12,7 +8,7 @@
  @param p_node 指向目标节点的指针
  @return 成功则返回对应整型值，失败返回0
  */
-int getByIntForNode(Node *p_node) {
+int getByIntForNode(CNode *p_node) {
     if (p_node->type == INT) return *(int *)(p_node->value);
     else return 0;
 }
@@ -24,7 +20,7 @@ int getByIntForNode(Node *p_node) {
  @param p_node 指向目标节点的指针
  @return 成功则返回对应无符号整型值，失败返回0
  */
-unsigned int getByUIntForNode(Node *p_node){
+unsigned int getByUIntForNode(CNode *p_node){
     if (p_node->type == UINT) return *(unsigned int *)(p_node->value);
     else return 0;
 }
@@ -35,7 +31,7 @@ unsigned int getByUIntForNode(Node *p_node){
  @param p_node 指向目标节点的指针
  @return 返回节点中储存的字符串
  */
-char *getByStringForNode(Node *p_node) {
+char *getByStringForNode(CNode *p_node) {
 	if (p_node->type == STRING) return (char *)(p_node->value);
 	else return NULL;
 }
@@ -46,7 +42,7 @@ char *getByStringForNode(Node *p_node) {
  @param p_node 指向目标节点的指针
  @return 返回节点中储存的双精度浮点值
  */
-double getByDoubleForNode(Node *p_node) {
+double getByDoubleForNode(CNode *p_node) {
 	if (p_node->type == DOUBLE) return *(double *)(p_node->value);
 	else return -1.0;
 }
@@ -57,7 +53,7 @@ double getByDoubleForNode(Node *p_node) {
  @param p_node 指向目标节点的指针
  @return 返回节点中储存的指针值
  */
-void *getByPointerForNode(Node *p_node) {
+void *getByPointerForNode(CNode *p_node) {
 	return (void *)(p_node->value);
 }
 
@@ -69,16 +65,8 @@ void *getByPointerForNode(Node *p_node) {
  @param p_node 指向目标节点的指针
  @return 成功返回相应排列序号，失败则会返回0
  */
-unsigned long long getIndexByNode(List *p_list, Node *p_node) {
-//    长链表模式可能启用则编译以下代码
-#ifdef list_quick_enable
-    if (p_list->p_lq != NULL){
-        register Node **p_fn_node = p_list->p_lq->fn_node;
-        register Node *rp_node = p_node;
-        for (register int i = 0; i < p_list->length; i++) if (p_fn_node[i] == rp_node) return i;
-    }
-#endif
-    register Node *t_node = p_list->head;
+unsigned long long getIndexByNode(Chain *p_list, CNode *p_node) {
+    register CNode *t_node = p_list->head;
     register unsigned long long index = 0;
     while (t_node != NULL) {
 //        id模块可能启用的时候则编译以下代码
