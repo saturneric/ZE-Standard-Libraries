@@ -6,7 +6,7 @@ int releaseNode(Node *p_node) {
         removeByNode(node_list, p_node);
     }
     if (p_node->value != NULL) {
-        if (p_node->type != POINTER && p_node->type != HOLE) {
+        if (p_node->type != POINTER) {
             if (p_node->type == LIST) {
                 releaseList((List *)p_node->value);
             }

@@ -2,7 +2,7 @@
 #define chain_h
 
 #include <chain/chain_type.h>
-#include <chain/chain.h>
+#include <list/list.h>
 
 /************************************************
  *节点的快速初始化: 为新节点分配内存空间,
@@ -232,7 +232,7 @@ extern void *getByPointerForNode(CNode *);
 /*
  *直接获得节点的序号
  *返回: 返回该节点在链表中的序号*/
-extern unsigned long long getIndexForNode(Chain *p_list,CNode *p_node);
+extern uint64_t getIndexForNode(Chain *p_list,CNode *p_node);
 
 /*
  *通过节点的序号找到节点中相关的值,并更新其中的储存的值的指针.
@@ -262,7 +262,7 @@ Chain *copyList(Chain *p_list);
 /*
  *通过序号查找相关的单个节点
  *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL.*/
-extern CNode *findByIndexForNode(Chain *, unsigned long long);
+extern CNode *findByIndexForNode(Chain *, uint64_t);
 
 /*
  *通过整型值查找储存该值的单个节点
