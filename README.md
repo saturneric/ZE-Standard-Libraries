@@ -49,14 +49,14 @@
     - list 链式内存管理
     - tree 目录树
     - error：错误管理模块
-- subfunc：子程序管理模块
-- type.h：全局信息头文件
+    - subfunc：子程序管理模块
+    - type.h：全局信息头文件
 - document：文档
-- info：工程说明及计划文档
-- raw design：模块概要设计文档
-- design：模块详细设计文档
-- test：测试方案及数据文档
+    - info：工程说明及计划文档
+    - raw design：模块概要设计文档
+    - design：模块详细设计文档
+    - test：测试方案及数据文档
 - test：不同平台下的测试程序文件
-- unix
-- windows
+    - unix
+    - windows
 - bin：编译后的二进制文件

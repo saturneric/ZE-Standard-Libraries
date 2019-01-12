@@ -4,11 +4,11 @@
 //如果ID模块可能启用则编译以下代码
 #ifdef id_enable
 /**
- 通过ID查找链表中符合条件的第一个节点
+ 通过ID查找链式结构中符合条件的第一个链式结构节点
 
- @param p_list 指向目标链表的指针
+ @param p_list 指向目标链式结构的指针
  @param s_id ID值
- @return 成功返回指向符合条件的节点的指针，不成功则返回NULL
+ @return 成功返回指向符合条件的链式结构节点的指针，不成功则返回NULL
  */
 Node *findByIdForNode(List *p_list, SID * s_id) {
     Node *ph_node = p_list->head;
@@ -39,12 +39,12 @@ Node *findByIdForNode(List *p_list, SID * s_id) {
 
 
 /**
- 通过值来查找链表中符合条件的第一个节点
+ 通过值来查找链式结构中符合条件的第一个链式结构节点
 
- @param p_list 指向目标链表的指针
+ @param p_list 指向目标链式结构的指针
  @param type 值的类型
  @param value 值
- @return 成功返回指向符合条件的节点的指针，不成功则返回NULL
+ @return 成功返回指向符合条件的链式结构节点的指针，不成功则返回NULL
  */
 Node *findByValue(List *p_list, uint type, const void *value) {
     Node *p_node = p_list->head;
@@ -82,12 +82,12 @@ Node *findByValue(List *p_list, uint type, const void *value) {
 }
 
 /**
- 通过值来查找链表中符合条件的所有节点
+ 通过值来查找链式结构中符合条件的所有链式结构节点
  
- @param p_list 指向目标链表的指针
+ @param p_list 指向目标链式结构的指针
  @param type 值的类型
  @param value 值
- @return 返回含有所有符合条件的节点的重组链表
+ @return 返回含有所有符合条件的链式结构节点的重组链式结构
  */
 List *mply_findByValue(List *p_list, unsigned int type, const void *value) {
     List *f_list = initList(0);

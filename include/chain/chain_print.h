@@ -1,5 +1,5 @@
-#ifndef list_print_h
-#define list_print_h
+#ifndef chain_print_h
+#define chain_print_h
 
 #include <chain/chain.h>
 #include <event/event.h>
@@ -39,4 +39,4 @@ __CALLBACK_STATE(printListForCustom);
 void printNode(CNode *p_node);
 
 
-#endif /* list_print_h */
+#endif /* chain_h */

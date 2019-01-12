@@ -105,13 +105,9 @@ Chain *newReturn(int if_status ,int status, char *argc, ...){
                                 lisrtull(p_list, va_arg(args, unsigned long long));
                                 count += 2;
                             }
-                            else{
-                                count++;
-                            }
+                            else count++;
                         }
-                        else{
-                            lisrtu(p_list, va_arg(args, unsigned int));
-                        }
+                        else lisrtu(p_list, va_arg(args, unsigned int));
                         break;
                     default:
                         break;
@@ -130,6 +126,6 @@ Chain *newReturn(int if_status ,int status, char *argc, ...){
 
  @return 指向构造的参数列表的指针
  */
-Chain *newCReturn(void){
+inline Chain *newCReturn(void){
     return newReturn(1, 0, NULL);
 }

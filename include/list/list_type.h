@@ -6,24 +6,24 @@
 #endif
 
 /*
- *节点的管理及操作的结构
+ *链式结构节点的管理及操作的结构
  */
 typedef struct Node{
     unsigned int type;//类型
     void *value;//值指针
-    struct Node *next;//指向下一个节点
-    struct Node *last;//指向上一个节点
+    struct Node *next;//指向下一个链式结构节点
+    struct Node *last;//指向上一个链式结构节点
 #ifdef id_enable
     SID *s_id;
 #endif
 } Node;
 
 /*
- *链表的管理及操作的结构
+ *链式结构的管理及操作的结构
  */
 typedef struct List{
-    Node *head;//指向第一个节点
-    Node *tail;//指向最后一个节点
+    Node *head;//指向第一个链式结构节点
+    Node *tail;//指向最后一个链式结构节点
     uint64_t length;
 #ifdef id_enable
     SID *s_id;

@@ -3,10 +3,10 @@
 
 
 /**
- 创建一个新的节点，并为其分配内存空间
+ 创建一个新的链式结构节点，并为其分配内存空间
 
- @param if_sid 新的节点是否带ID
- @return 返回指向新的节点的内存地址指针
+ @param if_sid 新的链式结构节点是否带ID
+ @return 返回指向新的链式结构节点的内存地址指针
  */
 #ifdef id_enable
 Node *initNode(_Bool if_sid)
@@ -27,7 +27,7 @@ Node *initNode(void)
     p_node->next = NULL;
     p_node->last = NULL;
     p_node->type = VOID;
-//    链表内存安全模式相关操作
+//    链式结构内存安全模式相关操作
     if (if_safeModeForNode) {
         if_safeModeForNode = 0;
         prec_node = initNode(0);
@@ -39,10 +39,10 @@ Node *initNode(void)
 }
 
 /**
- 创建一个新的链表，并为其分配内存空间
+ 创建一个新的链式结构，并为其分配内存空间
  
- @param if_sid 新的链表是否带ID
- @return 返回指向新的链表的内存地址指针
+ @param if_sid 新的链式结构是否带ID
+ @return 返回指向新的链式结构的内存地址指针
  */
 #ifdef id_enable
 List *initList(_Bool if_sid)
@@ -73,9 +73,9 @@ List *initList(void)
 }
 
 /**
- 为新的节点设定初始值
+ 为新的链式结构节点设定初始值
 
- @param p_node 指向目标节点的指针
+ @param p_node 指向目标链式结构节点的指针
  @param type 值得类型
  @param p_value 指向目标值的内存空间的指针
  @return 执行成功则返回0

@@ -9,7 +9,7 @@
  @return 以字节为单位返回链表及链表内包含的节点所占的内存空间
  */
 uint64_t calListMemory(Chain * p_list){
-    Node *p_node = p_list->head;
+    CNode *p_node = p_list->head;
     uint64_t nodes_size = 0LL;
     uint64_t list_size = sizeof(p_list);
     while(p_node != NULL){

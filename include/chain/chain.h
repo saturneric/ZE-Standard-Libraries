@@ -2,7 +2,7 @@
 #define chain_h
 
 #include <chain/chain_type.h>
-#include <list/list.h>
+#include <chain/chain.h>
 
 /************************************************
  *节点的快速初始化: 为新节点分配内存空间,
@@ -284,5 +284,150 @@ extern CNode *findByStringForNode(Chain *, char *);
  *返回: 如果成功返回指向该节点的指针,如果失败则返回NULL.*/
 extern CNode *findByPointerForNode(Chain *, void *);
 
+
+
+
+/************************************************
+ *节点快速初始化相关宏,提供函数名较为简单的调用方式
+ ************************************************/
+
+/****
+ *不带ID模块相关宏
+ */
+
+/*直接获取一个以整型值初始化的节点不带ID的缩略*/
+#define lni(cn) nodeWithInt(cn,0)
+
+/*直接获取一个以无符号整型值初始化的不带ID节点的缩略*/
+#define lnu(cn) nodeWithUInt(cn,0)
+
+/*直接获取一个以无符号长整形值初始化的节点的缩略*/
+#define lnull(cn) nodeWithULLInt(cn,0)
+
+/*直接获取一个以浮点值初始化的不带ID节点的缩略*/
+#define lnd(cn) nodeWithDouble(cn,0)
+
+/*直接获取一个以字符串值初始化的不带ID节点的缩略*/
+#define lns(cn) nodeWithString(cn,0)
+
+/*直接获取一个以指针值初始化的不带ID节点的缩略*/
+#define lnp(cn) nodeWithPointer(cn,0)
+
+/****
+ *带ID模块的相关宏
+ */
+
+/*直接获取一个以整型值初始化的带ID节点的缩略*/
+#define lsni(cn) nodeWithInt(cn,1)
+
+/*直接获取一个以浮点值初始化的带ID节点的缩略*/
+#define lsnd(cn) nodeWithDouble(cn,1)
+
+/*直接获取一个以字符串值初始化的带ID节点的缩略*/
+#define lsns(cn) nodeWithString(cn,1)
+
+/*直接获取一个以指针值初始化的节点的缩略*/
+#define lsnp(cn) nodeWithPointer(cn,1)
+
+
+
+
+/************************************************
+ *链表快速插入相关宏
+ ************************************************/
+
+/****
+ *尾部相关
+ */
+
+/*在链表尾部直接加入一个已经用整型值初始化的不带ID的节点*/
+#define lisrti(chain, cn) insertInTail(chain, lni(cn));
+
+/*在链表尾部直接加入一个已经用浮点值初始化的不带ID的节点*/
+#define lisrtd(chain, cn) insertInTail(chain, lnd(cn));
+
+/*在链表尾部直接加入一个已经用无符号整型值初始化的不带ID的节点*/
+#define lisrtu(chain, cn) insertInTail(chain, lnu(cn));
+
+/*在链表尾部直接加入一个已经用无符号长整型值初始化的不带ID的节点*/
+#define lisrtull(chain, cn) insertInTail(chain, lnull(cn));
+
+/*在链表尾部直接加入一个已经用指针值初始化的不带ID的节点*/
+#define lisrtp(chain, cn) insertInTail(chain, lnp(cn));
+
+/*在链表尾部直接加入一个已经用字符串值初始化的不带ID的节点*/
+#define lisrts(chain, cn) insertInTail(chain, lns(cn));
+
+/****
+ *头部相关
+ */
+
+/*在链表头部直接加入一个已经用整型值初始化的不带ID的节点*/
+#define lisrhi(chain, cn) insertInHead(chain, lni(cn));
+
+/*在链表头部直接加入一个已经用浮点值初始化的不带ID的节点*/
+#define lisrhd(chain, cn) insertInHead(chain, lnd(cn));
+
+/*在链表头部直接加入一个已经用无符号整型值初始化的不带ID的节点*/
+#define lisrhu(chain, cn) insertInHead(chain, lnu(cn));
+
+/*在链表头部直接加入一个已经用无符号长整型值初始化的不带ID的节点*/
+#define lisrhull(chain, cn) insertInHead(chain, lnull(cn));
+
+/*在链表头部直接加入一个已经用指针值初始化的不带ID的节点*/
+#define lisrhp(chain, cn) insertInHead(chain, lnp(cn));
+
+/*在链表头部直接加入一个已经用字符串值初始化的不带ID的节点*/
+#define lisrhs(chain, cn) insertInHead(chain, lns(cn));
+
+
+
+
+/************************************************
+ *节点快速获得储存值相关宏
+ ************************************************/
+
+/*快速获得指针类型的节点所储存的值*/
+#define lidxp(chain, cn) getByPointerForNode(findByIndexForNode(chain, cn))
+
+/*快速获得整型类型的节点所储存的值*/
+#define lidxi(chain, cn) getByIntForNode(findByIndexForNode(chain, cn))
+
+/*快速获得浮点类型的节点所储存的值*/
+#define lidxd(chain, cn) getByDoubleForNode(findByIndexForNode(chain, cn))
+
+/*快速获得字符串类型的节点所储存的值*/
+#define lidxs(chain, cn) getByStringForNode(findByIndexForNode(chain, cn))
+
+/*快速获得无符号长整型类型的节点所储存的值*/
+#define lupdull(chain,cn,value) updateValueWithULLIntForNode(findByIndexForNode(chain, cn),value)
+
+
+
+
+/************************************************
+ *其他快速操作相关宏
+ ************************************************/
+
+/*通过节点的序号直接得到它的值*/
+#define lidxvle(chain,cn) (findByIndexForNode(chain, cn)->value)
+
+/*通过节点序号直接移除节点*/
+#define lrmvidx(chain,cn) removeByNode(chain, findByIndexForNode(chain, cn)
+
+/*从列表头移除节点的缩略*/
+#define lpoph(chain) popFromHead(chain)
+
+/*从列表尾移除节点的缩略*/
+#define lpopt(chain) popFromTail(chain)
+
+/*通过节点的ID直接获得节点的值*/
+#define lfndsid(chain,sid) (findByIdForNode(chain,sid)->value)
+
+/*创建一个不带ID的链表的缩略*/
+#define lstns() initList(0);
+
+/*创建一个带有ID的链表缩略*/
+#define lstn() initList(1);
 
 #endif /* chain_h */
