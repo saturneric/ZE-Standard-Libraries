@@ -33,7 +33,6 @@
 #define STRING 3
 #define POINTER 4
 #define LIST 5
-#define STACK 6
 #define TREE 7
 #define LIST_NODE 8
 #define TREE_NODE 9
@@ -43,7 +42,6 @@
 #define STANDARD_DATA 13
 #define DATA_FILE 14
 #define MESSAGE 15
-#define HOLE 16
 #define ULLINT 17
 
 
@@ -69,10 +67,6 @@
 #define FILE_TSET_LEN 18
 #define HEAD_TEST_LEN 9
 #define INFO_TEST_LEN 8
-#define ENABLE_LIST_QUICK 65535
-#define FN_NODE_SPARE 500
-#define INDEX_CHANGE_MAX 500
-#define INDEX_DISTANCE_MAX 120
 #define STD_TEXT_LEN 4
 #define HIGH 0x3
 #define STANDARD 0x2

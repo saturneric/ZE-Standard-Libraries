@@ -187,7 +187,7 @@ inline Chain *mply_findByPointerForNode(Chain* p_list, void *temp) {
  @param m_index 序号位置
  @return 返回指向符合条件的链表的指针
  */
-CNode *findByIndexForNode(Chain *p_list, unsigned long long m_index) {
+CNode *findByIndexForNode(Chain *p_list, uint64_t m_index) {
     if(p_list == NULL) return NULL;
     CNode *p_node = p_list->head;
     unsigned long long i;
